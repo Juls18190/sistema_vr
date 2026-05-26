@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acceso Admin — Grupo V&R</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--dark:#0a1628;--dark2:#0f1e35;--blue:#1560BD;--blue2:#3a82e8;--accent:#4fc3f7;--text:#e8edf5;--muted:#8899aa;--border:rgba(255,255,255,0.09);--ff:'Sora',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--ff);background:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;background-image:radial-gradient(ellipse 60% 50% at 70% 50%,rgba(21,96,189,0.12) 0%,transparent 70%),linear-gradient(135deg,#060f20 0%,#091828 50%,#0a1e38 100%);}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulsar{0%,100%{opacity:1}50%{opacity:.3}}
+.card{background:rgba(15,30,53,0.95);border:0.5px solid var(--border);border-radius:16px;padding:2.75rem;width:380px;max-width:90vw;animation:fadeInUp .6s ease both;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.logo-wrap{display:flex;align-items:center;justify-content:center;margin-bottom:1.75rem;}
+.logo-box{width:52px;height:52px;background:var(--blue);border-radius:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(21,96,189,.4);}
+.brand-name{font-size:20px;font-weight:700;color:#fff;margin-left:12px;}
+.brand-sub{font-size:11px;color:var(--muted);}
+.title{font-size:20px;font-weight:600;color:#fff;text-align:center;margin-bottom:4px;}
+.subtitle{font-size:12px;color:var(--muted);text-align:center;margin-bottom:1.75rem;}
+.sep{height:0.5px;background:var(--border);margin-bottom:1.5rem;}
+
+/* FORM */
+.fr{margin-bottom:13px;position:relative;}
+.fr label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px;font-weight:500;}
+.fr-inner{position:relative;}
+.fr-inner svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;}
+.fr input{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid var(--border);border-radius:8px;padding:11px 40px 11px 40px;font-size:13px;color:var(--text);font-family:var(--ff);outline:none;transition:border-color .2s,box-shadow .2s;}
+.fr input:focus{border-color:rgba(21,96,189,.7);box-shadow:0 0 0 3px rgba(21,96,189,.15);}
+.fr input::placeholder{color:var(--muted);}
+.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:2px;transition:color .2s;}
+.eye-btn:hover{color:var(--accent);}
+.remember-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;font-size:12px;}
+.remember-row label{display:flex;align-items:center;gap:6px;color:var(--muted);cursor:pointer;}
+.remember-row input[type=checkbox]{accent-color:var(--blue);}
+.remember-row a{color:var(--accent);text-decoration:none;transition:opacity .2s;}
+.remember-row a:hover{opacity:.75;}
+.btn-login{width:100%;background:var(--blue);color:#fff;border:none;padding:13px;border-radius:8px;font-size:14px;font-family:var(--ff);cursor:pointer;font-weight:600;transition:all .2s;box-shadow:0 4px 14px rgba(21,96,189,.35);display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-login:hover{background:var(--blue2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(21,96,189,.45);}
+.error-box{background:rgba(239,68,68,0.1);border:0.5px solid rgba(239,68,68,0.3);color:#fca5a5;font-size:12px;padding:10px 13px;border-radius:8px;margin-bottom:13px;display:none;align-items:center;gap:8px;}
+.error-box.show{display:flex;}
+.back-link{display:block;text-align:center;margin-top:1.5rem;font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s;}
+.back-link:hover{color:var(--accent);}
+.badge{display:inline-flex;align-items:center;gap:5px;background:rgba(21,96,189,0.12);border:0.5px solid rgba(21,96,189,0.25);color:var(--accent);font-size:10px;padding:4px 10px;border-radius:12px;margin:0 auto 1.5rem;display:flex;width:fit-content;margin:0 auto 1.25rem;}
+.pulse{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulsar 2s infinite;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo-wrap">
+    <div class="logo-box"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <div style="margin-left:12px;"><div class="brand-name">GRUPO V&R</div><div class="brand-sub">Sistema de Gestión Interna</div></div>
+  </div>
+
+  <div class="badge"><span class="pulse"></span>Área de acceso restringido</div>
+
+  <div class="title">Iniciar sesión</div>
+  <div class="subtitle">Ingresa tus credenciales de administrador</div>
+  <div class="sep"></div>
+
+  <!-- ERROR BOX -->
+{% if error %}
+<div class="error-box show">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+
+  <span>{{ error }}</span>
+</div>
+{% endif %}
+
+    <form method="POST" action="{% url 'usuarios:login' %}" id="login-form">    {% csrf_token %}
+
+    <div class="fr">
+      <label>Usuario</label>
+      <div class="fr-inner">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <input type="text" name="username" id="username" placeholder="Nombre de usuario" required autocomplete="username">
+      </div>
+    </div>
+
+    <div class="fr">
+      <label>Contraseña</label>
+      <div class="fr-inner">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <input type="password" name="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+        <button type="button" class="eye-btn" onclick="toggleEye()">
+          <svg id="eye-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="remember-row">
+      <label><input type="checkbox" name="remember"> Recordar sesión</label>
+      <a href="#">¿Olvidaste tu contraseña?</a>
+    </div>
+
+    <button type="submit" class="btn-login">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Entrar al sistema
+    </button>
+  </form>
+
+  <a href="/" class="back-link">← Volver al sitio público</a>
+</div>
+
+<script>
+
+function toggleEye(){
+  var inp = document.getElementById('password');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+</script>
+
+{% if error %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('error-box').classList.add('show');
+    document.getElementById('error-msg').innerText = "{{ error }}";
+});
+</script>
+{% endif %}
+</body>
+</html>

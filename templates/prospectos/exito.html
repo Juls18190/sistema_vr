@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solicitud enviada — Grupo V&R</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#1560BD;--ff:'Sora',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--ff);background:#f1f5f9;min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:2.5rem;width:100%;max-width:420px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.06);}
+.icon{width:64px;height:64px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;}
+h2{font-size:20px;font-weight:700;color:#1e293b;margin-bottom:8px;}
+p{font-size:13px;color:#64748b;line-height:1.6;margin-bottom:1.75rem;}
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;font-family:var(--ff);}
+.btn:hover{background:#3a82e8;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <h2>¡Solicitud recibida!</h2>
+  <p>Gracias por contactarnos. Uno de nuestros asesores revisará tu solicitud y se pondrá en contacto contigo a la brevedad posible.</p>
+  <a href="/" class="btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Volver al inicio
+  </a>
+</div>
+</body>
+</html>

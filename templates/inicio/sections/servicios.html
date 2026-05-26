@@ -1,0 +1,77 @@
+<div class="sec" id="servicios">
+    <div class="sec-tag">Lo que ofrecemos</div>
+    <h2 class="sh">Soluciones integrales para cada etapa de tu vida</h2>
+    <div class="uline"></div>
+    <div class="svc-grid">
+
+    {% if servicios %}
+      {# ── Servicios desde la base de datos ── #}
+      {% for s in servicios %}
+        <div class="svc-card">
+            <div class="svc-img-wrap" style="background:linear-gradient(135deg,{% if s.categoria == 'personal' %}#0b2d4a,#1a5276{% elif s.categoria == 'inversion' %}#0a2d2d,#1f5c5c{% else %}#0a0a2d,#1f1f5c{% endif %});">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="rgba(79,195,247,0.5)" stroke-width="1.2">
+                  {% if s.icono_clase == 'medico' or 'médico' in s.nombre|lower %}
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                  {% elif 'vida' in s.nombre|lower %}
+                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                  {% elif 'auto' in s.nombre|lower %}
+                    <path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v5"/><circle cx="18" cy="17" r="2"/><circle cx="10" cy="17" r="2"/>
+                  {% elif 'hogar' in s.nombre|lower or 'casa' in s.nombre|lower %}
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                  {% elif 'inver' in s.nombre|lower or 'ahorro' in s.nombre|lower %}
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+                  {% else %}
+                    <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
+                  {% endif %}
+                </svg>
+            </div>
+            <div class="svc-body">
+                <h3>{{ s.nombre }}</h3>
+                <p>{{ s.descripcion_corta }}</p>
+                <a href="/servicios/" class="svc-link">Ver más →</a>
+            </div>
+        </div>
+      {% endfor %}
+
+    {% else %}
+      {# ── Fallback estático si la DB no tiene servicios cargados ── #}
+        <div class="svc-card">
+            <div class="svc-img-wrap bg-medico">
+                <svg width="180" height="140" viewBox="0 0 200 150" fill="none"><rect x="40" y="50" width="120" height="90" rx="3" fill="rgba(255,255,255,0.06)"/><rect x="88" y="30" width="24" height="70" rx="3" fill="rgba(255,255,255,0.2)"/><rect x="70" y="48" width="60" height="24" rx="3" fill="rgba(255,255,255,0.2)"/></svg>
+            </div>
+            <div class="svc-body"><h3>Gastos Médicos Mayores</h3><p>Accede a los mejores médicos y hospitales privados ante cualquier enfermedad.</p><a href="/servicios/" class="svc-link">Ver más →</a></div>
+        </div>
+        <div class="svc-card">
+            <div class="svc-img-wrap bg-vida">
+                <svg width="180" height="140" viewBox="0 0 200 150" fill="none"><path d="M100 25 L118 33 L118 48 Q118 60 100 70 Q82 60 82 48 L82 33 Z" fill="rgba(34,197,94,0.3)" stroke="rgba(34,197,94,0.5)" stroke-width="1"/></svg>
+            </div>
+            <div class="svc-body"><h3>Seguro de Vida</h3><p>Garantiza la estabilidad económica de tu familia a largo plazo.</p><a href="/servicios/" class="svc-link">Ver más →</a></div>
+        </div>
+        <div class="svc-card">
+            <div class="svc-img-wrap bg-auto">
+                <svg width="180" height="140" viewBox="0 0 200 150" fill="none"><rect x="30" y="70" width="140" height="38" rx="8" fill="rgba(240,160,30,0.25)" stroke="rgba(240,160,30,0.4)" stroke-width="1"/><circle cx="68" cy="108" r="16" fill="rgba(20,20,20,0.6)" stroke="rgba(255,255,255,0.2)" stroke-width="2"/><circle cx="132" cy="108" r="16" fill="rgba(20,20,20,0.6)" stroke="rgba(255,255,255,0.2)" stroke-width="2"/></svg>
+            </div>
+            <div class="svc-body"><h3>Seguro de Auto</h3><p>Protege tu vehículo y a terceros con coberturas amplias y accesibles.</p><a href="/servicios/" class="svc-link">Ver más →</a></div>
+        </div>
+        <div class="svc-card">
+            <div class="svc-img-wrap bg-hogar">
+                <svg width="180" height="140" viewBox="0 0 200 150" fill="none"><polygon points="100,20 175,70 25,70" fill="rgba(180,80,180,0.3)"/><rect x="82" y="100" width="36" height="40" rx="3" fill="rgba(200,100,200,0.25)"/></svg>
+            </div>
+            <div class="svc-body"><h3>Seguro de Hogar</h3><p>Protege tu patrimonio más valioso: hogar, contenidos y responsabilidad civil.</p><a href="/servicios/" class="svc-link">Ver más →</a></div>
+        </div>
+        <div class="svc-card">
+            <div class="svc-img-wrap bg-inversion">
+                <svg width="180" height="140" viewBox="0 0 200 150" fill="none"><polyline points="20,120 50,100 80,105 110,75 140,60 170,35 190,30" stroke="rgba(79,195,247,0.7)" stroke-width="2.5" fill="none"/></svg>
+            </div>
+            <div class="svc-body"><h3>Inversión y Ahorro</h3><p>Planes para hacer crecer y proteger tu patrimonio a mediano y largo plazo.</p><a href="/servicios/" class="svc-link">Ver más →</a></div>
+        </div>
+        <div class="svc-card">
+            <div class="svc-img-wrap bg-empresa">
+                <svg width="180" height="140" viewBox="0 0 200 150" fill="none"><rect x="20" y="50" width="50" height="90" rx="3" fill="rgba(100,100,255,0.2)"/><rect x="80" y="30" width="60" height="110" rx="3" fill="rgba(21,96,189,0.35)"/><rect x="150" y="60" width="45" height="80" rx="3" fill="rgba(100,100,255,0.2)"/></svg>
+            </div>
+            <div class="svc-body"><h3>Empresarial</h3><p>Seguros colectivos, médicos y beneficios para todos los colaboradores.</p><a href="/servicios/" class="svc-link">Ver más →</a></div>
+        </div>
+    {% endif %}
+
+    </div>
+</div>

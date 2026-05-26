@@ -1,0 +1,54 @@
+<div class="sec" id="citas">
+  <div class="citas-grid">
+    <div class="anim-left">
+      <div class="sec-tag">Reserva tu espacio</div>
+      <h2 class="sh">Agenda tu Asesoría</h2>
+      <div class="uline"></div>
+      <p class="subp" style="margin-bottom:1.25rem;">La primera consulta es <strong style="color:#fff;">gratuita</strong>.</p>
+      <div class="info-items">
+        <div class="ii"><div class="ii-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07"/></svg></div><div><strong>782 160 2295</strong><span>Llamadas y WhatsApp</span></div></div>
+        <div class="ii"><div class="ii-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg></div><div><strong>grupovr@inbursaasesores.com</strong><span>Respuesta en 24 horas</span></div></div>
+        <div class="ii"><div class="ii-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><strong>Av. Juárez #704 altos</strong><span>Col. 27 de Septiembre, Poza Rica</span></div></div>
+      </div>
+      <div class="horario"><h4>Horario de Atención</h4><p>Lunes — Viernes: 9:00 am – 5:00 pm<br>Sábado: 9:00 am – 2:00 pm</p></div>
+    </div>
+    <form class="fcard anim-right" method="POST" action="/citas/agendar/">
+      {% csrf_token %}
+      <div class="fcard-title">Solicitar Cita</div>
+      <div class="fgrid">
+        <div class="fr"><label>Nombre</label><input type="text" name="nombre" placeholder="Nombre" required></div>
+        <div class="fr"><label>Apellidos</label><input type="text" name="apellidos" placeholder="Apellidos" required></div>
+      </div>
+      <div class="fgrid">
+        <div class="fr"><label>Correo</label><input type="email" name="correo" placeholder="correo@ejemplo.com" required></div>
+        <div class="fr"><label>Teléfono</label><input type="tel" name="telefono" placeholder="782-000-0000"></div>
+      </div>
+      <div class="fr"><label>Interés principal</label>
+        <select name="motivo">
+          <option value="seguro_vida">Seguro de vida</option>
+          <option value="medico">Gastos médicos mayores</option>
+          <option value="inversion">Inversión y ahorro</option>
+          <option value="auto">Seguro de auto</option>
+          <option value="hogar">Seguro de hogar</option>
+          <option value="empresa">Empresarial</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="fgrid">
+        <div class="fr"><label>Fecha deseada</label><input type="date" name="fecha" required></div>
+        <div class="fr"><label>Horario</label>
+          <select name="hora">
+            <option value="09:00">9:00 – 10:00</option>
+            <option value="10:00">10:00 – 11:00</option>
+            <option value="11:00">11:00 – 12:00</option>
+            <option value="14:00">14:00 – 15:00</option>
+            <option value="15:00">15:00 – 16:00</option>
+            <option value="16:00">16:00 – 17:00</option>
+          </select>
+        </div>
+      </div>
+      <div class="fr"><label>Comentarios</label><textarea name="comentarios" rows="2" placeholder="Cuéntanos brevemente..."></textarea></div>
+      <button type="submit" class="btn-full">Confirmar Solicitud</button>
+    </form>
+  </div>
+</div>

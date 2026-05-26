@@ -1,0 +1,380 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vacantes — Grupo V&R Consultores</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dark:#0a1628;--dark2:#0f1e35;--blue:#1560BD;--blue2:#3a82e8;
+  --accent:#4fc3f7;--text:#e8edf5;--muted:#8899aa;
+  --border:rgba(255,255,255,0.09);--ff:'Sora',sans-serif;--fd:'Playfair Display',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--ff);background:var(--dark);color:var(--text);line-height:1.6;}
+.anim{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.anim.vis{opacity:1;transform:none;}
+
+/* TOPBAR */
+.topbar{background:#060c16;padding:6px 2.5rem;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted);border-bottom:0.5px solid var(--border);}
+.topbar a{color:var(--muted);text-decoration:none;margin-right:1.5rem;transition:color .2s;}
+.topbar a:hover{color:var(--accent);}
+.admin-link{background:var(--blue);color:#fff!important;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:500;}
+
+/* NAV */
+nav{background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);padding:0 2.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;height:58px;border-bottom:0.5px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.logo-box{width:36px;height:36px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.logo-txt{font-size:14px;font-weight:600;color:#fff;}
+.logo-sub{font-size:10px;color:var(--muted);}
+.nav-links{display:flex;list-style:none;height:58px;}
+.nav-links li a{display:flex;align-items:center;height:58px;padding:0 14px;font-size:13px;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;transition:all .2s;}
+.nav-links li a:hover,.nav-links li a.act{color:#fff;border-bottom-color:var(--blue);}
+.btn-nav{background:var(--blue);color:#fff;border:none;padding:10px 20px;border-radius:7px;font-size:12px;font-family:var(--ff);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(21,96,189,0.4);transition:all .2s;text-decoration:none;}
+.btn-nav:hover{background:var(--blue2);transform:translateY(-1px);}
+
+/* HERO */
+.page-hero{background:linear-gradient(135deg,#060f20 0%,#091828 50%,#0c2040 100%);padding:4rem 2.5rem 3rem;position:relative;overflow:hidden;border-bottom:0.5px solid var(--border);}
+.page-hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(21,96,189,0.15) 0%,transparent 70%);border-radius:50%;}
+.page-hero-tag{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);font-weight:600;margin-bottom:8px;}
+.page-hero h1{font-family:var(--fd);font-size:38px;font-weight:600;color:#fff;margin-bottom:12px;line-height:1.2;}
+.page-hero p{font-size:15px;color:rgba(255,255,255,.7);max-width:520px;line-height:1.7;}
+.vac-stats{display:flex;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap;}
+.vs{background:rgba(21,96,189,0.12);border:0.5px solid rgba(21,96,189,0.25);border-radius:10px;padding:.875rem 1.25rem;display:flex;align-items:center;gap:10px;}
+.vs-num{font-size:22px;font-weight:700;color:var(--accent);}
+.vs-label{font-size:11px;color:var(--muted);}
+
+/* SECCIONES */
+.sec{padding:3.5rem 2.5rem;}
+.sec-alt{background:var(--dark2);}
+.sh{font-family:var(--fd);font-size:26px;color:#fff;margin-bottom:8px;}
+.sec-tag{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:500;margin-bottom:6px;}
+.uline{width:44px;height:2px;background:var(--blue);margin:10px 0 2rem;}
+
+/* TARJETAS VACANTES */
+.vac-grid{display:flex;flex-direction:column;gap:1rem;margin-top:2rem;}
+.vac-card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:12px;padding:1.5rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:start;transition:all .25s;}
+.vac-card:hover{border-color:rgba(21,96,189,.4);transform:translateX(4px);box-shadow:0 4px 20px rgba(0,0,0,.2);}
+.vac-area{font-size:11px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.vac-title{font-size:18px;font-weight:600;color:#fff;margin-bottom:8px;}
+.vac-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1rem;}
+.vac-tags{display:flex;gap:8px;flex-wrap:wrap;}
+.vtag{font-size:11px;background:rgba(255,255,255,0.05);border:0.5px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:12px;}
+.vtag.blue{background:rgba(21,96,189,0.15);border-color:rgba(21,96,189,0.3);color:var(--accent);}
+.vac-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-width:160px;}
+.btn-apply{background:var(--blue);color:#fff;border:none;padding:11px 22px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.btn-apply:hover{background:var(--blue2);transform:translateY(-1px);}
+.badge-nueva{font-size:10px;background:rgba(34,197,94,0.15);color:#4ade80;border:0.5px solid rgba(34,197,94,0.3);padding:3px 10px;border-radius:10px;font-weight:600;}
+.badge-pdf{font-size:10px;background:rgba(239,68,68,0.12);color:#f87171;border:0.5px solid rgba(239,68,68,0.25);padding:3px 10px;border-radius:10px;font-weight:600;text-decoration:none;}
+.badge-pdf:hover{background:rgba(239,68,68,0.2);}
+.empty-msg{text-align:center;padding:3rem;color:var(--muted);font-size:15px;}
+
+/* BENEFICIOS */
+.ben-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem;}
+.ben{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:10px;padding:1.25rem;transition:border-color .2s;}
+.ben:hover{border-color:rgba(21,96,189,.35);}
+.ben-icon{width:40px;height:40px;background:rgba(21,96,189,.15);border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:.875rem;}
+.ben h4{font-size:14px;font-weight:600;color:#fff;margin-bottom:5px;}
+.ben p{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* PROCESO */
+.proceso-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-top:1.5rem;}
+.paso{text-align:center;position:relative;}
+.paso::after{content:'→';position:absolute;top:20px;right:-12px;font-size:18px;color:var(--blue);opacity:.5;}
+.paso:last-child::after{display:none;}
+.paso-num{width:44px;height:44px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;margin:0 auto 12px;}
+.paso h4{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;}
+.paso p{font-size:11px;color:var(--muted);line-height:1.5;}
+
+/* CTA */
+.cta-band{background:var(--blue);padding:3rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;}
+.cta-band h3{font-family:var(--fd);font-size:24px;color:#fff;margin-bottom:.5rem;}
+.cta-band p{font-size:14px;color:rgba(255,255,255,.78);}
+.btn-white{background:#fff;color:var(--blue);border:none;padding:13px 26px;border-radius:7px;font-size:13px;font-weight:700;font-family:var(--ff);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block;}
+.btn-white:hover{background:#e8f0fe;}
+
+/* FOOTER */
+footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.5rem 1.25rem;}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem;margin-bottom:2rem;}
+.ft-brand p{font-size:12px;color:var(--muted);line-height:1.7;margin:.5rem 0 1rem;max-width:240px;}
+.ft-col h5{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:.9rem;}
+.ft-col a{display:block;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:7px;transition:color .2s;}
+.ft-col a:hover{color:#fff;}
+.ft-bottom{border-top:0.5px solid var(--border);padding-top:1rem;display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+
+/* FLOAT BUTTONS */
+.float-wrap{position:fixed;bottom:1.75rem;right:1.75rem;display:flex;flex-direction:column;gap:10px;z-index:9999;}
+.float-item{position:relative;display:flex;align-items:center;}
+.float-tooltip{position:absolute;right:62px;background:#001133;color:#fff;font-size:11px;padding:5px 10px;border-radius:6px;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;}
+.float-tooltip::after{content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);border:5px solid transparent;border-right:none;border-left-color:#001133;}
+.float-item:hover .float-tooltip{opacity:1;}
+.fab{width:52px;height:52px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s;}
+.fab:hover{transform:scale(1.1);}
+.fab-wa{background:#25d366;box-shadow:0 4px 16px rgba(37,211,102,.4);}
+.fab-call{background:var(--blue);box-shadow:0 4px 16px rgba(21,96,189,.4);}
+
+@media(max-width:768px){
+  .ben-grid{grid-template-columns:1fr 1fr;}
+  .proceso-grid{grid-template-columns:1fr 1fr;}
+  .ft-grid{grid-template-columns:1fr 1fr;}
+  .vac-card{grid-template-columns:1fr;}
+  .vac-right{align-items:flex-start;}
+  .cta-band{flex-direction:column;}
+  .page-hero{padding:3rem 1.25rem 2rem;}
+  .sec{padding:2.5rem 1.25rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div>
+    <a href="tel:7821602295">📞 782 160 2295</a>
+    <a href="mailto:grupovr@inbursaasesores.com">✉ grupovr@inbursaasesores.com</a>
+  </div>
+  <div>
+    <a href="/dashboard/" class="admin-link">Acceso Admin ↗</a>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div style="margin-left:8px;">
+      <div class="logo-txt">GRUPO V&amp;R</div>
+      <div class="logo-sub">Consultores · Agente de Seguros S.A.</div>
+    </div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="/">Inicio</a></li>
+    <li><a href="/servicios/">Servicios</a></li>
+    <li><a href="/vacantes/" class="act">Vacantes</a></li>
+    <li><a href="/citas/agendar/">Citas</a></li>
+  </ul>
+  <a href="/citas/agendar/" class="btn-nav">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Agendar Cita
+  </a>
+</nav>
+
+<!-- HERO con estadísticas reales desde BD -->
+<div class="page-hero">
+  <div class="page-hero-tag">Únete al equipo</div>
+  <h1>Vacantes Disponibles</h1>
+  <p>Forma parte del mejor equipo de consultores financieros en la región. Horarios flexibles, comisiones atractivas y crecimiento real.</p>
+  <div class="vac-stats">
+    <div class="vs">
+      <div class="vs-num">{{ vacantes|length }}</div>
+      <div class="vs-label">Vacante{{ vacantes|length|pluralize }} activa{{ vacantes|length|pluralize }}</div>
+    </div>
+    <div class="vs">
+      <div class="vs-num">+500</div>
+      <div class="vs-label">Asesores certificados</div>
+    </div>
+    <div class="vs">
+      <div class="vs-num">100%</div>
+      <div class="vs-label">Capacitación incluida</div>
+    </div>
+  </div>
+</div>
+
+<!-- LISTA DE VACANTES DESDE POSTGRESQL -->
+<div class="sec">
+  <div class="sec-tag">Oportunidades</div>
+  <h2 class="sh">Posiciones abiertas</h2>
+  <div class="uline"></div>
+
+  <div class="vac-grid">
+    {% for v in vacantes %}
+    <div class="vac-card anim">
+      <div>
+        <div class="vac-area">{{ v.area }}</div>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
+          <div class="vac-title">{{ v.titulo }}</div>
+          {# Badge NUEVA solo si la vacante tiene menos de 7 días #}
+          {% now "Y-m-d" as hoy_str %}
+          {% if v.creada.date|timesince|slice:":1" == "0" %}
+            <span class="badge-nueva">NUEVA</span>
+          {% endif %}
+        </div>
+
+        <p class="vac-desc">{{ v.descripcion }}</p>
+
+        <div class="vac-tags">
+          <span class="vtag blue">{{ v.get_modalidad_display }}</span>
+          {# Ubicación real desde el modelo, no hardcodeada #}
+          {% if v.ubicacion %}
+            <span class="vtag">{{ v.ubicacion }}</span>
+          {% endif %}
+          {% if v.sueldo %}
+            <span class="vtag">{{ v.sueldo }}</span>
+          {% endif %}
+          {% if v.postulantes.count > 0 %}
+            <span class="vtag">{{ v.postulantes.count }} postulante{{ v.postulantes.count|pluralize }}</span>
+          {% endif %}
+          {% if v.fecha_limite %}
+            <span class="vtag">Cierra: {{ v.fecha_limite|date:"d/m/Y" }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="vac-right">
+        {% if v.pdf_convocatoria %}
+          <a href="{{ v.pdf_convocatoria.url }}" target="_blank" class="badge-pdf">📄 Ver convocatoria</a>
+        {% endif %}
+        <a href="/postulantes/crear/?vacante={{ v.id }}" class="btn-apply">Postularme →</a>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-msg">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" style="margin-bottom:1rem;opacity:.4;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      <p>No hay vacantes disponibles por el momento.</p>
+      <p style="font-size:13px;margin-top:.5rem;">Déjanos tus datos y te avisamos cuando abran nuevas posiciones.</p>
+      <a href="/citas/agendar/" class="btn-apply" style="display:inline-block;margin-top:1.5rem;">Contáctanos</a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- BENEFICIOS -->
+<div class="sec sec-alt">
+  <div class="sec-tag">Lo que ofrecemos</div>
+  <h2 class="sh">Beneficios de trabajar con nosotros</h2>
+  <div class="uline"></div>
+  <div class="ben-grid">
+    <div class="ben anim">
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+      <h4>Comisiones atractivas</h4>
+      <p>Esquema de comisiones competitivo con bonos trimestrales y anuales por cumplimiento de metas.</p>
+    </div>
+    <div class="ben anim" style="transition-delay:.1s">
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <h4>Horarios flexibles</h4>
+      <p>Organiza tu tiempo de trabajo. Ideal para estudiantes, amas de casa, jubilados y profesionistas.</p>
+    </div>
+    <div class="ben anim" style="transition-delay:.2s">
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg></div>
+      <h4>Capacitación continua</h4>
+      <p>Formación completa desde cero. Certificación ante la CNSF sin costo y cursos permanentes.</p>
+    </div>
+    <div class="ben anim" style="transition-delay:.1s">
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+      <h4>Respaldo Inbursa</h4>
+      <p>Trabaja con el respaldo de uno de los grupos financieros más importantes de México.</p>
+    </div>
+    <div class="ben anim" style="transition-delay:.2s">
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <h4>Crecimiento real</h4>
+      <p>Plan de carrera definido. Asciende de asesor a coordinador y director según tus resultados.</p>
+    </div>
+    <div class="ben anim" style="transition-delay:.3s">
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+      <h4>Convenciones</h4>
+      <p>Viajes y convenciones nacionales e internacionales para los mejores productores cada año.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESO DE SELECCIÓN -->
+<div class="sec">
+  <div class="sec-tag">¿Cómo aplicar?</div>
+  <h2 class="sh">Proceso de selección</h2>
+  <div class="uline"></div>
+  <div class="proceso-grid">
+    <div class="paso anim">
+      <div class="paso-num">1</div>
+      <h4>Envía tu CV</h4>
+      <p>Llena el formulario de postulación y sube tu CV en PDF.</p>
+    </div>
+    <div class="paso anim" style="transition-delay:.1s">
+      <div class="paso-num">2</div>
+      <h4>Revisión</h4>
+      <p>Nuestro equipo revisará tu perfil en máximo 48 horas hábiles.</p>
+    </div>
+    <div class="paso anim" style="transition-delay:.2s">
+      <div class="paso-num">3</div>
+      <h4>Entrevista</h4>
+      <p>Te contactaremos para una entrevista presencial o por videollamada.</p>
+    </div>
+    <div class="paso anim" style="transition-delay:.3s">
+      <div class="paso-num">4</div>
+      <h4>Bienvenido</h4>
+      <p>Si eres seleccionado, comenzamos tu capacitación de inmediato.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CTA FINAL -->
+<div class="cta-band">
+  <div>
+    <h3>¿Listo para dar el siguiente paso?</h3>
+    <p>Postúlate ahora y forma parte del equipo V&amp;R Consultores.</p>
+  </div>
+  <a href="/postulantes/crear/" class="btn-white">Enviar mi postulación →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-grid">
+    <div class="ft-brand">
+      <div style="font-size:16px;font-weight:600;color:#fff;">GRUPO V&amp;R</div>
+      <p>Protegemos lo que más te importa con soluciones financieras y de seguros a tu medida.</p>
+    </div>
+    <div class="ft-col">
+      <h5>Servicios</h5>
+      <a href="/servicios/">Gastos Médicos</a>
+      <a href="/servicios/">Seguro de Vida</a>
+      <a href="/servicios/">Seguro de Auto</a>
+    </div>
+    <div class="ft-col">
+      <h5>Empresa</h5>
+      <a href="/">Inicio</a>
+      <a href="/vacantes/">Vacantes</a>
+      <a href="/citas/agendar/">Agendar Cita</a>
+    </div>
+    <div class="ft-col">
+      <h5>Contacto</h5>
+      <a href="#">Av. Juárez #704, Poza Rica, Ver.</a>
+      <a href="tel:7821602295">782 160 2295</a>
+      <a href="mailto:grupovr@inbursaasesores.com">grupovr@inbursaasesores.com</a>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <p>© 2026 Grupo V&amp;R Consultores · Todos los derechos reservados.</p>
+    <p>Aviso de Privacidad</p>
+  </div>
+</footer>
+
+<!-- BOTONES FLOTANTES -->
+<div class="float-wrap">
+  <div class="float-item">
+    <div class="float-tooltip">Llamar</div>
+    <button class="fab fab-call" onclick="window.location.href='tel:7821602295'">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+    </button>
+  </div>
+  <div class="float-item">
+    <div class="float-tooltip">WhatsApp</div>
+    <button class="fab fab-wa" onclick="window.open('https://wa.me/527821602295','_blank')">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.1 1.524 5.823L0 24l6.335-1.499A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.885.916-3.636-.235-.374A9.861 9.861 0 012.106 12C2.106 6.58 6.58 2.106 12 2.106S21.894 6.58 21.894 12 17.42 21.894 12 21.894z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// Animación al hacer scroll
+var obs = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('vis'); });
+}, {threshold: 0.12});
+document.querySelectorAll('.anim').forEach(function(el){ obs.observe(el); });
+</script>
+</body>
+</html>

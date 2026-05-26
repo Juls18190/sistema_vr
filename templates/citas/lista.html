@@ -1,0 +1,509 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda de Citas — Grupo V&R</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1560BD;--blue2:#3a82e8;--bg:#f1f5f9;--white:#fff;
+  --gray:#f8fafc;--gray2:#f1f5f9;--txt:#1e293b;--txt2:#334155;
+  --txt3:#64748b;--bdr:#e2e8f0;--green:#22c55e;--yellow:#f59e0b;
+  --red:#ef4444;--ff:'Sora',sans-serif;
+  --dark:#0d1b2a;--dark2:#112240;--border:rgba(255,255,255,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--ff);background:var(--bg);color:var(--txt);}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* TOP BAR */
+.atop{
+  background:var(--white);border-bottom:1px solid var(--bdr);
+  padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;
+  height:54px;position:sticky;top:0;z-index:100;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06);
+}
+.atop-brand{display:flex;align-items:center;gap:10px;}
+.ab-mark{width:30px;height:30px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.ab-name{font-size:14px;font-weight:700;color:var(--blue);}
+.ab-name small{font-size:11px;font-weight:400;color:var(--txt3);margin-left:5px;}
+.atop-right{display:flex;align-items:center;gap:10px;}
+.user-chip{display:flex;align-items:center;gap:8px;background:var(--gray);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;cursor:pointer;}
+.uav{width:26px;height:26px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;}
+.user-chip span{font-size:12px;color:var(--txt2);font-weight:500;}
+.btn-back{display:inline-flex;align-items:center;gap:6px;background:var(--gray);border:1px solid var(--bdr);border-radius:7px;padding:7px 14px;font-size:12px;font-family:var(--ff);color:var(--txt2);cursor:pointer;text-decoration:none;font-weight:500;}
+.btn-back:hover{background:#e2e8f0;}
+
+/* LAYOUT */
+.abody{display:flex;flex:1;}
+.sidebar{width:220px;background:var(--dark2);flex-shrink:0;display:flex;flex-direction:column;border-right:0.5px solid var(--border);min-height:calc(100vh - 54px);}
+.sb-sec{padding:.6rem 0;}
+.sb-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.28);padding:0 1.25rem;margin-bottom:.4rem;font-weight:600;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 1.25rem;font-size:13px;color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;border-left:2px solid transparent;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.8);}
+.sb-item.on{background:rgba(21,96,189,.15);color:#fff;border-left-color:var(--blue);}
+.sb-item svg{width:15px;height:15px;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600;}
+.sb-badge.red{background:var(--red);}
+.sb-logout{margin-top:auto;border-top:0.5px solid var(--border);padding:.6rem 0;}
+
+.acontent{flex:1;padding:1.75rem;overflow:auto;animation:fadeInUp .4s ease both;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px;}
+.page-title{font-size:20px;font-weight:700;color:var(--txt);}
+.page-sub{font-size:12px;color:var(--txt3);margin-top:2px;}
+
+/* BOTONES */
+.btn-new{background:var(--blue);color:#fff;border:none;padding:8px 18px;border-radius:7px;font-size:12px;font-family:var(--ff);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .2s;box-shadow:0 3px 10px rgba(21,96,189,0.25);}
+.btn-new:hover{background:var(--blue2);transform:translateY(-1px);}
+.btn-exp{background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:7px 14px;border-radius:6px;font-size:12px;font-family:var(--ff);cursor:pointer;font-weight:500;transition:background .2s;}
+.btn-exp:hover{background:#e2e8f0;}
+
+/* KPI MINI */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem;}
+.kpi-mini{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;}
+.km-label{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;font-weight:600;}
+.km-num{font-size:24px;font-weight:700;color:var(--txt);}
+
+/* TABLA */
+.table-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin-bottom:1.25rem;}
+.tc-head{padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr);flex-wrap:wrap;gap:8px;}
+.tc-head h3{font-size:14px;font-weight:600;color:var(--txt);}
+.tc-actions{display:flex;gap:8px;align-items:center;}
+.filter-select{background:var(--white);border:1px solid var(--bdr);border-radius:7px;padding:7px 12px;font-size:12px;font-family:var(--ff);color:var(--txt2);outline:none;cursor:pointer;}
+.search-form{display:flex;align-items:center;gap:6px;background:var(--gray);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;}
+.search-form input{background:none;border:none;outline:none;font-size:12px;color:var(--txt2);width:160px;font-family:var(--ff);}
+table{width:100%;border-collapse:collapse;}
+th{background:var(--gray);padding:9px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.3px;color:var(--txt3);text-align:left;font-weight:600;border-bottom:1px solid var(--bdr);}
+td{padding:11px 14px;font-size:13px;color:var(--txt2);border-bottom:1px solid #f8fafc;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafbfc;}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600;}
+.b-blue{background:#dbeafe;color:#1d4ed8;}
+.b-green{background:#dcfce7;color:#15803d;}
+.b-yellow{background:#fef9c3;color:#a16207;}
+.b-red{background:#fee2e2;color:#dc2626;}
+.b-gray{background:#f1f5f9;color:var(--txt3);}
+.act-btn{width:28px;height:28px;background:var(--gray);border:1px solid var(--bdr);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt3);transition:all .2s;margin-right:3px;border:none;}
+.act-btn:hover{background:var(--blue);color:#fff;}
+.act-btn.del:hover{background:var(--red);color:#fff;}
+.empty-row{text-align:center;color:var(--txt3);padding:2rem!important;font-size:13px;}
+
+/* ALERTAS */
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
+.alert-success{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;}
+.alert-error{background:#fee2e2;color:#dc2626;border:1px solid #fecaca;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--white);border-radius:14px;padding:1.75rem;width:520px;max-width:95vw;animation:fadeInUp .3s ease both;max-height:90vh;overflow-y:auto;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.modal-title{font-size:16px;font-weight:700;color:var(--txt);}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--txt3);line-height:1;}
+.modal-close:hover{color:var(--txt);}
+.form-row{margin-bottom:12px;}
+.form-row label{display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;font-weight:600;}
+.form-row input,.form-row select,.form-row textarea{width:100%;background:var(--gray);border:1px solid var(--bdr);border-radius:6px;padding:9px 12px;font-size:13px;color:var(--txt);font-family:var(--ff);outline:none;transition:border-color .2s;}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:var(--blue);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;}
+.btn-cancel{background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:500;}
+.btn-submit{background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;}
+.btn-submit:hover{background:var(--blue2);}
+
+/* MODAL ESTADO */
+.estado-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:1rem 0;}
+.estado-opt{border:2px solid var(--bdr);border-radius:8px;padding:10px 14px;cursor:pointer;transition:all .2s;font-size:13px;font-weight:500;}
+.estado-opt:hover{border-color:var(--blue);}
+.estado-opt.sel{border-color:var(--blue);background:#dbeafe;color:#1d4ed8;}
+.estado-opt[data-e="confirmada"].sel{border-color:#22c55e;background:#dcfce7;color:#15803d;}
+.estado-opt[data-e="completada"].sel{border-color:#94a3b8;background:#f1f5f9;color:var(--txt3);}
+.estado-opt[data-e="cancelada"].sel{border-color:var(--red);background:#fee2e2;color:#dc2626;}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="atop">
+  <div class="atop-brand">
+    <div class="ab-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <span class="ab-name">ADMIN V&R<small>· Sistema de Gestión</small></span>
+  </div>
+  <div class="atop-right">
+    <a href="/dashboard/" class="btn-back">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </a>
+    <div class="user-chip">
+      <div class="uav">{{ request.user.username|slice:":2"|upper }}</div>
+      <span>{{ request.user.get_full_name|default:request.user.username }}</span>
+    </div>
+  </div>
+</div>
+
+<div class="abody">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-sec">
+      <div class="sb-label">Principal</div>
+      <a class="sb-item" href="/dashboard/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-label">Módulos</div>
+      <a class="sb-item on" href="/citas/admin/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Agenda de Citas <span class="sb-badge red">{{ pendientes }}</span>
+      </a>
+      <a class="sb-item" href="/postulantes/admin/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Postulantes
+      </a>
+      <a class="sb-item" href="/vacantes/admin/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+        Vacantes
+      </a>
+      <a class="sb-item" href="/prospectos/admin/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Prospectos
+      </a>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-label">Sistema</div>
+      <a class="sb-item" href="/usuarios/admin/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Usuarios
+      </a>
+    </div>
+    <div class="sb-logout">
+      <a class="sb-item" href="/usuarios/logout/" style="color:rgba(255,100,100,.7);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </a>
+    </div>
+  </div>
+
+  <!-- CONTENIDO -->
+  <div class="acontent">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Agenda de Citas</div>
+        <div class="page-sub">{{ total }} cita{{ total|pluralize }} registrada{{ total|pluralize }} en total</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-exp" onclick="exportarPDF()">Exportar PDF</button>
+        <button class="btn-new" onclick="abrirModalCrear()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Agendar cita
+        </button>
+      </div>
+    </div>
+
+    <!-- MENSAJES -->
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert {% if msg.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+          {{ msg }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- KPIs -->
+    <div class="kpi-strip">
+      <div class="kpi-mini">
+        <div><div class="km-label">Pendientes</div><div class="km-num" style="color:#a16207;">{{ pendientes }}</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="kpi-mini">
+        <div><div class="km-label">Confirmadas</div><div class="km-num" style="color:#15803d;">{{ confirmadas }}</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="kpi-mini">
+        <div><div class="km-label">Completadas</div><div class="km-num" style="color:var(--txt3);">{{ completadas }}</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/></svg>
+      </div>
+      <div class="kpi-mini">
+        <div><div class="km-label">Canceladas</div><div class="km-num" style="color:#dc2626;">{{ canceladas }}</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      </div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="table-card">
+      <div class="tc-head">
+        <h3>Todas las citas</h3>
+        <div class="tc-actions">
+          <!-- Filtro por estado -->
+          <form method="GET" id="filtroForm">
+            <input type="hidden" name="q" value="{{ busqueda }}">
+            <select class="filter-select" name="estado" onchange="document.getElementById('filtroForm').submit()">
+              <option value="">Todos los estados</option>
+              <option value="pendiente"  {% if estado_filtro == 'pendiente' %}selected{% endif %}>Pendiente</option>
+              <option value="confirmada" {% if estado_filtro == 'confirmada' %}selected{% endif %}>Confirmada</option>
+              <option value="completada" {% if estado_filtro == 'completada' %}selected{% endif %}>Completada</option>
+              <option value="cancelada"  {% if estado_filtro == 'cancelada' %}selected{% endif %}>Cancelada</option>
+            </select>
+          </form>
+          <!-- Búsqueda -->
+          <form method="GET" class="search-form">
+            <input type="hidden" name="estado" value="{{ estado_filtro }}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" name="q" placeholder="Buscar cliente..." value="{{ busqueda }}">
+          </form>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Servicio</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Asesor</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cita in citas %}
+          <tr id="fila-{{ cita.id }}">
+            <td>
+              <div style="font-weight:600;">{{ cita.nombre_cliente }} {{ cita.apellidos_cliente }}</div>
+              <div style="font-size:11px;color:var(--txt3);">{{ cita.correo }}</div>
+              <div style="font-size:11px;color:var(--txt3);">{{ cita.telefono }}</div>
+            </td>
+            <td>{{ cita.get_motivo_display }}</td>
+            <td>{{ cita.fecha|date:"d/m/Y" }}</td>
+            <td>{{ cita.hora|time:"H:i" }}</td>
+            <td>
+              {% if cita.asesor %}
+                {{ cita.asesor.get_full_name|default:cita.asesor.username }}
+              {% else %}
+                <span style="color:var(--txt3);">—</span>
+              {% endif %}
+            </td>
+            <td>
+              <span class="badge {% if cita.estado == 'pendiente' %}b-yellow{% elif cita.estado == 'confirmada' %}b-green{% elif cita.estado == 'completada' %}b-gray{% else %}b-red{% endif %}" id="badge-{{ cita.id }}">
+                {{ cita.get_estado_display }}
+              </span>
+            </td>
+            <td>
+              <!-- Botón editar estado -->
+              <button class="act-btn" title="Cambiar estado"
+                onclick="abrirModalEstado({{ cita.id }}, '{{ cita.estado }}', '{{ cita.nombre_cliente }} {{ cita.apellidos_cliente }}')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
+              </button>
+              <!-- Botón eliminar -->
+              <button class="act-btn del" title="Eliminar"
+                onclick="confirmarEliminar({{ cita.id }}, '{{ cita.nombre_cliente }} {{ cita.apellidos_cliente }}')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="empty-row">No hay citas registradas{% if busqueda or estado_filtro %} con estos filtros{% endif %}.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: AGENDAR CITA ══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalCrear">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Agendar nueva cita
+      </div>
+      <button class="modal-close" onclick="cerrarModal('modalCrear')">×</button>
+    </div>
+    <form method="POST" action="{% url 'citas:crear' %}">
+      {% csrf_token %}
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Nombre *</label>
+          <input type="text" name="nombre" placeholder="Nombre(s)" required>
+        </div>
+        <div class="form-row">
+          <label>Apellidos *</label>
+          <input type="text" name="apellidos" placeholder="Apellidos" required>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Correo *</label>
+          <input type="email" name="correo" placeholder="correo@ejemplo.com" required>
+        </div>
+        <div class="form-row">
+          <label>Teléfono</label>
+          <input type="text" name="telefono" placeholder="782-000-0000">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Fecha *</label>
+          <input type="date" name="fecha" required>
+        </div>
+        <div class="form-row">
+          <label>Hora *</label>
+          <input type="time" name="hora" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Motivo / Servicio *</label>
+        <select name="motivo" required>
+          <option value="">— Selecciona un servicio —</option>
+          <option value="seguro_vida">Seguro de vida</option>
+          <option value="medico">Gastos médicos mayores</option>
+          <option value="auto">Seguro de auto</option>
+          <option value="hogar">Seguro de hogar</option>
+          <option value="inversion">Inversión y ahorro</option>
+          <option value="empresa">Empresarial</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="form-row" id="row-motivo-otro" style="display:none;">
+        <label>Especificar motivo</label>
+        <input type="text" name="motivo_otro" placeholder="Describe el motivo...">
+      </div>
+      <div class="form-row">
+        <label>Comentarios adicionales</label>
+        <textarea name="comentarios" rows="2" placeholder="Notas internas..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="cerrarModal('modalCrear')">Cancelar</button>
+        <button type="submit" class="btn-submit">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Guardar cita
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══ MODAL: CAMBIAR ESTADO ════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalEstado">
+  <div class="modal" style="width:380px;">
+    <div class="modal-header">
+      <div class="modal-title">Cambiar estado de cita</div>
+      <button class="modal-close" onclick="cerrarModal('modalEstado')">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--txt3);margin-bottom:.5rem;">Cliente: <strong id="nombre-cita-estado"></strong></p>
+    <div class="estado-options">
+      <div class="estado-opt" data-e="pendiente"  onclick="selEstado(this)">🕐 Pendiente</div>
+      <div class="estado-opt" data-e="confirmada" onclick="selEstado(this)">✅ Confirmada</div>
+      <div class="estado-opt" data-e="completada" onclick="selEstado(this)">✔️ Completada</div>
+      <div class="estado-opt" data-e="cancelada"  onclick="selEstado(this)">❌ Cancelada</div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-cancel" onclick="cerrarModal('modalEstado')">Cancelar</button>
+      <button type="button" class="btn-submit" onclick="guardarEstado()">Guardar estado</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: CONFIRMAR ELIMINAR ════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalEliminar">
+  <div class="modal" style="width:360px;">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--red);">⚠️ Eliminar cita</div>
+      <button class="modal-close" onclick="cerrarModal('modalEliminar')">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:1.25rem;">
+      ¿Eliminar la cita de <strong id="nombre-cita-del"></strong>? Esta acción no se puede deshacer.
+    </p>
+    <form method="POST" id="formEliminar">
+      {% csrf_token %}
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="cerrarModal('modalEliminar')">Cancelar</button>
+        <button type="submit" class="btn-submit" style="background:var(--red);">Sí, eliminar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+/* ── Modales ── */
+function abrirModalCrear(){
+  document.getElementById('modalCrear').classList.add('show');
+}
+function cerrarModal(id){
+  document.getElementById(id).classList.remove('show');
+}
+// Cerrar modal al hacer clic fuera
+document.querySelectorAll('.modal-overlay').forEach(function(ov){
+  ov.addEventListener('click',function(e){
+    if(e.target===ov) ov.classList.remove('show');
+  });
+});
+
+/* ── Mostrar campo "motivo otro" ── */
+document.querySelector('[name="motivo"]').addEventListener('change',function(){
+  var row=document.getElementById('row-motivo-otro');
+  row.style.display=(this.value==='otro')?'block':'none';
+});
+
+/* ── Modal: cambiar estado ── */
+var citaIdEstado=null;
+var estadoSeleccionado=null;
+
+function abrirModalEstado(id, estadoActual, nombre){
+  citaIdEstado=id;
+  estadoSeleccionado=estadoActual;
+  document.getElementById('nombre-cita-estado').textContent=nombre;
+  // marcar estado actual
+  document.querySelectorAll('.estado-opt').forEach(function(opt){
+    opt.classList.remove('sel');
+    if(opt.dataset.e===estadoActual) opt.classList.add('sel');
+  });
+  document.getElementById('modalEstado').classList.add('show');
+}
+function selEstado(el){
+  document.querySelectorAll('.estado-opt').forEach(function(o){o.classList.remove('sel');});
+  el.classList.add('sel');
+  estadoSeleccionado=el.dataset.e;
+}
+function guardarEstado(){
+  if(!citaIdEstado||!estadoSeleccionado) return;
+  var csrf=document.querySelector('[name=csrfmiddlewaretoken]').value;
+  var fd=new FormData();
+  fd.append('estado',estadoSeleccionado);
+  fd.append('csrfmiddlewaretoken',csrf);
+  fetch('/citas/admin/'+citaIdEstado+'/estado/ajax/',{method:'POST',body:fd})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data.ok){
+      // Actualizar badge en tabla sin recargar
+      var badge=document.getElementById('badge-'+citaIdEstado);
+      var clases={'pendiente':'b-yellow','confirmada':'b-green','completada':'b-gray','cancelada':'b-red'};
+      badge.className='badge '+clases[data.estado];
+      badge.textContent=data.estado_display;
+      cerrarModal('modalEstado');
+    } else {
+      alert('Error: '+data.error);
+    }
+  })
+  .catch(function(){alert('Error de conexión.');});
+}
+
+/* ── Modal: eliminar ── */
+function confirmarEliminar(id, nombre){
+  document.getElementById('nombre-cita-del').textContent=nombre;
+  document.getElementById('formEliminar').action='/citas/admin/'+id+'/eliminar/';
+  document.getElementById('modalEliminar').classList.add('show');
+}
+
+/* ── Exportar PDF (básico por window.print) ── */
+function exportarPDF(){
+  window.print();
+}
+</script>
+
+</body>
+</html>

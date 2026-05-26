@@ -1,0 +1,129 @@
+<div class="sec sec-alt" id="reclutamiento">
+  <div class="sec-tag">Únete al equipo</div>
+  <h2 class="sh">Trabaja con Nosotros</h2>
+  <div class="uline"></div>
+  <p class="subp" style="margin-bottom:1.75rem;">Únete al mejor equipo de consultores financieros. Horarios flexibles, comisiones atractivas y crecimiento real.</p>
+  <div class="team-strip">
+    <div class="team-card anim-fadeup" style="background:linear-gradient(135deg,#0b2540,#1a4a7a);">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="team-caption">Asesores Profesionales</div>
+    </div>
+    <div class="team-card anim-fadeup" style="background:linear-gradient(135deg,#0d2e1a,#1a5c35);transition-delay:.1s">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      <div class="team-caption">Equipo de Trabajo</div>
+    </div>
+    <div class="team-card anim-fadeup" style="background:linear-gradient(135deg,#1a1a0b,#3d3d00);transition-delay:.2s">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.66 4 3 6 3s6-1.34 6-3v-5"/></svg>
+      <div class="team-caption">Capacitación Continua</div>
+    </div>
+  </div>
+  <div class="rec-grid">
+    <div class="anim-left">
+      <div class="tab-pills">
+        <button class="tp on" onclick="setTab(this,'estudiantes')">Estudiantes</button>
+        <button class="tp" onclick="setTab(this,'jubilados')">Jubilados</button>
+        <button class="tp" onclick="setTab(this,'amas')">Amas de Casa</button>
+        <button class="tp" onclick="setTab(this,'profesionistas')">Profesionistas</button>
+      </div>
+      <div class="rec-info" id="tab-estudiantes">
+        <h3>Programa Semillero de Talento <span class="rec-tag">ITS Poza Rica</span></h3>
+        <p class="subp" style="font-size:13px;margin-bottom:1rem;">Ideal para estudiantes de últimos semestres con horarios flexibles.</p>
+        <ul class="checklist">
+          <li><span class="cdot"></span>Capacitación constante</li>
+          <li><span class="cdot"></span>Comisiones y bonos trimestrales</li>
+          <li><span class="cdot"></span>Flexibilidad de horarios</li>
+          <li><span class="cdot"></span>Convenciones nacionales e internacionales</li>
+        </ul>
+      </div>
+      <div class="rec-info" id="tab-jubilados" style="display:none">
+        <h3>Oportunidad para Jubilados</h3>
+        <p class="subp" style="font-size:13px;margin-bottom:1rem;">Complementa tu pensión con comisiones atractivas sin horario fijo.</p>
+        <ul class="checklist">
+          <li><span class="cdot"></span>Sin horario obligatorio</li>
+          <li><span class="cdot"></span>Ingresos adicionales a tu pensión</li>
+          <li><span class="cdot"></span>Capacitación completa incluida</li>
+          <li><span class="cdot"></span>Red de apoyo constante</li>
+        </ul>
+      </div>
+      <div class="rec-info" id="tab-amas" style="display:none">
+        <h3>Programa para Amas de Casa</h3>
+        <p class="subp" style="font-size:13px;margin-bottom:1rem;">Trabaja desde casa o en tu tiempo libre con total flexibilidad.</p>
+        <ul class="checklist">
+          <li><span class="cdot"></span>100% flexible, tú decides tus horas</li>
+          <li><span class="cdot"></span>Trabajo desde casa o presencial</li>
+          <li><span class="cdot"></span>Comisiones semanales</li>
+          <li><span class="cdot"></span>Comunidad de mujeres emprendedoras</li>
+        </ul>
+      </div>
+      <div class="rec-info" id="tab-profesionistas" style="display:none">
+        <h3>Carrera para Profesionistas</h3>
+        <p class="subp" style="font-size:13px;margin-bottom:1rem;">Plan de carrera definido con crecimiento real a coordinador y director.</p>
+        <ul class="checklist">
+          <li><span class="cdot"></span>Plan de carrera estructurado</li>
+          <li><span class="cdot"></span>Comisiones altas + bonos</li>
+          <li><span class="cdot"></span>Certificación CNSF sin costo</li>
+          <li><span class="cdot"></span>Respaldo del Grupo Financiero Inbursa</li>
+        </ul>
+      </div>
+    </div>
+
+    {# ── FORMULARIO REAL con CSRF y vacantes dinámicas desde BD ── #}
+    <form class="fcard anim-right" method="POST" action="/postulantes/crear/" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="fcard-title">Formulario de Postulación</div>
+      <div class="fgrid">
+        <div class="fr">
+          <label>Nombre Completo</label>
+          <input type="text" name="nombre" placeholder="Tu nombre" required>
+        </div>
+        <div class="fr">
+          <label>Correo electrónico</label>
+          <input type="email" name="correo" placeholder="correo@ejemplo.com" required>
+        </div>
+      </div>
+      <div class="fr">
+        <label>Teléfono (opcional)</label>
+        <input type="tel" name="telefono" placeholder="782 000 0000">
+      </div>
+      <div class="fr">
+        <label>Área de interés</label>
+        <select name="vacante">
+          <option value="">— Selecciona una vacante —</option>
+          {% for v in vacantes_activas %}
+            <option value="{{ v.id }}">{{ v.titulo }}</option>
+          {% empty %}
+            <option value="" disabled>Sin vacantes disponibles por ahora</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="fr">
+        <label>Sube tu CV (PDF)</label>
+        <div class="upload-z" id="uploadZone" onclick="document.getElementById('cv-input').click()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+          <p id="uploadTxt">Clic para seleccionar PDF</p>
+          <input type="file" id="cv-input" name="cv" accept=".pdf" style="display:none" required
+            onchange="mostrarNombreCV(this)">
+        </div>
+      </div>
+      <button type="submit" class="btn-full">Enviar Postulación</button>
+    </form>
+  </div>
+</div>
+
+<script>
+/* Tabs de perfil */
+function setTab(btn, tabId) {
+  document.querySelectorAll('.tp').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelectorAll('.rec-info').forEach(function(d){ d.style.display='none'; });
+  btn.classList.add('on');
+  document.getElementById('tab-'+tabId).style.display='block';
+}
+
+/* Mostrar nombre del archivo CV seleccionado */
+function mostrarNombreCV(input) {
+  if (input.files && input.files[0]) {
+    document.getElementById('uploadZone').style.borderColor='#22c55e';
+    document.getElementById('uploadTxt').textContent = '✓ ' + input.files[0].name;
+  }
+}
+</script>
