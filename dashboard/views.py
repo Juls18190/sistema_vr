@@ -80,7 +80,9 @@ def index(request):
             'citas_pendientes':         Cita.objects.filter(estado='pendiente').count(),
             'citas_hoy':                citas_hoy,
             'postulantes_nuevos':       Postulante.objects.filter(estado='nuevo').count(),
-            'vacantes_activas':         Vacante.objects.filter(activa=True).count(),
+            'vacantes_activas':         Vacante.objects.filter(estado='activa').count(),
+            'vacantes_pausadas':        Vacante.objects.filter(estado='pausada').count(),
+            'vacantes_cerradas':        Vacante.objects.filter(estado='cerrada').count(),
             'vacantes_total':           Vacante.objects.count(),
             'prospectos_nuevos':        Prospecto.objects.filter(estado='nuevo').count(),
 
@@ -120,6 +122,10 @@ def index(request):
             'servicios':                Servicio.objects.all().order_by('orden'),
             'servicios_total':          Servicio.objects.count(),
             'servicios_activos':        Servicio.objects.filter(activo=True).count(),
+            'servicios_ocultos':        Servicio.objects.filter(activo=False).count(),
+            'servicios_personal':       Servicio.objects.filter(categoria='personal').count(),
+            'servicios_inversion':      Servicio.objects.filter(categoria='inversion').count(),
+            'servicios_empresarial':    Servicio.objects.filter(categoria='empresarial').count(),
 
             # ── Usuarios ──────────────────────────────────────────────────
             'usuarios':                 usuarios,
@@ -144,6 +150,11 @@ def index(request):
                 Cita.objects.filter(estado='cancelada').count(),
             ],
 
+            # ── Citas del día (panel lateral) ─────────────────────────────
+            'citas_dia': Cita.objects.filter(
+                fecha=hoy.date()
+            ).select_related('asesor').order_by('hora'),
+
             # ── Utilidades ────────────────────────────────────────────────
             'hoy':     hoy.date(),
             'hoy_str': hoy_str,
@@ -166,6 +177,8 @@ def index(request):
             'prospectos_contactados': 0, 'prospectos_convertidos': 0,
             'prospectos_descartados': 0,
             'servicios': [], 'servicios_total': 0, 'servicios_activos': 0,
+            'servicios_ocultos': 0, 'servicios_personal': 0,
+            'servicios_inversion': 0, 'servicios_empresarial': 0,
             'usuarios': [], 'usuarios_total': 0,
             'historial_reciente': [], 'historial_total': 0,
             'vacantes_activas_lista': [], 'asesores': [],
@@ -173,6 +186,7 @@ def index(request):
             'chart_citas':    [0, 0, 0, 0, 0, 0],
             'chart_posts':    [0, 0, 0, 0, 0, 0],
             'chart_doughnut': [0, 0, 0, 0],
+            'citas_dia': [],
             'hoy': timezone.now().date(),
             'hoy_str': '',
             'usuario': request.user,
@@ -182,6 +196,79 @@ def index(request):
 
     return render(request, 'dashboard/index.html', contexto)
 
+@login_required
+def kpis_ajax(request):
+    """Devuelve KPIs y actividad reciente filtrados por periodo."""
+    from datetime import datetime, time as time_obj, timedelta
+
+    periodo = request.GET.get('periodo', 'mes')
+    hoy     = timezone.now().date()
+
+    rangos = {
+        'hoy':    timezone.make_aware(datetime.combine(hoy, time_obj.min)),
+        'semana': timezone.make_aware(datetime.combine(
+                      hoy - timedelta(days=hoy.weekday()), time_obj.min)),
+        'mes':    timezone.make_aware(datetime.combine(
+                      hoy.replace(day=1), time_obj.min)),
+        'año':    timezone.make_aware(datetime.combine(
+                      hoy.replace(month=1, day=1), time_obj.min)),
+    }
+    inicio = rangos.get(periodo, rangos['mes'])
+
+    # KPIs filtrados por periodo
+    citas_periodo      = Cita.objects.filter(creada__gte=inicio).count()
+    postulantes_periodo = Postulante.objects.filter(fecha__gte=inicio).count()
+    prospectos_periodo  = Prospecto.objects.filter(fecha__gte=inicio).count()
+    vacantes_periodo    = Vacante.objects.filter(creada__gte=inicio).count()
+
+    # Actividad reciente filtrada por periodo
+    historial_qs = (
+        Historial.objects
+        .select_related('usuario')
+        .filter(fecha__gte=inicio)
+        .order_by('-fecha')[:15]
+    )
+    actividad = []
+    colores = {
+        'postulantes': '#3b82f6',
+        'citas':       '#22c55e',
+        'vacantes':    '#8b5cf6',
+        'prospectos':  '#f59e0b',
+        'usuarios':    '#0d9488',
+    }
+    for h in historial_qs:
+        actividad.append({
+            'accion':  h.accion,
+            'modulo':  h.modulo,
+            'color':   colores.get(h.modulo, '#94a3b8'),
+            'usuario': (h.usuario.get_full_name() or h.usuario.username) if h.usuario else 'Sistema',
+            'fecha':   h.fecha.strftime('%d/%m/%Y %H:%M'),
+        })
+
+    # Citas del día (siempre son de hoy, independiente del filtro)
+    citas_hoy_lista = []
+    for c in Cita.objects.filter(fecha=hoy).select_related('asesor').order_by('hora'):
+        citas_hoy_lista.append({
+            'nombre':  f'{c.nombre_cliente} {c.apellidos_cliente}',
+            'hora':    c.hora.strftime('%H:%M'),
+            'motivo':  c.get_motivo_display(),
+            'estado':  c.estado,
+            'asesor':  (c.asesor.get_full_name() or c.asesor.username) if c.asesor else '—',
+        })
+
+    return JsonResponse({
+        'ok':      True,
+        'periodo': periodo,
+        'kpis': {
+            'citas':      citas_periodo,
+            'post':       postulantes_periodo,
+            'prosp':      prospectos_periodo,
+            'vac':        vacantes_periodo,
+        },
+        'actividad':   actividad,
+        'citas_hoy':   citas_hoy_lista,
+        'total_hoy':   len(citas_hoy_lista),
+    })
 
 @login_required
 def cambiar_estado_ajax(request, post_id):

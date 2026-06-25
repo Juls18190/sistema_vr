@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
+import traceback
 from django.utils import timezone
-from datetime import date
+from datetime import date, time as time_obj
 
 from .models import Cita
 from historial.models import registrar
@@ -160,6 +161,261 @@ def cambiar_estado_ajax(request, cita_id):
             return JsonResponse({'ok': True, 'estado': cita.estado, 'estado_display': cita.get_estado_display()})
         return JsonResponse({'ok': False, 'error': 'Estado no válido'}, status=400)
     return JsonResponse({'ok': False, 'error': 'Método no permitido'}, status=405)
+
+
+# ── API JSON: detalle de una cita (desde el dashboard) ───────────────────────
+@login_required
+def detalle_ajax(request, cita_id):
+    if request.method != 'GET':
+        return JsonResponse({'ok': False}, status=405)
+    cita = get_object_or_404(Cita, id=cita_id)
+    return JsonResponse({
+        'ok':               True,
+        'id':               cita.id,
+        'nombre_cliente':   cita.nombre_cliente,
+        'apellidos_cliente':cita.apellidos_cliente,
+        'correo':           cita.correo,
+        'telefono':         cita.telefono,
+        'fecha':            str(cita.fecha),
+        'hora':             str(cita.hora),
+        'motivo':           cita.motivo,
+        'motivo_display':   cita.get_motivo_display(),
+        'motivo_otro':      cita.motivo_otro or '',
+        'comentarios':      cita.comentarios or '',
+        'estado':           cita.estado,
+        'estado_display':   cita.get_estado_display(),
+        'asesor':           cita.asesor.get_full_name() or cita.asesor.username if cita.asesor else '',
+        'creada':           cita.creada.strftime('%d/%m/%Y %H:%M'),
+    })
+
+# ── API JSON: crear cita desde el dashboard ───────────────────────────────────
+@login_required
+def crear_ajax(request):
+    if request.method != 'POST':
+        return JsonResponse({
+            'ok': False,
+            'error': 'Método no permitido'
+        }, status=405)
+
+    try:
+        fecha = date.fromisoformat(request.POST.get('fecha', ''))
+
+        if fecha < date.today():
+            return JsonResponse({
+                'ok': False,
+                'error': 'La fecha no puede ser anterior a hoy.'
+            }, status=400)
+
+        cita = Cita.objects.create(
+            nombre_cliente=request.POST.get('nombre', '').strip(),
+            apellidos_cliente=request.POST.get('apellidos', '').strip(),
+            correo=request.POST.get('correo', '').strip(),
+            telefono=request.POST.get('telefono', '').strip(),
+            fecha=fecha,
+            hora=request.POST.get('hora'),
+            motivo=request.POST.get('motivo', ''),
+            motivo_otro=request.POST.get('motivo_otro', ''),
+            comentarios=request.POST.get('comentarios', ''),
+            estado='pendiente',
+            asesor=request.user,
+        )
+
+        registrar(
+            usuario=request.user,
+            accion=f'Cita creada desde dashboard para {cita.nombre_cliente} {cita.apellidos_cliente} ({cita.fecha})',
+            modulo='citas',
+            objeto_id=cita.id,
+            request=request,
+        )
+
+        return JsonResponse({
+            'ok': True,
+            'id': cita.id,
+            'nombre_cliente': cita.nombre_cliente,
+            'apellidos_cliente': cita.apellidos_cliente,
+            'correo': cita.correo,
+            'fecha': str(cita.fecha),
+            'hora': str(cita.hora),  # ← CORREGIDO
+            'motivo_display': cita.get_motivo_display(),
+            'estado': cita.estado,
+            'estado_display': cita.get_estado_display(),
+            'total': Cita.objects.count(),
+            'pendientes': Cita.objects.filter(
+                estado='pendiente'
+            ).count(),
+        })
+
+    except Exception as e:
+        traceback.print_exc()
+
+        return JsonResponse({
+            'ok': False,
+            'error': str(e)
+        }, status=400)
+    
+    # ── API JSON: crear cita desde el dashboard ───────────────────────────────────
+@login_required
+def crear_ajax(request):
+    if request.method != 'POST':
+        return JsonResponse({'ok': False}, status=405)
+    try:
+        # Convertir fecha: str → datetime.date
+        fecha_str = request.POST.get('fecha', '').strip()
+        if not fecha_str:
+            return JsonResponse({'ok': False, 'error': 'La fecha es obligatoria.'}, status=400)
+        fecha = date.fromisoformat(fecha_str)
+        if fecha < date.today():
+            return JsonResponse({'ok': False, 'error': 'La fecha no puede ser anterior a hoy.'}, status=400)
+
+        # Convertir hora: str → datetime.time
+        # TimeField espera un objeto time, no un string.
+        # Si se le pasa un string, create() lo guarda pero el objeto en memoria
+        # conserva el string original — por eso .strftime() falla.
+        from datetime import time as time_type
+        hora_str = request.POST.get('hora', '').strip()
+        if not hora_str:
+            return JsonResponse({'ok': False, 'error': 'La hora es obligatoria.'}, status=400)
+        partes = hora_str.split(':')
+        hora = time_type(int(partes[0]), int(partes[1]))
+
+        cita = Cita.objects.create(
+            nombre_cliente    = request.POST.get('nombre', '').strip(),
+            apellidos_cliente = request.POST.get('apellidos', '').strip(),
+            correo            = request.POST.get('correo', '').strip(),
+            telefono          = request.POST.get('telefono', '').strip(),
+            fecha             = fecha,
+            hora              = hora,          # ← ya es datetime.time
+            motivo            = request.POST.get('motivo', ''),
+            motivo_otro       = request.POST.get('motivo_otro', ''),
+            comentarios       = request.POST.get('comentarios', ''),
+            estado            = 'pendiente',
+            asesor            = request.user,
+        )
+        registrar(
+            usuario=request.user,
+            accion=f'Cita creada desde dashboard para {cita.nombre_cliente} {cita.apellidos_cliente} ({cita.fecha})',
+            modulo='citas',
+            objeto_id=cita.id,
+            request=request,
+        )
+        return JsonResponse({
+            'ok':                True,
+            'id':                cita.id,
+            'nombre_cliente':    cita.nombre_cliente,
+            'apellidos_cliente': cita.apellidos_cliente,
+            'correo':            cita.correo,
+            'fecha':             str(cita.fecha),
+            'hora':              cita.hora.strftime('%H:%M'),  # ← ahora sí es time
+            'motivo_display':    cita.get_motivo_display(),
+            'estado':            cita.estado,
+            'estado_display':    cita.get_estado_display(),
+            'total':             Cita.objects.count(),
+            'pendientes':        Cita.objects.filter(estado='pendiente').count(),
+        })
+
+    except (ValueError, IndexError):
+        return JsonResponse({'ok': False, 'error': 'Fecha u hora con formato inválido.'}, status=400)
+    except Exception as e:
+        return JsonResponse({'ok': False, 'error': str(e)}, status=400)
+
+# ── API JSON: asignar asesor a una cita ──────────────────────────────────────
+@login_required
+def asignar_asesor_ajax(request, cita_id):
+    if request.method != 'POST':
+        return JsonResponse({'ok': False}, status=405)
+
+    # Solo admins pueden asignar asesores
+    try:
+        if not request.user.perfil.es_admin:
+            return JsonResponse({'ok': False, 'error': 'Sin permisos.'}, status=403)
+    except Exception:
+        if not request.user.is_superuser:
+            return JsonResponse({'ok': False, 'error': 'Sin permisos.'}, status=403)
+
+    cita = get_object_or_404(Cita, id=cita_id)
+    asesor_id = request.POST.get('asesor_id', '').strip()
+
+    if asesor_id:
+        from django.contrib.auth.models import User as UserModel
+        asesor = get_object_or_404(UserModel, id=asesor_id, is_active=True)
+        nombre_asesor = asesor.get_full_name() or asesor.username
+        cita.asesor = asesor
+    else:
+        nombre_asesor = None
+        cita.asesor = None
+
+    cita.save(update_fields=['asesor'])
+
+    registrar(
+        usuario=request.user,
+        accion=f'Asesor {"asignado: " + nombre_asesor if nombre_asesor else "removido"} en cita #{cita_id} ({cita.nombre_cliente} {cita.apellidos_cliente})',
+        modulo='citas',
+        objeto_id=cita_id,
+        request=request,
+    )
+
+    return JsonResponse({
+        'ok':           True,
+        'asesor_id':    cita.asesor.id if cita.asesor else None,
+        'asesor_nombre': nombre_asesor or '',
+    })
+
+
+# ── API JSON: editar una cita ─────────────────────────────────────────────────
+@login_required
+def editar_ajax(request, cita_id):
+    if request.method != 'POST':
+        return JsonResponse({'ok': False}, status=405)
+
+    from datetime import time as time_type
+    cita = get_object_or_404(Cita, id=cita_id)
+
+    try:
+        fecha_str = request.POST.get('fecha', '').strip()
+        fecha = date.fromisoformat(fecha_str)
+
+        hora_str = request.POST.get('hora', '').strip()
+        partes = hora_str.split(':')
+        hora = time_type(int(partes[0]), int(partes[1]))
+
+        motivo = request.POST.get('motivo', '').strip()
+        if motivo not in [m[0] for m in Cita.MOTIVO_CHOICES]:
+            return JsonResponse({'ok': False, 'error': 'Motivo no válido.'}, status=400)
+
+        cita.nombre_cliente    = request.POST.get('nombre', '').strip()
+        cita.apellidos_cliente = request.POST.get('apellidos', '').strip()
+        cita.correo            = request.POST.get('correo', '').strip()
+        cita.telefono          = request.POST.get('telefono', '').strip()
+        cita.fecha             = fecha
+        cita.hora              = hora
+        cita.motivo            = motivo
+        cita.motivo_otro       = request.POST.get('motivo_otro', '').strip()
+        cita.comentarios       = request.POST.get('comentarios', '').strip()
+        cita.save()
+
+        registrar(
+            usuario=request.user,
+            accion=f'Cita #{cita_id} editada por {request.user.get_full_name() or request.user.username}',
+            modulo='citas',
+            objeto_id=cita_id,
+            request=request,
+        )
+
+        return JsonResponse({
+            'ok':             True,
+            'id':             cita.id,
+            'nombre_cliente': cita.nombre_cliente,
+            'apellidos_cliente': cita.apellidos_cliente,
+            'correo':         cita.correo,
+            'fecha':          str(cita.fecha),
+            'hora':           cita.hora.strftime('%H:%M'),
+            'motivo_display': cita.get_motivo_display(),
+        })
+
+    except (ValueError, IndexError):
+        return JsonResponse({'ok': False, 'error': 'Fecha u hora con formato inválido.'}, status=400)
+    except Exception as e:
+        return JsonResponse({'ok': False, 'error': str(e)}, status=400)
 
 
 # ── Vista admin: eliminar cita ────────────────────────────────────────────────

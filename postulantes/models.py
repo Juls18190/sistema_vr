@@ -31,6 +31,12 @@ class Postulante(models.Model):
         choices=ESTADO_CHOICES,
         default='nuevo'
     )
+    notas = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name='Notas internas',
+        help_text='Observaciones privadas del reclutador. No visibles para el postulante.'
+    )
     fecha = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

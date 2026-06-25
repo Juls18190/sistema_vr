@@ -1,0 +1,544 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expediente — {{ prospecto.nombre }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1560BD;--blue2:#3a82e8;--bg:#f1f5f9;--white:#fff;
+  --gray:#f8fafc;--gray2:#f1f5f9;--txt:#1e293b;--txt2:#334155;
+  --txt3:#64748b;--bdr:#e2e8f0;--green:#22c55e;--red:#ef4444;
+  --yellow:#f59e0b;--ff:'Sora',sans-serif;
+  --dark2:#112240;--border:rgba(255,255,255,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--ff);background:var(--bg);color:var(--txt);min-height:100vh;display:flex;flex-direction:column;}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* TOP BAR */
+.atop{background:var(--white);border-bottom:1px solid var(--bdr);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.atop-brand{display:flex;align-items:center;gap:10px;}
+.ab-mark{width:30px;height:30px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.ab-name{font-size:14px;font-weight:700;color:var(--blue);}
+.ab-name small{font-size:11px;font-weight:400;color:var(--txt3);margin-left:5px;}
+.atop-right{display:flex;align-items:center;gap:10px;}
+.user-chip{display:flex;align-items:center;gap:8px;background:var(--gray);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;}
+.uav{width:26px;height:26px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;}
+.user-chip span{font-size:12px;color:var(--txt2);font-weight:500;}
+.btn-back{display:inline-flex;align-items:center;gap:6px;background:var(--gray);border:1px solid var(--bdr);border-radius:7px;padding:7px 14px;font-size:12px;font-family:var(--ff);color:var(--txt2);cursor:pointer;text-decoration:none;font-weight:500;}
+.btn-back:hover{background:#e2e8f0;}
+
+/* LAYOUT */
+.abody{display:flex;flex:1;}
+.sidebar{width:220px;background:var(--dark2);flex-shrink:0;display:flex;flex-direction:column;border-right:0.5px solid var(--border);min-height:calc(100vh - 54px);}
+.sb-sec{padding:.6rem 0;}
+.sb-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.28);padding:0 1.25rem;margin-bottom:.4rem;font-weight:600;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 1.25rem;font-size:13px;color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;border-left:2px solid transparent;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.8);}
+.sb-item.on{background:rgba(21,96,189,.15);color:#fff;border-left-color:var(--blue);}
+.sb-item svg{width:15px;height:15px;flex-shrink:0;}
+.sb-logout{margin-top:auto;border-top:0.5px solid var(--border);padding:.6rem 0;}
+
+.acontent{flex:1;padding:1.75rem;overflow:auto;animation:fadeInUp .4s ease both;}
+
+/* HERO DEL EXPEDIENTE */
+.exp-hero{background:linear-gradient(135deg,var(--dark2),#1e3a5f);border-radius:14px;padding:1.75rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}
+.exp-avatar{width:64px;height:64px;background:rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0;}
+.exp-hero-info{flex:1;}
+.exp-nombre{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;}
+.exp-sub{font-size:12px;color:rgba(255,255,255,.55);}
+.exp-hero-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.btn-accion{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12px;font-family:var(--ff);font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+.btn-editar{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);}
+.btn-editar:hover{background:rgba(255,255,255,.22);}
+.btn-convertir{background:#22c55e;color:#fff;}
+.btn-convertir:hover{background:#16a34a;}
+.btn-eliminar{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3);}
+.btn-eliminar:hover{background:rgba(239,68,68,.3);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;}
+.b-blue{background:#dbeafe;color:#1d4ed8;}
+.b-green{background:#dcfce7;color:#15803d;}
+.b-yellow{background:#fef9c3;color:#a16207;}
+.b-gray{background:#f1f5f9;color:var(--txt3);}
+.b-purple{background:#ede9fe;color:#6d28d9;}
+.b-red{background:#fee2e2;color:#dc2626;}
+
+/* CARDS DE DATOS */
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.exp-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:1.25rem;}
+.exp-card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--txt3);margin-bottom:1rem;display:flex;align-items:center;gap:6px;}
+.exp-card-title svg{color:var(--blue);}
+.field-row{display:flex;flex-direction:column;gap:3px;margin-bottom:.85rem;}
+.field-row:last-child{margin-bottom:0;}
+.field-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--txt3);}
+.field-value{font-size:13px;color:var(--txt2);font-weight:500;}
+.field-value a{color:var(--blue);text-decoration:none;}
+.field-value a:hover{text-decoration:underline;}
+
+/* SEGUIMIENTO */
+.seg-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin-bottom:1.25rem;}
+.seg-header{padding:1rem 1.25rem;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
+.seg-header-title{font-size:14px;font-weight:700;}
+.seg-form{padding:1.25rem;border-bottom:1px solid var(--bdr);}
+.seg-form label{display:block;font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;}
+.seg-form textarea{width:100%;border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:13px;font-family:var(--ff);color:var(--txt);outline:none;resize:vertical;min-height:80px;transition:border-color .2s;}
+.seg-form textarea:focus{border-color:var(--blue);}
+.btn-seg{display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:12px;font-family:var(--ff);font-weight:600;cursor:pointer;margin-top:10px;}
+.btn-seg:hover{background:var(--blue2);}
+
+/* LÍNEA DE TIEMPO */
+.timeline{padding:1.25rem;}
+.tl-item{display:flex;gap:12px;margin-bottom:1.25rem;position:relative;}
+.tl-item:last-child{margin-bottom:0;}
+.tl-dot{width:34px;height:34px;background:var(--gray);border:2px solid var(--bdr);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:var(--blue);}
+.tl-connector{position:absolute;left:17px;top:34px;bottom:-12px;width:1px;background:var(--bdr);}
+.tl-item:last-child .tl-connector{display:none;}
+.tl-body{flex:1;padding-top:4px;}
+.tl-meta{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap;}
+.tl-asesor{font-size:12px;font-weight:600;color:var(--txt);}
+.tl-fecha{font-size:11px;color:var(--txt3);}
+.tl-comentario{font-size:13px;color:var(--txt2);line-height:1.6;background:var(--gray);border-radius:8px;padding:10px 12px;}
+
+/* ALERTS */
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:1rem;}
+.alert-success{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;}
+.alert-error{background:#fee2e2;color:#dc2626;border:1px solid #fecaca;}
+
+/* MODALES */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--white);border-radius:14px;padding:1.75rem;width:540px;max-width:95vw;animation:fadeInUp .3s ease both;max-height:90vh;overflow-y:auto;}
+.modal-sm{width:400px;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.modal-title{font-size:16px;font-weight:700;}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;}
+.form-group{margin-bottom:.9rem;}
+.form-group label{display:block;font-size:11px;font-weight:600;color:var(--txt3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px;}
+.form-group input,.form-group textarea,.form-group select{width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt);outline:none;background:var(--white);}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--blue);}
+.form-group textarea{min-height:75px;resize:vertical;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;}
+.btn-cancel{background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;}
+.btn-submit{background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;}
+.btn-danger{background:var(--red);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;}
+
+/* RESPONSIVE */
+@media(max-width:780px){
+  .exp-grid{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="atop">
+  <div class="atop-brand">
+    <div class="ab-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <span class="ab-name">ADMIN V&R<small>· Sistema de Gestión</small></span>
+  </div>
+  <div class="atop-right">
+    <a href="{% url 'prospectos:index' %}" class="btn-back">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Prospectos
+    </a>
+    <div class="user-chip">
+      <div class="uav">{{ request.user.username|slice:":2"|upper }}</div>
+      <span>{{ request.user.get_full_name|default:request.user.username }}</span>
+    </div>
+  </div>
+</div>
+
+<div class="abody">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-sec">
+      <div class="sb-label">Principal</div>
+      <a class="sb-item" href="/dashboard/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-label">Módulos</div>
+      <a class="sb-item" href="/citas/admin/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Agenda de Citas
+      </a>
+      <a class="sb-item" href="/postulantes/admin/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Postulantes
+      </a>
+      <a class="sb-item" href="/vacantes/admin/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+        Vacantes
+      </a>
+      <a class="sb-item on" href="/prospectos/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Prospectos
+      </a>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-label">Sistema</div>
+      <a class="sb-item" href="/admin/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Usuarios
+      </a>
+    </div>
+    <div class="sb-logout">
+      <a class="sb-item" href="/usuarios/logout/" style="color:rgba(255,100,100,.7);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </a>
+    </div>
+  </div>
+
+  <!-- CONTENIDO -->
+  <div class="acontent">
+
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert {% if msg.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- HERO -->
+    <div class="exp-hero">
+      <div class="exp-avatar">{{ prospecto.nombre|slice:":2"|upper }}</div>
+      <div class="exp-hero-info">
+        <div class="exp-nombre">{{ prospecto.nombre }}</div>
+        <div class="exp-sub">
+          {{ prospecto.get_interes_display }} &nbsp;·&nbsp; Registrado el {{ prospecto.fecha|date:"d/m/Y" }}
+          &nbsp;·&nbsp;
+          {% if prospecto.estado == 'nuevo' %}<span class="badge b-blue">Nuevo</span>
+          {% elif prospecto.estado == 'contactado' %}<span class="badge b-yellow">Contactado</span>
+          {% elif prospecto.estado == 'convertido' %}<span class="badge b-green">Convertido</span>
+          {% else %}<span class="badge b-gray">Descartado</span>{% endif %}
+          {% if prospecto.es_referido %}<span class="badge b-purple" style="margin-left:6px;">Referido</span>{% endif %}
+        </div>
+      </div>
+      <div class="exp-hero-actions">
+        <button class="btn-accion btn-editar" onclick="document.getElementById('modalEditar').classList.add('show')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
+          Editar
+        </button>
+        {% if prospecto.estado != 'convertido' %}
+        <button class="btn-accion btn-convertir" onclick="document.getElementById('modalConvertir').classList.add('show')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Convertir a cliente
+        </button>
+        {% endif %}
+        <button class="btn-accion btn-eliminar" onclick="document.getElementById('modalEliminar').classList.add('show')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+          Eliminar
+        </button>
+      </div>
+    </div>
+
+    <!-- DATOS GENERALES -->
+    <div class="exp-grid">
+
+      <!-- DATOS DE CONTACTO -->
+      <div class="exp-card">
+        <div class="exp-card-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Datos de contacto
+        </div>
+        <div class="field-row">
+          <div class="field-label">Correo electrónico</div>
+          <div class="field-value"><a href="mailto:{{ prospecto.correo }}">{{ prospecto.correo }}</a></div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Teléfono</div>
+          <div class="field-value"><a href="tel:{{ prospecto.telefono }}">{{ prospecto.telefono }}</a></div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Empresa actual</div>
+          <div class="field-value">{{ prospecto.empresa_actual|default:"— No registrada" }}</div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">¿Es referido?</div>
+          <div class="field-value">
+            {% if prospecto.es_referido %}
+              <span class="badge b-purple">Sí — por {{ prospecto.nombre_referente|default:"sin nombre" }}</span>
+            {% else %}
+              <span style="color:var(--txt3);">No</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- DATOS COMERCIALES -->
+      <div class="exp-card">
+        <div class="exp-card-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Datos comerciales
+        </div>
+        <div class="field-row">
+          <div class="field-label">Servicio de interés</div>
+          <div class="field-value">{{ prospecto.get_interes_display }}</div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Estado</div>
+          <div class="field-value">
+            {% if prospecto.estado == 'nuevo' %}<span class="badge b-blue">Nuevo</span>
+            {% elif prospecto.estado == 'contactado' %}<span class="badge b-yellow">Contactado</span>
+            {% elif prospecto.estado == 'convertido' %}<span class="badge b-green">Convertido en cliente</span>
+            {% else %}<span class="badge b-gray">Descartado</span>{% endif %}
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Asesor asignado</div>
+          <div class="field-value">
+            {% if prospecto.asesor_asignado %}
+              {{ prospecto.asesor_asignado.get_full_name|default:prospecto.asesor_asignado.username }}
+            {% else %}
+              <span style="color:var(--txt3);font-style:italic;">Sin asignar</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Fecha de contacto</div>
+          <div class="field-value">{{ prospecto.fecha_contacto|date:"d/m/Y H:i"|default:"— No registrada" }}</div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Póliza actual (PDF)</div>
+          <div class="field-value">
+            {% if prospecto.archivo_poliza %}
+              <a href="{{ prospecto.archivo_poliza.url }}" target="_blank">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Ver PDF
+              </a>
+            {% else %}
+              <span style="color:var(--txt3);">Sin archivo adjunto</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /exp-grid -->
+
+    <!-- MENSAJE INICIAL -->
+    {% if prospecto.mensaje %}
+    <div class="exp-card" style="margin-bottom:1.25rem;">
+      <div class="exp-card-title">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Mensaje inicial del prospecto
+      </div>
+      <p style="font-size:13px;color:var(--txt2);line-height:1.7;">{{ prospecto.mensaje }}</p>
+    </div>
+    {% endif %}
+
+    <!-- NOTAS INTERNAS -->
+    {% if prospecto.notas %}
+    <div class="exp-card" style="margin-bottom:1.25rem;">
+      <div class="exp-card-title">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Notas internas
+      </div>
+      <p style="font-size:13px;color:var(--txt2);line-height:1.7;">{{ prospecto.notas }}</p>
+    </div>
+    {% endif %}
+
+    <!-- HISTORIAL DE SEGUIMIENTO -->
+    <div class="seg-card">
+      <div class="seg-header">
+        <div class="seg-header-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" style="vertical-align:-2px;margin-right:6px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Historial de seguimientos
+          <span style="font-size:11px;color:var(--txt3);font-weight:400;margin-left:6px;">({{ seguimientos|length }} registro{{ seguimientos|length|pluralize }})</span>
+        </div>
+      </div>
+
+      <!-- Formulario agregar seguimiento -->
+      <div class="seg-form">
+        <form method="POST" action="{% url 'prospectos:agregar_seguimiento' prospecto.id %}">
+          {% csrf_token %}
+          <label>Agregar comentario de seguimiento</label>
+          {{ form_seg.comentario }}
+          <button type="submit" class="btn-seg">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Registrar seguimiento
+          </button>
+        </form>
+      </div>
+
+      <!-- Línea de tiempo -->
+      <div class="timeline">
+        {% for seg in seguimientos %}
+        <div class="tl-item">
+          <div>
+            <div class="tl-dot">{{ forloop.revcounter }}</div>
+            <div class="tl-connector"></div>
+          </div>
+          <div class="tl-body">
+            <div class="tl-meta">
+              <span class="tl-asesor">
+                {% if seg.asesor %}{{ seg.asesor.get_full_name|default:seg.asesor.username }}{% else %}Sistema{% endif %}
+              </span>
+              <span class="tl-fecha">{{ seg.fecha|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div class="tl-comentario">{{ seg.comentario }}</div>
+          </div>
+        </div>
+        {% empty %}
+        <div style="text-align:center;padding:2rem;color:var(--txt3);font-size:13px;">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:.3;display:block;margin:0 auto 10px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          No hay seguimientos registrados aún.
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div><!-- /acontent -->
+</div><!-- /abody -->
+
+
+<!-- ═══ MODAL: EDITAR PROSPECTO ══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalEditar">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Editar prospecto</div>
+      <button class="modal-close" onclick="document.getElementById('modalEditar').classList.remove('show')">×</button>
+    </div>
+    <form method="POST" action="{% url 'prospectos:editar' prospecto.id %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Nombre completo *</label>
+          <input type="text" name="nombre" value="{{ prospecto.nombre }}" required>
+        </div>
+        <div class="form-group">
+          <label>Correo *</label>
+          <input type="email" name="correo" value="{{ prospecto.correo }}" required>
+        </div>
+        <div class="form-group">
+          <label>Teléfono *</label>
+          <input type="text" name="telefono" value="{{ prospecto.telefono }}" required>
+        </div>
+        <div class="form-group">
+          <label>Empresa actual</label>
+          <input type="text" name="empresa_actual" value="{{ prospecto.empresa_actual|default:'' }}">
+        </div>
+        <div class="form-group">
+          <label>Interés / Servicio *</label>
+          <select name="interes" required>
+            {% for val, label in prospecto.INTERES_CHOICES %}
+            <option value="{{ val }}" {% if prospecto.interes == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Estado *</label>
+          <select name="estado" required>
+            {% for val, label in prospecto.ESTADO_CHOICES %}
+            <option value="{{ val }}" {% if prospecto.estado == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Asesor asignado</label>
+          <select name="asesor_asignado">
+            <option value="">— Sin asignar —</option>
+            {% for a in asesores %}
+            <option value="{{ a.id }}" {% if prospecto.asesor_asignado_id == a.id %}selected{% endif %}>
+              {{ a.get_full_name|default:a.username }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Fecha de contacto</label>
+          <input type="datetime-local" name="fecha_contacto"
+            value="{% if prospecto.fecha_contacto %}{{ prospecto.fecha_contacto|date:'Y-m-d' }}T{{ prospecto.fecha_contacto|time:'H:i' }}{% endif %}">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" name="es_referido" {% if prospecto.es_referido %}checked{% endif %} style="width:auto;">
+            ¿Es referido?
+          </label>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Nombre del referente</label>
+          <input type="text" name="nombre_referente" value="{{ prospecto.nombre_referente|default:'' }}">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Póliza actual (PDF — dejar vacío para mantener el actual)</label>
+          <input type="file" name="archivo_poliza" accept=".pdf">
+          {% if prospecto.archivo_poliza %}
+          <div style="font-size:11px;color:var(--txt3);margin-top:4px;">
+            Actual: <a href="{{ prospecto.archivo_poliza.url }}" target="_blank" style="color:var(--blue);">ver archivo</a>
+          </div>
+          {% endif %}
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Notas internas</label>
+          <textarea name="notas" rows="2">{{ prospecto.notas|default:'' }}</textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="document.getElementById('modalEditar').classList.remove('show')">Cancelar</button>
+        <button type="submit" class="btn-submit">✓ Guardar cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ═══ MODAL: CONVERTIR ══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalConvertir">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title" style="color:#15803d;">✓ Convertir a cliente</div>
+      <button class="modal-close" onclick="document.getElementById('modalConvertir').classList.remove('show')">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:1.25rem;">
+      ¿Marcar a <strong>{{ prospecto.nombre }}</strong> como cliente convertido?<br>
+      <span style="color:var(--txt3);font-size:12px;">El estado cambiará a "Convertido en cliente".</span>
+    </p>
+    <form method="POST" action="{% url 'prospectos:convertir' prospecto.id %}">
+      {% csrf_token %}
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="document.getElementById('modalConvertir').classList.remove('show')">Cancelar</button>
+        <button type="submit" class="btn-submit" style="background:#15803d;">✓ Sí, convertir</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ═══ MODAL: ELIMINAR ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalEliminar">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--red);">⚠️ Eliminar prospecto</div>
+      <button class="modal-close" onclick="document.getElementById('modalEliminar').classList.remove('show')">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:1.25rem;">
+      ¿Eliminar permanentemente a <strong>{{ prospecto.nombre }}</strong>?<br>
+      <span style="color:var(--txt3);font-size:12px;">Se eliminarán también todos sus seguimientos. Esta acción no se puede deshacer.</span>
+    </p>
+    <form method="POST" action="{% url 'prospectos:eliminar' prospecto.id %}">
+      {% csrf_token %}
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="document.getElementById('modalEliminar').classList.remove('show')">Cancelar</button>
+        <button type="submit" class="btn-danger">Sí, eliminar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.modal-overlay').forEach(function(ov) {
+  ov.addEventListener('click', function(e) { if (e.target === ov) ov.classList.remove('show'); });
+});
+</script>
+
+</body>
+</html>

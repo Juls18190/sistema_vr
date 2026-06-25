@@ -46,10 +46,11 @@
       <div class="fr"><label>Área de interés</label>
         <select name="vacante">
           <option value="">Selecciona una vacante</option>
-          <option>Asesor financiero</option>
-          <option>Agente de seguros</option>
-          <option>Promotor de créditos</option>
-          <option>Promotor de TPV</option>
+          {% for v in vacantes_form %}
+          <option value="{{ v.id }}">{{ v.titulo }}{% if v.area %} — {{ v.area }}{% endif %}</option>
+          {% empty %}
+          <option value="" disabled>No hay vacantes disponibles</option>
+          {% endfor %}
         </select>
       </div>
       <div class="fr"><label>Sube tu CV (PDF)</label>

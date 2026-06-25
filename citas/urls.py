@@ -9,9 +9,13 @@ urlpatterns = [
     path('exito/',               views.exito,               name='exito'),
 
     # ── Admin (requieren login) ────────────────────────────────
-    path('admin/',               views.lista,               name='lista'),
+    path('admin/',               views.lista,               name='lista'),  
     path('admin/crear/',         views.crear,               name='crear'),
-    path('admin/<int:cita_id>/estado/',      views.cambiar_estado,      name='cambiar_estado'),
+    path('admin/crear/ajax/',    views.crear_ajax,           name='crear_ajax'),    
+    path('admin/<int:cita_id>/estado/',          views.cambiar_estado,      name='cambiar_estado'),
+    path('admin/<int:cita_id>/asignar/ajax/',    views.asignar_asesor_ajax, name='asignar_asesor_ajax'),
+    path('admin/<int:cita_id>/editar/ajax/',     views.editar_ajax,         name='editar_ajax'),
+    path('admin/<int:cita_id>/detalle/ajax/', views.detalle_ajax,        name='detalle_ajax'),
     path('admin/<int:cita_id>/estado/ajax/', views.cambiar_estado_ajax, name='cambiar_estado_ajax'),
     path('admin/<int:cita_id>/eliminar/',    views.eliminar,            name='eliminar'),
 ]

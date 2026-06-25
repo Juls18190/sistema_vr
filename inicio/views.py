@@ -8,9 +8,11 @@ from prospectos.models import Prospecto
 
 def home(request):
     vacantes = Vacante.objects.filter(estado='activa').order_by('-creada')[:6]
+    vacantes_form = Vacante.objects.filter(estado='activa').order_by('titulo')
     servicios = Servicio.objects.filter(activo=True).order_by('orden')
     context = {
         'vacantes': vacantes,
+        'vacantes_form': vacantes_form,
         'servicios': servicios,
         # Stats reales para el dashboard público
         'total_postulantes': Postulante.objects.count(),

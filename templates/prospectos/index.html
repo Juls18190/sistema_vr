@@ -17,7 +17,9 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--ff);background:var(--bg);color:var(--txt);min-height:100vh;display:flex;flex-direction:column;}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 
+/* TOP BAR */
 .atop{background:var(--white);border-bottom:1px solid var(--bdr);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
 .atop-brand{display:flex;align-items:center;gap:10px;}
 .ab-mark{width:30px;height:30px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;}
@@ -30,6 +32,7 @@ body{font-family:var(--ff);background:var(--bg);color:var(--txt);min-height:100v
 .btn-back{display:inline-flex;align-items:center;gap:6px;background:var(--gray);border:1px solid var(--bdr);border-radius:7px;padding:7px 14px;font-size:12px;font-family:var(--ff);color:var(--txt2);cursor:pointer;text-decoration:none;font-weight:500;}
 .btn-back:hover{background:#e2e8f0;}
 
+/* LAYOUT */
 .abody{display:flex;flex:1;}
 .sidebar{width:220px;background:var(--dark2);flex-shrink:0;display:flex;flex-direction:column;border-right:0.5px solid var(--border);min-height:calc(100vh - 54px);}
 .sb-sec{padding:.6rem 0;}
@@ -40,6 +43,7 @@ body{font-family:var(--ff);background:var(--bg);color:var(--txt);min-height:100v
 .sb-item svg{width:15px;height:15px;flex-shrink:0;}
 .sb-logout{margin-top:auto;border-top:0.5px solid var(--border);padding:.6rem 0;}
 
+/* CONTENIDO */
 .acontent{flex:1;padding:1.75rem;overflow:auto;animation:fadeInUp .4s ease both;}
 .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px;}
 .page-title{font-size:20px;font-weight:700;}
@@ -47,60 +51,91 @@ body{font-family:var(--ff);background:var(--bg);color:var(--txt);min-height:100v
 .btn-primary{display:inline-flex;align-items:center;gap:7px;background:var(--blue);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-family:var(--ff);font-weight:600;cursor:pointer;transition:all .2s;}
 .btn-primary:hover{background:var(--blue2);}
 
-.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem;}
-.kpi-mini{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;}
-.km-label{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;font-weight:600;}
-.km-num{font-size:24px;font-weight:700;}
+/* KPI STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:1.5rem;}
+.kpi-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:1rem 1.25rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.kpi-card:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(21,96,189,.1);}
+.kpi-card.active{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,96,189,.12);}
+.kpi-card.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--blue);}
+.kpi-num{font-size:28px;font-weight:700;line-height:1;margin-bottom:4px;}
+.kpi-label{font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;}
 
+/* CONTROLES */
+.ctrl-bar{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.search-wrap{display:flex;align-items:center;gap:7px;background:var(--white);border:1px solid var(--bdr);border-radius:8px;padding:7px 12px;flex:1;min-width:220px;max-width:340px;}
+.search-wrap input{border:none;outline:none;font-size:13px;font-family:var(--ff);color:var(--txt);width:100%;background:none;}
+.filter-sel{background:var(--white);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;cursor:pointer;}
+.cnt-label{font-size:12px;color:var(--txt3);margin-left:auto;}
+
+/* GRID DE TARJETAS */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;}
+
+/* TARJETA PROSPECTO */
+.pros-card{background:var(--white);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;transition:all .2s;animation:fadeInUp .35s ease both;}
+.pros-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-2px);}
+.pros-card.estado-nuevo      .card-accent{background:linear-gradient(135deg,#1d4ed8,#3a82e8);}
+.pros-card.estado-contactado  .card-accent{background:linear-gradient(135deg,#d97706,#f59e0b);}
+.pros-card.estado-convertido  .card-accent{background:linear-gradient(135deg,#15803d,#22c55e);}
+.pros-card.estado-descartado  .card-accent{background:linear-gradient(135deg,#475569,#94a3b8);}
+.card-accent{height:5px;width:100%;}
+.card-body{padding:1.1rem 1.25rem;}
+.card-header-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.75rem;gap:8px;}
+.card-nombre{font-size:14px;font-weight:700;color:var(--txt);line-height:1.3;}
+.card-fecha{font-size:10px;color:var(--txt3);white-space:nowrap;margin-top:2px;}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.2px;}
+.b-blue{background:#dbeafe;color:#1d4ed8;}
+.b-green{background:#dcfce7;color:#15803d;}
+.b-yellow{background:#fef9c3;color:#a16207;}
+.b-gray{background:#f1f5f9;color:var(--txt3);}
+.b-red{background:#fee2e2;color:#dc2626;}
+
+.card-info{display:flex;flex-direction:column;gap:5px;margin-bottom:.9rem;}
+.ci-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt2);}
+.ci-row svg{flex-shrink:0;color:var(--txt3);}
+.ci-label{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;width:60px;flex-shrink:0;}
+
+.card-footer{border-top:1px solid var(--bdr);padding:.75rem 1.25rem;display:flex;gap:6px;align-items:center;}
+.cbtn{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;font-size:11px;font-family:var(--ff);font-weight:600;cursor:pointer;border:1px solid var(--bdr);background:var(--gray2);color:var(--txt2);transition:all .15s;}
+.cbtn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
+.cbtn.del:hover{background:var(--red);border-color:var(--red);color:#fff;}
+.cbtn.convert{background:#f0fdf4;border-color:#bbf7d0;color:#15803d;}
+.cbtn.convert:hover{background:#15803d;border-color:#15803d;color:#fff;}
+.cbtn.ver:hover{background:#f8fafc;color:var(--blue);border-color:var(--blue);}
+
+/* ESTADO VACÍO */
+.empty-state{grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--txt3);}
+.empty-state svg{opacity:.25;margin-bottom:1rem;}
+.empty-state p{font-size:14px;}
+
+/* ALERTS */
 .alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:1rem;}
 .alert-success{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;}
 .alert-error{background:#fee2e2;color:#dc2626;border:1px solid #fecaca;}
 
-.table-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;}
-.tc-head{padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr);flex-wrap:wrap;gap:8px;}
-.tc-head h3{font-size:14px;font-weight:600;}
-.tc-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.filter-select{background:var(--white);border:1px solid var(--bdr);border-radius:7px;padding:7px 12px;font-size:12px;font-family:var(--ff);color:var(--txt2);outline:none;cursor:pointer;}
-.search-form{display:flex;align-items:center;gap:6px;background:var(--gray);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;}
-.search-form input{background:none;border:none;outline:none;font-size:12px;color:var(--txt2);width:160px;font-family:var(--ff);}
-table{width:100%;border-collapse:collapse;}
-th{background:var(--gray);padding:9px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.3px;color:var(--txt3);text-align:left;font-weight:600;border-bottom:1px solid var(--bdr);}
-td{padding:11px 14px;font-size:13px;color:var(--txt2);border-bottom:1px solid #f8fafc;vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:#fafbfc;}
-.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600;}
-.b-blue{background:#dbeafe;color:#1d4ed8;}
-.b-green{background:#dcfce7;color:#15803d;}
-.b-yellow{background:#fef9c3;color:#a16207;}
-.b-red{background:#fee2e2;color:#dc2626;}
-.b-gray{background:#f1f5f9;color:var(--txt3);}
-.b-purple{background:#ede9fe;color:#6d28d9;}
-.act-btn{width:28px;height:28px;background:var(--gray);border:1px solid var(--bdr);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt3);transition:all .2s;margin-right:3px;border:none;}
-.act-btn:hover{background:var(--blue);color:#fff;}
-.act-btn.del:hover{background:var(--red);color:#fff;}
-.empty-row{text-align:center;color:var(--txt3);padding:2rem!important;font-size:13px;}
-
 /* MODALES */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
 .modal-overlay.show{display:flex;}
-.modal{background:var(--white);border-radius:14px;padding:1.75rem;width:520px;max-width:95vw;animation:fadeInUp .3s ease both;max-height:90vh;overflow-y:auto;}
-.modal-sm{width:380px;}
+.modal{background:var(--white);border-radius:14px;padding:1.75rem;width:540px;max-width:95vw;animation:fadeInUp .3s ease both;max-height:90vh;overflow-y:auto;}
+.modal-sm{width:400px;}
 .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
 .modal-title{font-size:16px;font-weight:700;}
 .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;padding:0 4px;}
 .modal-close:hover{color:var(--txt);}
-.form-group{margin-bottom:1rem;}
-.form-group label{display:block;font-size:11px;font-weight:600;color:var(--txt2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px;}
+.form-group{margin-bottom:.9rem;}
+.form-group label{display:block;font-size:11px;font-weight:600;color:var(--txt3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px;}
 .form-group input,.form-group textarea,.form-group select{width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt);outline:none;transition:border-color .2s;background:var(--white);}
 .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--blue);}
-.form-group textarea{min-height:80px;resize:vertical;}
+.form-group textarea{min-height:75px;resize:vertical;}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;}
 .btn-cancel{background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;}
-.btn-cancel:hover{background:#e2e8f0;}
 .btn-submit{background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;}
-.btn-submit:hover{background:var(--blue2);}
 .btn-danger{background:var(--red);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;}
-.btn-danger:hover{background:#c00;}
+
+/* PANEL DETALLE */
+.detalle-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;margin-bottom:1rem;}
+.d-field label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--txt3);margin-bottom:3px;display:block;}
+.d-field span{color:var(--txt2);}
+.notas-box{background:var(--gray);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--txt2);line-height:1.5;min-height:48px;}
 </style>
 </head>
 <body>
@@ -173,7 +208,7 @@ tr:hover td{background:#fafbfc;}
     <div class="page-header">
       <div>
         <div class="page-title">Gestión de Prospectos</div>
-        <div class="page-sub">{{ total }} prospecto{{ total|pluralize }} registrado{{ total|pluralize }}</div>
+        <div class="page-sub" id="subtitle">{{ total }} prospecto{{ total|pluralize }} registrado{{ total|pluralize }}</div>
       </div>
       <button class="btn-primary" onclick="abrirModalCrear()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -189,121 +224,236 @@ tr:hover td{background:#fafbfc;}
 
     <!-- KPIs -->
     <div class="kpi-strip">
-      <div class="kpi-mini">
-        <div><div class="km-label">Total</div><div class="km-num" style="color:var(--txt);">{{ total }}</div></div>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <div class="kpi-card active" id="kpi-todos" onclick="filtrarKpi('')">
+        <div class="kpi-num" style="color:var(--txt);">{{ total }}</div>
+        <div class="kpi-label">Total</div>
       </div>
-      <div class="kpi-mini">
-        <div><div class="km-label">Nuevos</div><div class="km-num" style="color:#1d4ed8;">{{ nuevos }}</div></div>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3a82e8" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <div class="kpi-card" id="kpi-nuevo" onclick="filtrarKpi('nuevo')">
+        <div class="kpi-num" style="color:#1d4ed8;">{{ nuevos }}</div>
+        <div class="kpi-label">Nuevos</div>
       </div>
-      <div class="kpi-mini">
-        <div><div class="km-label">Contactados</div><div class="km-num" style="color:#d97706;">{{ contactados }}</div></div>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 012 2.18 2 2 0 014 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14v2.92z"/></svg>
+      <div class="kpi-card" id="kpi-contactado" onclick="filtrarKpi('contactado')">
+        <div class="kpi-num" style="color:#d97706;">{{ contactados }}</div>
+        <div class="kpi-label">Contactados</div>
       </div>
-      <div class="kpi-mini">
-        <div><div class="km-label">Convertidos</div><div class="km-num" style="color:#15803d;">{{ convertidos }}</div></div>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <div class="kpi-card" id="kpi-convertido" onclick="filtrarKpi('convertido')">
+        <div class="kpi-num" style="color:#15803d;">{{ convertidos }}</div>
+        <div class="kpi-label">Convertidos</div>
+      </div>
+      <div class="kpi-card" id="kpi-descartado" onclick="filtrarKpi('descartado')">
+        <div class="kpi-num" style="color:#64748b;">
+          {{ prospectos|length }}<!-- Se calculará en JS -->
+        </div>
+        <div class="kpi-label">Descartados</div>
       </div>
     </div>
 
-    <!-- TABLA -->
-    <div class="table-card">
-      <div class="tc-head">
-        <h3>Todos los prospectos</h3>
-        <div class="tc-actions">
-          <form method="GET" id="filtroForm">
-            <input type="hidden" name="q" value="{{ busqueda }}">
-            <select class="filter-select" name="estado" onchange="document.getElementById('filtroForm').submit()">
-              <option value="">Todos los estados</option>
-              <option value="nuevo"      {% if estado_filtro == 'nuevo'      %}selected{% endif %}>Nuevos</option>
-              <option value="contactado" {% if estado_filtro == 'contactado' %}selected{% endif %}>Contactados</option>
-              <option value="convertido" {% if estado_filtro == 'convertido' %}selected{% endif %}>Convertidos</option>
-              <option value="descartado" {% if estado_filtro == 'descartado' %}selected{% endif %}>Descartados</option>
-            </select>
-          </form>
-          <form method="GET" class="search-form" id="searchForm">
-            <input type="hidden" name="estado" value="{{ estado_filtro }}">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" name="q" placeholder="Buscar nombre o correo..." value="{{ busqueda }}"
-              onkeydown="if(event.key==='Enter'){document.getElementById('searchForm').submit();}">
-          </form>
+    <!-- CONTROLES -->
+    <div class="ctrl-bar">
+      <div class="search-wrap">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="busqueda-input" placeholder="Buscar por nombre, correo o teléfono…" oninput="aplicarFiltros()">
+      </div>
+      <select class="filter-sel" id="filtro-interes" onchange="aplicarFiltros()">
+        <option value="">Todos los servicios</option>
+        <option value="seguro_vida">Seguro de vida</option>
+        <option value="medico">Gastos médicos</option>
+        <option value="auto">Seguro de auto</option>
+        <option value="hogar">Seguro de hogar</option>
+        <option value="inversion">Inversión y ahorro</option>
+        <option value="empresa">Empresarial</option>
+        <option value="general">Información general</option>
+      </select>
+      <select class="filter-sel" id="filtro-asesor" onchange="aplicarFiltros()">
+        <option value="">Todos los asesores</option>
+        {% for asesor in asesores %}
+        <option value="{{ asesor.id }}">{{ asesor.get_full_name|default:asesor.username }}</option>
+        {% endfor %}
+        <option value="sin">Sin asignar</option>
+      </select>
+      <span class="cnt-label" id="cnt-visible">{{ prospectos|length }} mostrando</span>
+    </div>
+
+    <!-- GRID DE TARJETAS -->
+    <div class="cards-grid" id="cards-grid">
+
+      {% for p in prospectos %}
+      <div class="pros-card estado-{{ p.estado }}"
+           id="card-p-{{ p.id }}"
+           data-estado="{{ p.estado }}"
+           data-nombre="{{ p.nombre|lower }}"
+           data-correo="{{ p.correo|lower }}"
+           data-telefono="{{ p.telefono }}"
+           data-interes="{{ p.interes }}"
+           data-asesor-id="{{ p.asesor_asignado_id|default:'' }}"
+           style="animation-delay:{{ forloop.counter0 }}00ms;">
+
+        <div class="card-accent"></div>
+        <div class="card-body">
+
+          <!-- Cabecera: nombre + badge estado -->
+          <div class="card-header-row">
+            <div>
+              <div class="card-nombre">{{ p.nombre }}</div>
+              <div class="card-fecha">{{ p.fecha|date:"d/m/Y · H:i" }}</div>
+            </div>
+            {% if p.estado == 'nuevo' %}
+              <span class="badge b-blue">Nuevo</span>
+            {% elif p.estado == 'contactado' %}
+              <span class="badge b-yellow">Contactado</span>
+            {% elif p.estado == 'convertido' %}
+              <span class="badge b-green">Convertido</span>
+            {% else %}
+              <span class="badge b-gray">Descartado</span>
+            {% endif %}
+          </div>
+
+          <!-- Info: correo, teléfono, servicio, asesor -->
+          <div class="card-info">
+            <div class="ci-row">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span style="color:var(--txt3);">{{ p.correo }}</span>
+            </div>
+            <div class="ci-row">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 012 2.18 2 2 0 014 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14v2.92z"/></svg>
+              <span>{{ p.telefono }}</span>
+            </div>
+            <div class="ci-row">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>{{ p.get_interes_display }}</span>
+            </div>
+            <div class="ci-row">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              {% if p.asesor_asignado %}
+                <span style="font-weight:600;">{{ p.asesor_asignado.get_full_name|default:p.asesor_asignado.username }}</span>
+              {% else %}
+                <span style="color:var(--txt3);font-style:italic;">Sin asignar</span>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if p.notas %}
+          <div class="notas-box" title="Notas internas">
+            <span style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;">📝 Nota: </span>
+            {{ p.notas|truncatechars:90 }}
+          </div>
+          {% endif %}
+
+        </div>
+
+        <!-- Acciones -->
+        <div class="card-footer">
+          <a class="cbtn ver" href="{% url 'prospectos:expediente' p.id %}" title="Ver expediente completo">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Expediente
+          </a>
+          <button class="cbtn ver" title="Ver detalle rápido"
+            data-id="{{ p.id }}"
+            data-nombre="{{ p.nombre|escapejs }}"
+            data-correo="{{ p.correo|escapejs }}"
+            data-telefono="{{ p.telefono|escapejs }}"
+            data-interes="{{ p.get_interes_display|escapejs }}"
+            data-asesor="{{ p.asesor_asignado.get_full_name|default:p.asesor_asignado.username|default:'Sin asignar'|escapejs }}"
+            data-estado="{{ p.estado }}"
+            data-fecha="{{ p.fecha|date:'d/m/Y H:i'|escapejs }}"
+            data-notas="{{ p.notas|default:''|escapejs }}"
+            data-mensaje="{{ p.mensaje|default:''|escapejs }}"
+            onclick="abrirDetalle(this)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg>
+            Ver
+          </button>
+          <button class="cbtn" title="Editar prospecto"
+            data-id="{{ p.id }}"
+            data-nombre="{{ p.nombre|escapejs }}"
+            data-correo="{{ p.correo|escapejs }}"
+            data-telefono="{{ p.telefono|escapejs }}"
+            data-interes="{{ p.interes }}"
+            data-estado="{{ p.estado }}"
+            data-asesor="{{ p.asesor_asignado_id|default:'' }}"
+            data-notas="{{ p.notas|default:''|escapejs }}"
+            onclick="abrirModalEditar(this)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
+            Editar
+          </button>
+          {% if p.estado != 'convertido' %}
+          <button class="cbtn convert" title="Marcar como convertido"
+            onclick="convertirProspecto({{ p.id }}, '{{ p.nombre|escapejs }}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Convertir
+          </button>
+          {% endif %}
+          <button class="cbtn del" title="Eliminar prospecto" style="margin-left:auto;"
+            onclick="confirmarEliminar({{ p.id }}, '{{ p.nombre|escapejs }}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            Eliminar
+          </button>
         </div>
       </div>
+      {% empty %}
+      <div class="empty-state">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <p>No hay prospectos registrados.</p>
+      </div>
+      {% endfor %}
 
-      <table>
-        <thead>
-          <tr>
-            <th>Prospecto</th>
-            <th>Teléfono</th>
-            <th>Interés</th>
-            <th>Asesor</th>
-            <th>Estado</th>
-            <th>Fecha</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for p in prospectos %}
-          <tr>
-            <td>
-              <div style="font-weight:600;color:var(--txt);">{{ p.nombre }}</div>
-              <div style="font-size:11px;color:var(--txt3);margin-top:2px;">{{ p.correo }}</div>
-            </td>
-            <td>{{ p.telefono }}</td>
-            <td>{{ p.get_interes_display }}</td>
-            <td>
-              {% if p.asesor_asignado %}
-                <span style="font-size:12px;">{{ p.asesor_asignado.get_full_name|default:p.asesor_asignado.username }}</span>
-              {% else %}
-                <span style="color:var(--txt3);font-size:12px;">— Sin asignar</span>
-              {% endif %}
-            </td>
-            <td>
-              {% if p.estado == 'nuevo' %}
-                <span class="badge b-blue">Nuevo</span>
-              {% elif p.estado == 'contactado' %}
-                <span class="badge b-yellow">Contactado</span>
-              {% elif p.estado == 'convertido' %}
-                <span class="badge b-green">Convertido</span>
-              {% else %}
-                <span class="badge b-gray">Descartado</span>
-              {% endif %}
-            </td>
-            <td style="white-space:nowrap;font-size:12px;">{{ p.fecha|date:"d/m/Y" }}</td>
-            <td style="white-space:nowrap;">
-              <button class="act-btn" title="Editar"
-                data-id="{{ p.id }}"
-                data-nombre="{{ p.nombre|escapejs }}"
-                data-correo="{{ p.correo|escapejs }}"
-                data-telefono="{{ p.telefono|escapejs }}"
-                data-interes="{{ p.interes }}"
-                data-estado="{{ p.estado }}"
-                data-asesor="{{ p.asesor_asignado_id|default:'' }}"
-                data-notas="{{ p.notas|default:''|escapejs }}"
-                onclick="abrirModalEditar(this)">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
-              </button>
-              <button class="act-btn del" title="Eliminar"
-                onclick="confirmarEliminar({{ p.id }}, '{{ p.nombre|escapejs }}')">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-              </button>
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="7" class="empty-row">
-              No hay prospectos{% if busqueda or estado_filtro %} con estos filtros{% endif %}.
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    </div><!-- /cards-grid -->
+  </div><!-- /acontent -->
+</div><!-- /abody -->
+
+
+<!-- ═══ MODAL: VER DETALLE ════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalDetalle">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Detalle del prospecto</div>
+      <button class="modal-close" onclick="cerrarModal('modalDetalle')">×</button>
+    </div>
+    <div class="detalle-grid">
+      <div class="d-field" style="grid-column:1/-1;">
+        <label>Nombre completo</label>
+        <span id="d-nombre" style="font-size:16px;font-weight:700;color:var(--txt);"></span>
+      </div>
+      <div class="d-field">
+        <label>Correo</label>
+        <span id="d-correo"></span>
+      </div>
+      <div class="d-field">
+        <label>Teléfono</label>
+        <span id="d-telefono"></span>
+      </div>
+      <div class="d-field">
+        <label>Servicio de interés</label>
+        <span id="d-interes"></span>
+      </div>
+      <div class="d-field">
+        <label>Asesor asignado</label>
+        <span id="d-asesor"></span>
+      </div>
+      <div class="d-field">
+        <label>Estado</label>
+        <span id="d-estado"></span>
+      </div>
+      <div class="d-field">
+        <label>Fecha de registro</label>
+        <span id="d-fecha"></span>
+      </div>
+    </div>
+    <div id="d-mensaje-bloque" style="margin-bottom:.75rem;display:none;">
+      <div style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:5px;">Mensaje inicial</div>
+      <div class="notas-box" id="d-mensaje"></div>
+    </div>
+    <div id="d-notas-bloque" style="margin-bottom:.75rem;display:none;">
+      <div style="font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:5px;">Notas internas</div>
+      <div class="notas-box" id="d-notas"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="cerrarModal('modalDetalle')">Cerrar</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL CREAR -->
+
+<!-- ═══ MODAL: CREAR PROSPECTO ═══════════════════════════════════════════════ -->
 <div class="modal-overlay" id="modalCrear">
   <div class="modal">
     <div class="modal-header">
@@ -358,7 +508,7 @@ tr:hover td{background:#fafbfc;}
         </div>
         <div class="form-group" style="grid-column:1/-1;">
           <label>Mensaje inicial</label>
-          <textarea name="mensaje" rows="2" placeholder="Notas sobre el primer contacto…"></textarea>
+          <textarea name="mensaje" placeholder="Notas sobre el primer contacto…"></textarea>
         </div>
       </div>
       <div class="modal-actions">
@@ -369,7 +519,8 @@ tr:hover td{background:#fafbfc;}
   </div>
 </div>
 
-<!-- MODAL EDITAR -->
+
+<!-- ═══ MODAL: EDITAR PROSPECTO ══════════════════════════════════════════════ -->
 <div class="modal-overlay" id="modalEditar">
   <div class="modal">
     <div class="modal-header">
@@ -423,7 +574,7 @@ tr:hover td{background:#fafbfc;}
         </div>
         <div class="form-group" style="grid-column:1/-1;">
           <label>Notas internas</label>
-          <textarea name="notas" id="edit-notas" rows="2" placeholder="Notas de seguimiento…"></textarea>
+          <textarea name="notas" id="edit-notas" placeholder="Notas de seguimiento…"></textarea>
         </div>
       </div>
       <div class="modal-actions">
@@ -434,14 +585,15 @@ tr:hover td{background:#fafbfc;}
   </div>
 </div>
 
-<!-- MODAL ELIMINAR -->
+
+<!-- ═══ MODAL: ELIMINAR ═══════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="modalEliminar">
   <div class="modal modal-sm">
     <div class="modal-header">
       <div class="modal-title" style="color:var(--red);">⚠️ Eliminar prospecto</div>
       <button class="modal-close" onclick="cerrarModal('modalEliminar')">×</button>
     </div>
-    <p style="font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:1.25rem;">
+    <p style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:1.25rem;">
       ¿Eliminar el prospecto <strong id="nombre-pros-del"></strong>?<br>
       <span style="color:var(--txt3);font-size:12px;">Esta acción no se puede deshacer.</span>
     </p>
@@ -455,34 +607,173 @@ tr:hover td{background:#fafbfc;}
   </div>
 </div>
 
+
+<!-- ═══ MODAL: CONVERTIR ══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalConvertir">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title" style="color:#15803d;">✓ Convertir a cliente</div>
+      <button class="modal-close" onclick="cerrarModal('modalConvertir')">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:1.25rem;">
+      ¿Marcar a <strong id="nombre-pros-conv"></strong> como <strong>Convertido</strong>?<br>
+      <span style="color:var(--txt3);font-size:12px;">El estado cambiará a "Convertido en cliente".</span>
+    </p>
+    <form method="POST" id="formConvertir" action="#">
+      {% csrf_token %}
+      <input type="hidden" name="estado" value="convertido">
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="cerrarModal('modalConvertir')">Cancelar</button>
+        <button type="submit" class="btn-submit" style="background:#15803d;">✓ Sí, convertir</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
 <script>
+// ── Utilidades ────────────────────────────────────────────────────────────────
 function cerrarModal(id) { document.getElementById(id).classList.remove('show'); }
 document.querySelectorAll('.modal-overlay').forEach(function(ov) {
   ov.addEventListener('click', function(e) { if (e.target === ov) ov.classList.remove('show'); });
 });
 
+// ── KPIs — filtrar tarjetas por estado ───────────────────────────────────────
+var _estadoActivo = '';
+
+function filtrarKpi(estado) {
+  _estadoActivo = estado;
+
+  // Estilo activo en KPI
+  document.querySelectorAll('.kpi-card').forEach(function(k) { k.classList.remove('active'); });
+  var kpiId = estado ? 'kpi-' + estado : 'kpi-todos';
+  var el = document.getElementById(kpiId);
+  if (el) el.classList.add('active');
+
+  // Sincronizar búsqueda con estado
+  aplicarFiltros();
+}
+
+// ── Filtros combinados: estado + interés + asesor + texto ────────────────────
+function aplicarFiltros() {
+  var busq    = (document.getElementById('busqueda-input').value || '').toLowerCase().trim();
+  var interes = document.getElementById('filtro-interes').value;
+  var asesor  = document.getElementById('filtro-asesor').value;
+
+  var cards   = document.querySelectorAll('.pros-card[data-estado]');
+  var visible = 0;
+
+  cards.forEach(function(card) {
+    var pasaEstado  = !_estadoActivo || card.dataset.estado === _estadoActivo;
+    var pasaInteres = !interes       || card.dataset.interes === interes;
+    var pasaAsesor  = !asesor        ||
+                      (asesor === 'sin' && !card.dataset.asesorId) ||
+                      card.dataset.asesorId === asesor;
+    var pasaBusq    = !busq ||
+                      (card.dataset.nombre  || '').indexOf(busq) !== -1 ||
+                      (card.dataset.correo  || '').indexOf(busq) !== -1 ||
+                      (card.dataset.telefono|| '').indexOf(busq) !== -1;
+
+    var mostrar = pasaEstado && pasaInteres && pasaAsesor && pasaBusq;
+    card.style.display = mostrar ? '' : 'none';
+    if (mostrar) visible++;
+  });
+
+  // Contador y estado vacío
+  document.getElementById('cnt-visible').textContent = visible + ' mostrando';
+  var subtitle = document.getElementById('subtitle');
+  if (subtitle) subtitle.textContent = visible + ' prospecto' + (visible !== 1 ? 's' : '') + ' registrado' + (visible !== 1 ? 's' : '');
+
+  var grid = document.getElementById('cards-grid');
+  var yaVacio = grid.querySelector('.empty-state');
+  if (visible === 0 && !yaVacio) {
+    var div = document.createElement('div');
+    div.className = 'empty-state';
+    div.id = 'empty-dynamic';
+    div.innerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><p>No hay prospectos con estos filtros.</p>';
+    grid.appendChild(div);
+  } else if (visible > 0) {
+    var dynVacio = document.getElementById('empty-dynamic');
+    if (dynVacio) dynVacio.remove();
+  }
+}
+
+// ── Inicializar contador de descartados ───────────────────────────────────────
+(function() {
+  var desc = document.querySelectorAll('.pros-card[data-estado="descartado"]').length;
+  var el = document.querySelector('#kpi-descartado .kpi-num');
+  if (el) el.textContent = desc;
+})();
+
+// ── Modal: Ver detalle ────────────────────────────────────────────────────────
+function abrirDetalle(btn) {
+  var d = btn.dataset;
+  document.getElementById('d-nombre').textContent   = d.nombre;
+  document.getElementById('d-correo').textContent   = d.correo;
+  document.getElementById('d-telefono').textContent = d.telefono;
+  document.getElementById('d-interes').textContent  = d.interes;
+  document.getElementById('d-asesor').textContent   = d.asesor;
+  document.getElementById('d-fecha').textContent    = d.fecha;
+
+  // Badge estado
+  var estadoLabels = { nuevo:'Nuevo', contactado:'Contactado', convertido:'Convertido en cliente', descartado:'Descartado' };
+  var estadoBadges = { nuevo:'b-blue', contactado:'b-yellow', convertido:'b-green', descartado:'b-gray' };
+  document.getElementById('d-estado').innerHTML =
+    '<span class="badge ' + (estadoBadges[d.estado] || 'b-gray') + '">' + (estadoLabels[d.estado] || d.estado) + '</span>';
+
+  // Mensaje
+  var msgBloque = document.getElementById('d-mensaje-bloque');
+  if (d.mensaje) {
+    document.getElementById('d-mensaje').textContent = d.mensaje;
+    msgBloque.style.display = '';
+  } else {
+    msgBloque.style.display = 'none';
+  }
+
+  // Notas
+  var notasBloque = document.getElementById('d-notas-bloque');
+  if (d.notas) {
+    document.getElementById('d-notas').textContent = d.notas;
+    notasBloque.style.display = '';
+  } else {
+    notasBloque.style.display = 'none';
+  }
+
+  document.getElementById('modalDetalle').classList.add('show');
+}
+
+// ── Modal: Crear ──────────────────────────────────────────────────────────────
 function abrirModalCrear() { document.getElementById('modalCrear').classList.add('show'); }
 
+// ── Modal: Editar ─────────────────────────────────────────────────────────────
 function abrirModalEditar(btn) {
   var d = btn.dataset;
-  document.getElementById('formEditar').action = '/prospectos/' + d.id + '/editar/';
-  document.getElementById('edit-nombre').value   = d.nombre;
-  document.getElementById('edit-correo').value   = d.correo;
-  document.getElementById('edit-telefono').value = d.telefono;
-  document.getElementById('edit-interes').value  = d.interes;
-  document.getElementById('edit-estado').value   = d.estado;
-  document.getElementById('edit-notas').value    = d.notas;
+  document.getElementById('formEditar').action     = '/prospectos/' + d.id + '/editar/';
+  document.getElementById('edit-nombre').value     = d.nombre;
+  document.getElementById('edit-correo').value     = d.correo;
+  document.getElementById('edit-telefono').value   = d.telefono;
+  document.getElementById('edit-interes').value    = d.interes;
+  document.getElementById('edit-estado').value     = d.estado;
+  document.getElementById('edit-notas').value      = d.notas;
   var asesorSel = document.getElementById('edit-asesor');
   for (var i = 0; i < asesorSel.options.length; i++) {
-    asesorSel.options[i].selected = (asesorSel.options[i].value == d.asesor);
+    asesorSel.options[i].selected = (asesorSel.options[i].value === d.asesor);
   }
   document.getElementById('modalEditar').classList.add('show');
 }
 
+// ── Modal: Eliminar ───────────────────────────────────────────────────────────
 function confirmarEliminar(id, nombre) {
   document.getElementById('nombre-pros-del').textContent = nombre;
   document.getElementById('formEliminar').action = '/prospectos/' + id + '/eliminar/';
   document.getElementById('modalEliminar').classList.add('show');
+}
+
+// ── Modal: Convertir ──────────────────────────────────────────────────────────
+function convertirProspecto(id, nombre) {
+  document.getElementById('nombre-pros-conv').textContent = nombre;
+  document.getElementById('formConvertir').action = '/prospectos/' + id + '/editar/';
+  document.getElementById('modalConvertir').classList.add('show');
 }
 </script>
 

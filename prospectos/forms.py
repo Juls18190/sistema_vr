@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Prospecto
-
+from .models import Prospecto, SeguimientoProspecto
 
 # ── Formulario PÚBLICO (sitio web) ────────────────────────────────────────────
 class ProspectoPublicoForm(forms.ModelForm):
@@ -30,7 +29,10 @@ class ProspectoForm(forms.ModelForm):
             'nombre', 'correo', 'telefono', 'interes',
             'mensaje', 'estado', 'asesor_asignado',
             'fecha_contacto', 'notas',
+            'es_referido', 'nombre_referente',
+            'tipo_registro', 'servicios_interes', 'promociones_actuales',
         ]
+        
         widgets = {
             'nombre':   forms.TextInput(attrs={'placeholder': 'Nombre completo', 'class': 'campo'}),
             'correo':   forms.EmailInput(attrs={'placeholder': 'correo@ejemplo.com', 'class': 'campo'}),
@@ -62,3 +64,17 @@ class ProspectoForm(forms.ModelForm):
         self.fields['fecha_contacto'].required = False
         self.fields['notas'].required = False
         self.fields['mensaje'].required = False
+
+        # ── Formulario de Seguimiento ─────────────────────────────────────────────────
+
+class SeguimientoForm(forms.ModelForm):
+    class Meta:
+        model  = SeguimientoProspecto
+        fields = ['comentario']
+        widgets = {
+            'comentario': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Escribe el comentario de seguimiento…',
+            }),
+        }
+        labels = {'comentario': ''}
