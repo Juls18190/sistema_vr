@@ -3,43 +3,59 @@ from .models import Servicio
 
 
 class ServicioForm(forms.ModelForm):
+
     class Meta:
-        model  = Servicio
+        model = Servicio
+
         fields = [
-            'nombre', 'categoria', 'descripcion_corta',
-            'descripcion', 'icono_clase', 'orden', 'activo',
+            'nombre',
+            'categoria',
+            'descripcion_corta',
+            'descripcion',
+            'imagen',
+            'orden',
+            'activo',
         ]
+
         widgets = {
             'nombre': forms.TextInput(attrs={
-                'placeholder': 'Ej. Seguro de vida, Ahorro universitario…',
                 'class': 'campo',
+                'placeholder': 'Nombre del servicio'
             }),
-            'categoria': forms.Select(attrs={'class': 'campo'}),
+
+            'categoria': forms.Select(attrs={
+                'class': 'campo'
+            }),
+
             'descripcion_corta': forms.TextInput(attrs={
-                'placeholder': 'Resumen breve visible en tarjetas (máx. 300 car.)',
                 'class': 'campo',
+                'placeholder': 'Descripción corta'
             }),
+
             'descripcion': forms.Textarea(attrs={
-                'rows': 4,
-                'placeholder': 'Descripción completa del servicio…',
                 'class': 'campo',
+                'rows': 4
             }),
-            'icono_clase': forms.TextInput(attrs={
-                'placeholder': 'Ej. fa-shield-alt (Font Awesome class)',
-                'class': 'campo',
+
+            'imagen': forms.ClearableFileInput(attrs={
+                'class': 'campo'
             }),
+
             'orden': forms.NumberInput(attrs={
-                'class': 'campo',
-                'min': 0,
+                'class': 'campo'
             }),
-            'activo': forms.CheckboxInput(attrs={'class': 'campo-check'}),
+
+            'activo': forms.CheckboxInput(attrs={
+                'class': 'campo-check'
+            }),
         }
+
         labels = {
-            'nombre':           'Nombre del servicio *',
-            'categoria':        'Categoría *',
-            'descripcion_corta':'Descripción corta *',
-            'descripcion':      'Descripción completa *',
-            'icono_clase':      'Clase de ícono (opcional)',
-            'orden':            'Orden de aparición',
-            'activo':           'Publicado (visible en el sitio)',
+            'nombre': 'Nombre',
+            'categoria': 'Categoría',
+            'descripcion_corta': 'Descripción corta',
+            'descripcion': 'Descripción completa',
+            'imagen': 'Imagen',
+            'orden': 'Orden',
+            'activo': 'Publicado',
         }

@@ -1,0 +1,58 @@
+{% load static %}
+<div class="sec" id="vacantes-destacadas">
+  <div class="anim-fadeup" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <div>
+      <div class="sec-tag">Únete al equipo</div>
+      <h2 class="sh">Vacantes Destacadas</h2>
+      <div class="uline"></div>
+    </div>
+    <a href="/vacantes/" class="btn-s" style="margin-bottom:2rem;">Ver todas las vacantes →</a>
+  </div>
+
+  {% if vacantes_destacadas %}
+  <div class="vd-wrap anim-fadeup">
+    {% if vacantes_destacadas|length > 1 %}
+    <button class="vd-arrow vd-prev" onclick="vdMove(-1)" aria-label="Anterior">‹</button>
+    <button class="vd-arrow vd-next" onclick="vdMove(1)" aria-label="Siguiente">›</button>
+    {% endif %}
+    <div class="vd-track" id="vdTrack">
+      {% for v in vacantes_destacadas %}
+      <div class="vd-card">
+        {% if v.imagen %}
+          <div class="vd-img" style="background-image:url('{{ v.imagen.url }}');">
+            <span class="vd-badge">{{ v.get_publico_objetivo_display }}</span>
+          </div>
+        {% else %}
+          <div class="vd-img" style="background:linear-gradient(135deg,#0b2540,#1a4a7a);display:flex;align-items:center;justify-content:center;">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+            <span class="vd-badge">{{ v.get_publico_objetivo_display }}</span>
+          </div>
+        {% endif %}
+        <div class="vd-body">
+          <div class="vd-title">{{ v.titulo }}</div>
+          <div class="vd-tags">
+            <span class="vd-tag blue">{{ v.get_modalidad_display }}</span>
+            {% if v.ubicacion %}<span class="vd-tag">{{ v.ubicacion }}</span>{% endif %}
+          </div>
+          <a href="/vacantes/" class="vd-btn">Ver convocatoria</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="vd-empty anim-fadeup">Por el momento no tenemos vacantes activas. Vuelve pronto o escríbenos por WhatsApp para saber de próximas oportunidades.</div>
+  {% endif %}
+</div>
+
+<script>
+(function(){
+  var track = document.getElementById('vdTrack');
+  if(!track) return;
+  window.vdMove = function(dir){
+    var card = track.querySelector('.vd-card');
+    var step = card ? (card.offsetWidth + 20) : 300;
+    track.scrollBy({ left: dir * step, behavior: 'smooth' });
+  };
+})();
+</script>

@@ -1,19 +1,32 @@
+{% load static %}
 <footer>
   <div class="ft-grid">
     <div class="ft-brand">
-      <div style="font-size:16px;font-weight:600;color:#fff;">GRUPO V&amp;R</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;">
+        <img src="{% static 'img/logo.png' %}" alt="Grupo V&R" width="32" height="20">
+        <span style="font-size:16px;font-weight:600;color:#fff;">GRUPO V&amp;R</span>
+      </div>
       <p>Protegemos lo que más te importa con soluciones financieras y de seguros a tu medida, respaldados por Grupo Financiero Inbursa.</p>
+      <div class="ft-social" style="display:flex;gap:10px;margin-top:1rem;">
+        <!-- TODO: reemplazar por la URL real de Facebook -->
+        <a href="https://www.facebook.com/GrupoVRagentes/" data-social="facebook" aria-label="Facebook" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;">f</a>
+        <!-- TODO: reemplazar por la URL real de LinkedIn -->
+        <a href="https://www.linkedin.com/company/grupo-v-r-consultores-agente-de-seguros/" data-social="linkedin" aria-label="LinkedIn" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;">in</a>
+        <!-- TODO: reemplazar por la URL real de Instagram -->
+        <a href="https://www.instagram.com/grupo.vr.seguros/" data-social="instagram" aria-label="Instagram" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;">ig</a>
+        <a href="https://wa.me/527891079756" target="_blank" data-social="whatsapp" aria-label="WhatsApp" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;">wa</a>
+        <a href="mailto:grupovr@inbursaasesores.com" data-social="correo" aria-label="Correo" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;">✉</a>
+      </div>
     </div>
-    <div class="ft-col"><h5>Servicios</h5><a href="#">Gastos Médicos</a><a href="#">Seguro de Vida</a><a href="#">Seguro de Auto</a><a href="#">Inversión y Ahorro</a><a href="#">Empresarial</a></div>
-    <div class="ft-col"><h5>Empresa</h5><a href="#">Quiénes Somos</a><a href="#reclutamiento">Únete al Equipo</a><a href="#citas">Agendar Cita</a><a href="/usuarios/login/">Portal Admin</a></div>
-    <div class="ft-col"><h5>Contacto</h5><a href="#">Av. Juárez #704, Poza Rica</a><a href="tel:7821602295">782 160 2295</a><a href="mailto:grupovr@inbursaasesores.com">grupovr@inbursaasesores.com</a></div>
+    <div class="ft-col"><h5>Servicios</h5><a href="/servicios/">Gastos Médicos</a><a href="/servicios/">Seguro de Vida</a><a href="/servicios/">Seguro de Auto</a><a href="/servicios/">Inversión y Ahorro</a><a href="/servicios/">Empresarial</a></div>
+    <div class="ft-col"><h5>Empresa</h5><a href="/#nosotros">Quiénes Somos</a><a href="/vacantes/">Vacantes</a><a href="/citas/agendar/">Agendar Cita</a><a href="/usuarios/login/">Portal Admin</a></div>
+    <div class="ft-col"><h5>Contacto</h5><span style="display:block;font-size:13px;color:var(--muted);margin-bottom:7px;">Av. Juárez #704, Poza Rica, Ver.</span><a href="tel:7821602295">782 160 2295</a><a href="mailto:grupovr@inbursaasesores.com">grupovr@inbursaasesores.com</a></div>
   </div>
   <div class="ft-bottom">
     <p>© 2026 Grupo V&amp;R Consultores · Todos los derechos reservados.</p>
     <p>Aviso de Privacidad · Términos y Condiciones</p>
   </div>
 </footer>
-
 <div class="float-wrap">
   <div class="float-item">
     <div class="float-tooltip">Llamar ahora</div>
@@ -23,7 +36,7 @@
   </div>
   <div class="float-item">
     <div class="float-tooltip">WhatsApp</div>
-    <button class="fab fab-wa" onclick="window.open('https://wa.me/527821602295','_blank')">
+    <button class="fab fab-wa" onclick="window.open('https://wa.me/527891079756','_blank')">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.1 1.524 5.823L0 24l6.335-1.499A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.885.916-3.636-.235-.374A9.861 9.861 0 012.106 12C2.106 6.58 6.58 2.106 12 2.106S21.894 6.58 21.894 12 17.42 21.894 12 21.894z"/></svg>
     </button>
   </div>

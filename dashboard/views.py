@@ -15,6 +15,17 @@ from servicios.models   import Servicio
 from historial.models   import Historial
 from usuarios.models    import PerfilUsuario
 
+def _qs_prospectos(user):
+    """
+    Devuelve el queryset base de Prospecto visible para este usuario.
+    Admin/superuser → todos. Asesor → solo los asignados a él.
+    """
+    perfil   = getattr(user, 'perfil', None)
+    es_admin = perfil.es_admin if perfil else user.is_superuser
+    if es_admin:
+        return Prospecto.objects.all()
+    return Prospecto.objects.filter(asesor_asignado=user)
+
 
 def _datos_mensuales():
     MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
@@ -56,6 +67,7 @@ def _datos_mensuales():
 @login_required(login_url='/usuarios/login/')
 def index(request):
     try:
+        Vacante.sincronizar_vencidas()
         meses_labels, citas_data, posts_data = _datos_mensuales()
 
         hoy = timezone.now()
@@ -84,7 +96,7 @@ def index(request):
             'vacantes_pausadas':        Vacante.objects.filter(estado='pausada').count(),
             'vacantes_cerradas':        Vacante.objects.filter(estado='cerrada').count(),
             'vacantes_total':           Vacante.objects.count(),
-            'prospectos_nuevos':        Prospecto.objects.filter(estado='nuevo').count(),
+            'prospectos_nuevos':        _qs_prospectos(request.user).filter(estado='nuevo').count(),
 
             # ── Postulantes — 6 estados (Fase 1) ──────────────────────────
             'postulantes_total':        Postulante.objects.count(),
@@ -111,12 +123,12 @@ def index(request):
             # ── Postulantes tabla ──────────────────────────────────────────
             'postulantes':              Postulante.objects.select_related('vacante').order_by('-fecha')[:50],
 
-            # ── Prospectos ────────────────────────────────────────────────
-            'prospectos':               Prospecto.objects.select_related('asesor_asignado').order_by('-fecha')[:50],
-            'prospectos_total':         Prospecto.objects.count(),
-            'prospectos_contactados':   Prospecto.objects.filter(estado='contactado').count(),
-            'prospectos_convertidos':   Prospecto.objects.filter(estado='convertido').count(),
-            'prospectos_descartados':   Prospecto.objects.filter(estado='descartado').count(),
+            # ── Prospectos — filtrados por rol ────────────────────────────
+            'prospectos':               _qs_prospectos(request.user).select_related('asesor_asignado').order_by('-fecha')[:50],
+            'prospectos_total':         _qs_prospectos(request.user).count(),
+            'prospectos_contactados':   _qs_prospectos(request.user).filter(estado='contactado').count(),
+            'prospectos_convertidos':   _qs_prospectos(request.user).filter(estado='convertido').count(),
+            'prospectos_descartados':   _qs_prospectos(request.user).filter(estado='descartado').count(),
 
             # ── Servicios ─────────────────────────────────────────────────
             'servicios':                Servicio.objects.all().order_by('orden'),
@@ -196,8 +208,162 @@ def index(request):
 
     return render(request, 'dashboard/index.html', contexto)
 
+# ── Notificaciones en tiempo real ─────────────────────────────────────────────
+# Estructura de cada notificación:
+#   tipo        → identificador de categoría ('cita_hoy', 'postulante_nuevo', etc.)
+#   titulo      → texto corto del encabezado
+#   mensaje     → descripción legible
+#   prioridad   → 'alta' | 'media' | 'informativa'
+#   canales     → lista de canales habilitados en fases futuras ['dashboard', 'email', 'whatsapp']
+#   accion_nav  → sección del dashboard a la que navega el botón (para nav() en el JS)
+#   accion_url  → URL alternativa si la acción sale del dashboard (puede ser None)
+#
+# FASE 2: cuando se implemente el modelo Notificacion, esta función
+# seguirá calculando las mismas queries pero además creará registros
+# persistentes y los enviará por email/WhatsApp según `canales`.
+
+def _calcular_notificaciones(usuario):
+    """
+    Calcula notificaciones en tiempo real con ORM.
+    Devuelve lista ordenada por prioridad (alta → media → informativa).
+    """
+    from datetime import timedelta
+    from django.db.models import Max
+
+    hoy      = timezone.now().date()
+    items    = []
+
+    PRIORIDAD_ORDEN = {'alta': 0, 'media': 1, 'informativa': 2}
+
+    # ── 1. Citas pendientes o confirmadas de HOY ───────────────────────────────
+    citas_hoy = Cita.objects.filter(
+        fecha=hoy,
+        estado__in=['pendiente', 'confirmada']
+    ).order_by('hora')
+
+    for c in citas_hoy:
+        hora_str = c.hora.strftime('%H:%M')
+        items.append({
+            'tipo':       'cita_hoy',
+            'titulo':     f'Cita a las {hora_str}',
+            'mensaje':    f'{c.nombre_cliente} {c.apellidos_cliente} — {c.get_motivo_display()}',
+            'prioridad':  'alta',
+            'canales':    ['dashboard'],          # Fase 2: agregar 'email', 'whatsapp'
+            'accion_nav': 'citas',
+            'accion_url': None,
+        })
+
+    # ── 2. Postulantes en estado 'nuevo' (sin revisar) ─────────────────────────
+    post_nuevos = Postulante.objects.filter(estado='nuevo').count()
+    if post_nuevos > 0:
+        items.append({
+            'tipo':       'postulante_nuevo',
+            'titulo':     'Postulantes sin revisar',
+            'mensaje':    f'{post_nuevos} postulante{"s" if post_nuevos > 1 else ""} esperando revisión',
+            'prioridad':  'media',
+            'canales':    ['dashboard'],
+            'accion_nav': 'postulantes',
+            'accion_url': None,
+        })
+
+# ── 3. Prospectos sin ningún seguimiento (filtrado por rol) ───────────────
+    qs_prosp = _qs_prospectos(usuario)
+    sin_seguimiento = qs_prosp.filter(
+        seguimientos__isnull=True,
+        estado__in=['nuevo', 'contactado']
+    ).count()
+    if sin_seguimiento > 0:
+        items.append({
+            'tipo':       'prospecto_sin_seguimiento',
+            'titulo':     'Prospectos sin seguimiento',
+            'mensaje':    f'{sin_seguimiento} prospecto{"s" if sin_seguimiento > 1 else ""} sin ningún contacto registrado',
+            'prioridad':  'media',
+            'canales':    ['dashboard'],
+            'accion_nav': 'prospectos',
+            'accion_url': None,
+        })
+
+    # ── 4. Prospectos sin seguimiento en los últimos 7 días (por rol) ─────────
+    hace_7_dias = timezone.now() - timedelta(days=7)
+    con_seguimiento_reciente = (
+        qs_prosp
+        .filter(seguimientos__fecha__gte=hace_7_dias)
+        .values_list('id', flat=True)
+    )
+    sin_seguimiento_reciente = qs_prosp.filter(
+        estado__in=['nuevo', 'contactado'],
+        seguimientos__isnull=False,
+    ).exclude(id__in=con_seguimiento_reciente).count()
+    if sin_seguimiento_reciente > 0:
+        items.append({
+            'tipo':       'prospecto_seguimiento_tardio',
+            'titulo':     'Seguimientos atrasados',
+            'mensaje':    f'{sin_seguimiento_reciente} prospecto{"s" if sin_seguimiento_reciente > 1 else ""} sin seguimiento en los últimos 7 días',
+            'prioridad':  'media',
+            'canales':    ['dashboard'],
+            'accion_nav': 'prospectos',
+            'accion_url': None,
+        })
+
+    # ── . Vacantes activas por vencer (próximos 7 días) ──────────────────────
+    en_7_dias = hoy + timedelta(days=7)
+    vac_por_vencer = Vacante.objects.filter(
+        estado='activa',
+        fecha_limite__isnull=False,
+        fecha_limite__lte=en_7_dias,
+        fecha_limite__gte=hoy,
+    )
+    for v in vac_por_vencer:
+        dias_restantes = (v.fecha_limite - hoy).days
+        if dias_restantes == 0:
+            tiempo_msg = 'vence HOY'
+            prioridad  = 'alta'
+        elif dias_restantes == 1:
+            tiempo_msg = 'vence mañana'
+            prioridad  = 'alta'
+        else:
+            tiempo_msg = f'vence en {dias_restantes} días'
+            prioridad  = 'media'
+
+        items.append({
+            'tipo':       'vacante_por_vencer',
+            'titulo':     'Vacante próxima a cerrar',
+            'mensaje':    f'"{v.titulo}" {tiempo_msg}',
+            'prioridad':  prioridad,
+            'canales':    ['dashboard'],
+            'accion_nav': 'vacantes',
+            'accion_url': None,
+        })
+
+    # ── Ordenar: alta → media → informativa ───────────────────────────────────
+    items.sort(key=lambda x: PRIORIDAD_ORDEN.get(x['prioridad'], 99))
+
+    return items
+
+
+@login_required
+def notificaciones_ajax(request):
+    """Endpoint AJAX para el panel de notificaciones del dashboard."""
+    items = _calcular_notificaciones(request.user)
+
+    # Etiqueta visual por prioridad
+    prioridad_labels = {
+        'alta':        {'label': 'Alta',        'color': '#dc2626', 'bg': '#fee2e2'},
+        'media':       {'label': 'Media',       'color': '#d97706', 'bg': '#fef3c7'},
+        'informativa': {'label': 'Informativa', 'color': '#2563eb', 'bg': '#dbeafe'},
+    }
+    for item in items:
+        item['prioridad_meta'] = prioridad_labels.get(item['prioridad'], prioridad_labels['informativa'])
+
+    return JsonResponse({
+        'ok':    True,
+        'total': len(items),
+        'items': items,
+    })
+
 @login_required
 def kpis_ajax(request):
+    
     """Devuelve KPIs y actividad reciente filtrados por periodo."""
     from datetime import datetime, time as time_obj, timedelta
 
@@ -218,7 +384,7 @@ def kpis_ajax(request):
     # KPIs filtrados por periodo
     citas_periodo      = Cita.objects.filter(creada__gte=inicio).count()
     postulantes_periodo = Postulante.objects.filter(fecha__gte=inicio).count()
-    prospectos_periodo  = Prospecto.objects.filter(fecha__gte=inicio).count()
+    prospectos_periodo  = _qs_prospectos(request.user).filter(fecha__gte=inicio).count()
     vacantes_periodo    = Vacante.objects.filter(creada__gte=inicio).count()
 
     # Actividad reciente filtrada por periodo

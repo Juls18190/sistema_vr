@@ -91,6 +91,8 @@ tr:hover td{background:#fafbfc;}
 .toggle-btn.pausada:hover{background:#fde68a;}
 .toggle-btn.cerrada{color:#dc2626;border-color:#fecaca;background:#fee2e2;}
 .toggle-btn.cerrada:hover{background:#fecaca;}
+.toggle-btn.vencida{color:#b91c1c;border-color:#fca5a5;background:#fef2f2;}
+.toggle-btn.vencida:hover{background:#fee2e2;}
 .toggle-btn:disabled{opacity:.5;cursor:wait;}
 
 /* MODALES */
@@ -196,7 +198,7 @@ tr:hover td{background:#fafbfc;}
         <div class="page-title">Gestión de Vacantes</div>
         <div class="page-sub">
           {{ total }} vacante{{ total|pluralize }} registrada{{ total|pluralize }}
-          {% if busqueda or estado_filtro %} · Filtros activos{% endif %}
+          {% if busqueda or estado_filtro or publico_filtro %} · Filtros activos{% endif %}
         </div>
       </div>
       <button class="btn-primary" onclick="abrirModalCrear()">
@@ -259,23 +261,39 @@ tr:hover td{background:#fafbfc;}
           <!-- Filtro por estado -->
           <form method="GET" id="filtroEstado">
             <input type="hidden" name="q" value="{{ busqueda }}">
+            <input type="hidden" name="publico_objetivo" value="{{ publico_filtro }}">
             <select class="filter-select" name="estado" onchange="document.getElementById('filtroEstado').submit()">
               <option value="">Todos los estados</option>
               <option value="activa"  {% if estado_filtro == 'activa'  %}selected{% endif %}>Activas</option>
               <option value="pausada" {% if estado_filtro == 'pausada' %}selected{% endif %}>Pausadas</option>
               <option value="cerrada" {% if estado_filtro == 'cerrada' %}selected{% endif %}>Cerradas</option>
+              <option value="vencida" {% if estado_filtro == 'vencida' %}selected{% endif %}>Vencidas</option>
+            </select>
+          </form>
+          <!-- Filtro por público objetivo -->
+          <form method="GET" id="filtroPublico">
+            <input type="hidden" name="q" value="{{ busqueda }}">
+            <input type="hidden" name="estado" value="{{ estado_filtro }}">
+            <select class="filter-select" name="publico_objetivo" onchange="document.getElementById('filtroPublico').submit()">
+              <option value="">Todo público</option>
+              <option value="general"        {% if publico_filtro == 'general'        %}selected{% endif %}>General</option>
+              <option value="estudiantes"    {% if publico_filtro == 'estudiantes'    %}selected{% endif %}>Estudiantes</option>
+              <option value="jubilados"      {% if publico_filtro == 'jubilados'      %}selected{% endif %}>Jubilados</option>
+              <option value="amas_casa"      {% if publico_filtro == 'amas_casa'      %}selected{% endif %}>Amas de casa</option>
+              <option value="profesionistas" {% if publico_filtro == 'profesionistas' %}selected{% endif %}>Profesionistas</option>
             </select>
           </form>
           <!-- Búsqueda -->
           <form method="GET" id="busquedaForm">
             <input type="hidden" name="estado" value="{{ estado_filtro }}">
+            <input type="hidden" name="publico_objetivo" value="{{ publico_filtro }}">
             <div class="search-wrap">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input type="text" name="q" placeholder="Buscar título o área…" value="{{ busqueda }}"
                 onkeydown="if(event.key==='Enter'){document.getElementById('busquedaForm').submit();}">
             </div>
           </form>
-          {% if busqueda or estado_filtro %}
+          {% if busqueda or estado_filtro or publico_filtro %}
             <a href="/vacantes/admin/" style="font-size:12px;color:var(--txt3);text-decoration:none;padding:7px 10px;">✕ Limpiar</a>
           {% endif %}
         </div>
@@ -287,6 +305,7 @@ tr:hover td{background:#fafbfc;}
             <th>Vacante</th>
             <th>Área</th>
             <th>Modalidad</th>
+            <th>Público</th>
             <th>Postulantes</th>
             <th>Estado</th>
             <th>Creada</th>
@@ -309,20 +328,24 @@ tr:hover td{background:#fafbfc;}
             </td>
             <td>{{ v.area }}</td>
             <td>{{ v.get_modalidad_display }}</td>
+            <td><span class="badge b-blue">{{ v.get_publico_objetivo_display }}</span></td>
             <td>
               <a href="/postulantes/admin/?vacante={{ v.id }}" style="text-decoration:none;">
                 <span class="badge b-blue">{{ v.postulantes.count }} postulante{{ v.postulantes.count|pluralize }}</span>
               </a>
             </td>
             <td>
-              {# Toggle de 3 estados: activa → pausada → cerrada → activa #}
+              {# Toggle de 4 estados. "Vencida" es automático por fecha límite:
+                 si se pulsa aquí, el backend la regresa a "vencida" solo,
+                 porque la fecha límite sigue en el pasado. #}
               <button
                 class="toggle-btn {{ v.estado }}"
                 id="toggle-{{ v.id }}"
                 onclick="toggleEstado({{ v.id }}, this)"
-                title="Click para cambiar estado">
+                title="{% if v.estado == 'vencida' %}Vencida automáticamente — edita la fecha límite para reactivarla{% else %}Click para cambiar estado{% endif %}">
                 {% if v.estado == 'activa' %}✓ Activa
                 {% elif v.estado == 'pausada' %}⏸ Pausada
+                {% elif v.estado == 'vencida' %}⏳ Vencida
                 {% else %}✗ Cerrada{% endif %}
               </button>
             </td>
@@ -340,7 +363,7 @@ tr:hover td{background:#fafbfc;}
           </tr>
           {% empty %}
           <tr>
-            <td colspan="7" class="empty-row">
+            <td colspan="8" class="empty-row">
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--bdr)" stroke-width="1.5" style="margin-bottom:8px;display:block;margin-left:auto;margin-right:auto;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
               No hay vacantes{% if busqueda or estado_filtro %} con estos filtros{% endif %}.
               {% if busqueda or estado_filtro %}
@@ -411,6 +434,16 @@ tr:hover td{background:#fafbfc;}
             <option value="activa" selected>Activa</option>
             <option value="pausada">Pausada</option>
             <option value="cerrada">Cerrada</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Público objetivo *</label>
+          <select name="publico_objetivo" required>
+            <option value="general" selected>General</option>
+            <option value="estudiantes">Estudiantes</option>
+            <option value="jubilados">Jubilados</option>
+            <option value="amas_casa">Amas de casa</option>
+            <option value="profesionistas">Profesionistas</option>
           </select>
         </div>
         <div class="form-group">
@@ -502,6 +535,17 @@ tr:hover td{background:#fafbfc;}
             <option value="activa">Activa</option>
             <option value="pausada">Pausada</option>
             <option value="cerrada">Cerrada</option>
+            <option value="vencida" disabled>Vencida (automático por fecha límite)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Público objetivo *</label>
+          <select name="publico_objetivo" id="e-publico" required>
+            <option value="general">General</option>
+            <option value="estudiantes">Estudiantes</option>
+            <option value="jubilados">Jubilados</option>
+            <option value="amas_casa">Amas de casa</option>
+            <option value="profesionistas">Profesionistas</option>
           </select>
         </div>
         <div class="form-group">
@@ -609,6 +653,7 @@ function abrirModalEditar(id) {
     document.getElementById('e-modalidad').value   = d.modalidad;
     document.getElementById('e-sueldo').value      = d.sueldo;
     document.getElementById('e-estado').value      = d.estado;
+    document.getElementById('e-publico').value     = d.publico_objetivo;
     document.getElementById('e-fecha').value       = d.fecha_limite;
 
     // Mostrar links a archivos actuales si existen
@@ -652,7 +697,7 @@ function toggleEstado(id, btn) {
       if (d.ok) {
         // Actualizar clase y texto del botón
         btn.className = 'toggle-btn ' + d.estado;
-        var labels = { activa: '✓ Activa', pausada: '⏸ Pausada', cerrada: '✗ Cerrada' };
+        var labels = { activa: '✓ Activa', pausada: '⏸ Pausada', cerrada: '✗ Cerrada', vencida: '⏳ Vencida' };
         btn.textContent = labels[d.estado] || d.label;
       } else {
         alert('Error al cambiar el estado.');

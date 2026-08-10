@@ -26,33 +26,32 @@ def cambiar_estado(request, id):
 # ── Vista pública: formulario de postulación ─────────────────────────────────
 def crear(request):
     if request.method == 'POST':
+        # Si algo falla, regresamos al usuario a la misma página de donde vino
+        # (hoy siempre /vacantes/), en vez de mandarlo a una plantilla distinta.
+        origen = request.META.get('HTTP_REFERER') or '/vacantes/'
+
         # Validar que se subió un CV
         cv = request.FILES.get('cv')
         if not cv:
-            vacantes = Vacante.objects.filter(activa=True)
-            return render(request, 'postulantes/formulario.html', {
-                'vacantes': vacantes,
-                'error': 'Por favor adjunta tu CV en formato PDF.',
-                'post': request.POST,
-            })
+            messages.error(request, 'Por favor adjunta tu CV en formato PDF.')
+            return redirect(origen)
+
         # Validar tipo de archivo
         nombre_cv = cv.name.lower()
         if not nombre_cv.endswith('.pdf') and cv.content_type not in ('application/pdf',):
-            vacantes = Vacante.objects.filter(activa=True)
-            return render(request, 'postulantes/formulario.html', {
-                'vacantes': vacantes,
-                'error': 'Solo se aceptan archivos PDF para el CV.',
-                'post': request.POST,
-            })
+            messages.error(request, 'Solo se aceptan archivos PDF para el CV.')
+            return redirect(origen)
 
         # Validar tamaño (5 MB)
         if cv.size > 5 * 1024 * 1024:
-            vacantes = Vacante.objects.filter(activa=True)
-            return render(request, 'postulantes/formulario.html', {
-                'vacantes': vacantes,
-                'error': 'El CV no puede superar 5 MB.',
-                'post': request.POST,
-            })
+            messages.error(request, 'El CV no puede superar 5 MB.')
+            return redirect(origen)
+
+        nombre = request.POST.get('nombre', '').strip()
+        correo = request.POST.get('correo', '').strip()
+        if not nombre or not correo:
+            messages.error(request, 'Nombre y correo son obligatorios.')
+            return redirect(origen)
 
         vacante_id = request.POST.get('vacante')
         vacante = None
@@ -63,8 +62,8 @@ def crear(request):
                 pass
 
         postulante = Postulante.objects.create(
-            nombre   = request.POST.get('nombre', '').strip(),
-            correo   = request.POST.get('correo', '').strip(),
+            nombre   = nombre,
+            correo   = correo,
             telefono = request.POST.get('telefono', '').strip(),
             linkedin = request.POST.get('linkedin', '').strip() or None,
             cv       = cv,
@@ -89,7 +88,7 @@ def crear(request):
             return redirect('/dashboard/#postulantes')
         return redirect('postulantes:exito')
 
-    vacantes = Vacante.objects.filter(activa=True)
+    vacantes = Vacante.objects.filter(estado='activa')
     return render(request, 'postulantes/formulario.html', {'vacantes': vacantes})
 
 

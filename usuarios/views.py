@@ -31,37 +31,7 @@ def logout_view(request):
 
 @login_required
 def cambiar_password_ajax(request):
-    """Cambia la contraseña del usuario autenticado vía AJAX."""
-    from django.http import JsonResponse
-    from django.contrib.auth import update_session_auth_hash
-
-    if request.method != 'POST':
-        return JsonResponse({'ok': False, 'error': 'Método no permitido.'}, status=405)
-
-    actual     = request.POST.get('password_actual', '')
-    nueva      = request.POST.get('password_nueva', '')
-    confirmacion = request.POST.get('password_confirmacion', '')
-
-    if not actual or not nueva or not confirmacion:
-        return JsonResponse({'ok': False, 'error': 'Todos los campos son obligatorios.'})
-
-    if not request.user.check_password(actual):
-        return JsonResponse({'ok': False, 'error': 'La contraseña actual es incorrecta.'})
-
-    if nueva != confirmacion:
-        return JsonResponse({'ok': False, 'error': 'La nueva contraseña y su confirmación no coinciden.'})
-
-    if len(nueva) < 8:
-        return JsonResponse({'ok': False, 'error': 'La nueva contraseña debe tener al menos 8 caracteres.'})
-
-    request.user.set_password(nueva)
-    request.user.save()
-    update_session_auth_hash(request, request.user)  # mantiene la sesión activa
-
-    return JsonResponse({'ok': True, 'mensaje': 'Contraseña actualizada correctamente.'})
-
-@login_required
-def cambiar_password_ajax(request):
+    
     """Cambia la contraseña del usuario autenticado vía AJAX."""
     from django.http import JsonResponse
     from django.contrib.auth import update_session_auth_hash

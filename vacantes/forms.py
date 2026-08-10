@@ -8,7 +8,7 @@ class VacanteForm(forms.ModelForm):
         fields = [
             'titulo', 'area', 'descripcion', 'requisitos',
             'ubicacion', 'modalidad', 'sueldo', 'estado',
-            'fecha_limite', 'pdf_convocatoria', 'imagen',
+            'publico_objetivo', 'fecha_limite', 'pdf_convocatoria', 'imagen',
         ]
         widgets = {
             'titulo':      forms.TextInput(attrs={
@@ -39,6 +39,7 @@ class VacanteForm(forms.ModelForm):
                 'class': 'campo',
             }),
             'estado':      forms.Select(attrs={'class': 'campo'}),
+            'publico_objetivo': forms.Select(attrs={'class': 'campo'}),
             'fecha_limite':forms.DateInput(attrs={
                 'type': 'date',
                 'class': 'campo',
@@ -55,6 +56,7 @@ class VacanteForm(forms.ModelForm):
             'modalidad':        'Modalidad *',
             'sueldo':           'Sueldo / Rango salarial',
             'estado':           'Estado de la vacante *',
+            'publico_objetivo': 'Público objetivo *',
             'fecha_limite':     'Fecha límite',
             'pdf_convocatoria': 'PDF de convocatoria',
             'imagen':           'Imagen de portada',

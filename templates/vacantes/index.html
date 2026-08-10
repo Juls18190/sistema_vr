@@ -65,6 +65,26 @@ nav{background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);padding:0 2.5rem;d
 .vtag{font-size:11px;background:rgba(255,255,255,0.05);border:0.5px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:12px;}
 .vtag.blue{background:rgba(21,96,189,0.15);border-color:rgba(21,96,189,0.3);color:var(--accent);}
 .vac-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-width:160px;}
+.vac-main{display:flex;gap:14px;align-items:flex-start;}
+.vac-thumb{width:64px;height:64px;border-radius:10px;background-size:cover;background-position:center;flex-shrink:0;cursor:pointer;}
+.vac-thumb-ph{width:64px;height:64px;border-radius:10px;background:rgba(255,255,255,0.04);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* ══ LIGHTBOX DE IMÁGENES ══ */
+.vac-lightbox{display:none;position:fixed;inset:0;background:rgba(5,12,22,.92);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;padding:2rem;}
+.vac-lightbox.open{display:flex;}
+.vac-lightbox img{max-width:90vw;max-height:85vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5);object-fit:contain;}
+.vac-lightbox-close{position:fixed;top:20px;right:24px;width:42px;height:42px;border-radius:50%;border:0.5px solid var(--border);background:rgba(10,22,40,.9);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:1000;}
+.vac-lightbox-close:hover{background:rgba(21,96,189,.7);}
+.vac-lightbox-nav{position:fixed;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;pointer-events:none;}
+.vac-lightbox-arrow{pointer-events:auto;width:44px;height:44px;border-radius:50%;border:0.5px solid var(--border);background:rgba(10,22,40,.9);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.vac-lightbox-arrow:hover{background:rgba(21,96,189,.7);}
+.badge-img{font-size:10px;background:rgba(21,96,189,0.14);color:var(--accent);border:0.5px solid rgba(21,96,189,0.3);padding:3px 10px;border-radius:10px;font-weight:600;cursor:pointer;font-family:var(--ff);}
+.badge-img:hover{background:rgba(21,96,189,0.24);}
+@media(max-width:600px){
+  .vac-lightbox{padding:1rem;}
+  .vac-lightbox img{max-width:94vw;max-height:80vh;}
+  .vac-lightbox-close{top:14px;right:14px;width:38px;height:38px;}
+}
 .btn-apply{background:var(--blue);color:#fff;border:none;padding:11px 22px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-block;}
 .btn-apply:hover{background:var(--blue2);transform:translateY(-1px);}
 .badge-nueva{font-size:10px;background:rgba(34,197,94,0.15);color:#4ade80;border:0.5px solid rgba(34,197,94,0.3);padding:3px 10px;border-radius:10px;font-weight:600;}
@@ -126,6 +146,36 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
   .page-hero{padding:3rem 1.25rem 2rem;}
   .sec{padding:2.5rem 1.25rem;}
 }
+
+/* ── Trabaja con Nosotros (movido desde inicio/sections/reclutamiento.html) ── */
+.team-strip   { display: flex; gap: 10px; margin-bottom: 2rem; }
+.team-card    { flex: 1; border-radius: 8px; overflow: hidden; position: relative; height: 130px; }
+.team-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0,rgba(0,0,0,.75),transparent); padding: 8px; font-size: 11px; color: #fff; font-weight: 500; }
+.rec-grid     { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.tab-pills    { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.tp           { padding: 6px 14px; font-size: 12px; border-radius: 20px; border: 0.5px solid var(--border); color: var(--muted); cursor: pointer; background: none; font-family: var(--ff); }
+.tp.on        { background: var(--blue); color: #fff; border-color: var(--blue); }
+.rec-info     { background: rgba(255,255,255,0.03); border: 0.5px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+.rec-info h3  { font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 8px; }
+.rec-tag      { font-size: 10px; background: rgba(21,96,189,0.2); color: var(--accent); padding: 2px 8px; border-radius: 10px; }
+.checklist    { list-style: none; font-size: 13px; color: var(--muted); }
+.checklist li { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+.cdot         { width: 14px; height: 14px; background: rgba(21,96,189,.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.cdot::after  { content: ""; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
+.fcard        { background: rgba(255,255,255,0.02); border: 0.5px solid var(--border); border-radius: 10px; padding: 1.5rem; }
+.fcard-title  { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: 1.25rem; }
+.fr           { margin-bottom: 11px; }
+.fr label     { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .3px; }
+.fr input, .fr select, .fr textarea { width: 100%; background: rgba(255,255,255,0.04); border: 0.5px solid var(--border); border-radius: 6px; padding: 9px 12px; font-size: 13px; color: var(--text); font-family: var(--ff); outline: none; transition: border-color .2s; }
+.fr input:focus, .fr select:focus { border-color: rgba(21,96,189,.6); }
+.fr select option { background: #0f1e35; }
+.fgrid        { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.upload-z     { width: 100%; background: rgba(255,255,255,0.02); border: 1.5px dashed rgba(255,255,255,0.1); border-radius: 6px; padding: 1.25rem; text-align: center; cursor: pointer; transition: border-color .2s; }
+.upload-z:hover { border-color: rgba(21,96,189,.5); }
+.upload-z p   { font-size: 12px; color: var(--muted); margin-top: 5px; }
+.btn-full     { width: 100%; background: var(--blue); color: #fff; border: none; padding: 11px; border-radius: 6px; font-size: 13px; font-family: var(--ff); cursor: pointer; margin-top: 8px; transition: background .2s; }
+.btn-full:hover { background: var(--blue2); }
+@media(max-width:768px){ .rec-grid{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -166,7 +216,7 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
 
 <!-- HERO con estadísticas reales desde BD -->
 <div class="page-hero">
-  <div class="page-hero-tag">Únete al equipo</div>
+  <div class="page-hero-tag">Bolsa de Trabajo</div>
   <h1>Vacantes Disponibles</h1>
   <p>Forma parte del mejor equipo de consultores financieros en la región. Horarios flexibles, comisiones atractivas y crecimiento real.</p>
   <div class="vac-stats">
@@ -185,62 +235,86 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
   </div>
 </div>
 
-<!-- LISTA DE VACANTES DESDE POSTGRESQL -->
-<div class="sec">
-  <div class="sec-tag">Oportunidades</div>
-  <h2 class="sh">Posiciones abiertas</h2>
+<!-- POSTULACIÓN POR CATEGORÍA -->
+<div class="sec" id="reclutamiento">
+  <div class="sec-tag">Postúlate</div>
+  <h2 class="sh">Vacantes por Categoría</h2>
   <div class="uline"></div>
 
-  <div class="vac-grid">
-    {% for v in vacantes %}
-    <div class="vac-card anim">
-      <div>
-        <div class="vac-area">{{ v.area }}</div>
-
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
-          <div class="vac-title">{{ v.titulo }}</div>
-          {# Badge NUEVA solo si la vacante tiene menos de 7 días #}
-          {% now "Y-m-d" as hoy_str %}
-          {% if v.creada.date|timesince|slice:":1" == "0" %}
-            <span class="badge-nueva">NUEVA</span>
-          {% endif %}
-        </div>
-
-        <p class="vac-desc">{{ v.descripcion }}</p>
-
-        <div class="vac-tags">
-          <span class="vtag blue">{{ v.get_modalidad_display }}</span>
-          {# Ubicación real desde el modelo, no hardcodeada #}
-          {% if v.ubicacion %}
-            <span class="vtag">{{ v.ubicacion }}</span>
-          {% endif %}
-          {% if v.sueldo %}
-            <span class="vtag">{{ v.sueldo }}</span>
-          {% endif %}
-          {% if v.postulantes.count > 0 %}
-            <span class="vtag">{{ v.postulantes.count }} postulante{{ v.postulantes.count|pluralize }}</span>
-          {% endif %}
-          {% if v.fecha_limite %}
-            <span class="vtag">Cierra: {{ v.fecha_limite|date:"d/m/Y" }}</span>
-          {% endif %}
-        </div>
+  <div class="rec-grid">
+    {% if hay_vacantes %}
+    <div class="anim">
+      <div class="tab-pills">
+        {% if vacantes_estudiantes %}<button class="tp{% if tab_inicial == 'estudiantes' %} on{% endif %}" onclick="setTab(this,'estudiantes')">Estudiantes</button>{% endif %}
+        {% if vacantes_jubilados %}<button class="tp{% if tab_inicial == 'jubilados' %} on{% endif %}" onclick="setTab(this,'jubilados')">Jubilados</button>{% endif %}
+        {% if vacantes_amas_casa %}<button class="tp{% if tab_inicial == 'amas' %} on{% endif %}" onclick="setTab(this,'amas')">Amas de Casa</button>{% endif %}
+        {% if vacantes_profesionistas %}<button class="tp{% if tab_inicial == 'profesionistas' %} on{% endif %}" onclick="setTab(this,'profesionistas')">Profesionistas</button>{% endif %}
+        <button class="tp{% if tab_inicial == 'general' %} on{% endif %}" onclick="setTab(this,'general')">General</button>
       </div>
 
-      <div class="vac-right">
-        {% if v.pdf_convocatoria %}
-          <a href="{{ v.pdf_convocatoria.url }}" target="_blank" class="badge-pdf">📄 Ver convocatoria</a>
-        {% endif %}
-        <a href="/postulantes/crear/?vacante={{ v.id }}" class="btn-apply">Postularme →</a>
+      <div class="rec-info" id="tab-estudiantes" style="display:{% if tab_inicial == 'estudiantes' %}block{% else %}none{% endif %}">
+        <h3>Vacantes para Estudiantes</h3>
+        {% include 'vacantes/_vac_panel.html' with lista=vacantes_estudiantes %}
+      </div>
+      <div class="rec-info" id="tab-jubilados" style="display:{% if tab_inicial == 'jubilados' %}block{% else %}none{% endif %}">
+        <h3>Vacantes para Jubilados</h3>
+        {% include 'vacantes/_vac_panel.html' with lista=vacantes_jubilados %}
+      </div>
+      <div class="rec-info" id="tab-amas" style="display:{% if tab_inicial == 'amas' %}block{% else %}none{% endif %}">
+        <h3>Vacantes para Amas de Casa</h3>
+        {% include 'vacantes/_vac_panel.html' with lista=vacantes_amas_casa %}
+      </div>
+
+      <div class="rec-info" id="tab-profesionistas" style="display:{% if tab_inicial == 'profesionistas' %}block{% else %}none{% endif %}">
+        <h3>Vacantes para Profesionistas</h3>
+        {% include 'vacantes/_vac_panel.html' with lista=vacantes_profesionistas %}
+      </div>
+
+      <div class="rec-info" id="tab-general" style="display:{% if tab_inicial == 'general' %}block{% else %}none{% endif %}">
+        <h3>Todas Nuestras Oportunidades</h3>
+        {% include 'vacantes/_vac_panel.html' with lista=vacantes_general %}
       </div>
     </div>
-    {% empty %}
-    <div class="empty-msg">
+    {% else %}
+    <div class="anim" style="text-align:center;padding:3rem 1.5rem;background:rgba(255,255,255,0.02);border:0.5px solid var(--border);border-radius:12px;">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" style="margin-bottom:1rem;opacity:.4;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-      <p>No hay vacantes disponibles por el momento.</p>
-      <p style="font-size:13px;margin-top:.5rem;">Déjanos tus datos y te avisamos cuando abran nuevas posiciones.</p>
-      <a href="/citas/agendar/" class="btn-apply" style="display:inline-block;margin-top:1.5rem;">Contáctanos</a>
+      <p style="color:var(--muted);font-size:14px;line-height:1.7;">Por el momento no tenemos vacantes activas.<br>Déjanos tus datos y te avisaremos en cuanto abramos una nueva convocatoria.</p>
     </div>
-    {% endfor %}
+    {% endif %}
+
+    <form class="fcard anim" method="POST" action="/postulantes/crear/" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% if messages %}
+        {% for m in messages %}
+        <div style="background:{% if m.tags == 'success' %}rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:#4ade80{% else %}rgba(239,68,68,.12);border-color:rgba(239,68,68,.3);color:#f87171{% endif %};border:0.5px solid;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:1rem;">{{ m }}</div>
+        {% endfor %}
+      {% endif %}
+      <div class="fcard-title">Formulario de Postulación</div>
+      <p style="font-size:12px;color:var(--muted);margin:-0.5rem 0 1.25rem;line-height:1.6;">Completa tu información y sube tu CV. Te contactaremos en un máximo de 48 horas hábiles.</p>
+      <div class="fgrid">
+        <div class="fr"><label>Nombre Completo</label><input type="text" name="nombre" placeholder="Tu nombre" required></div>
+        <div class="fr"><label>Correo electrónico</label><input type="email" name="correo" placeholder="correo@ejemplo.com" required></div>
+      </div>
+      <div class="fr"><label>Teléfono (opcional)</label><input type="tel" name="telefono" placeholder="782 000 0000"></div>
+      <div class="fr"><label>Área de interés</label>
+        <select name="vacante">
+          <option value="">Selecciona una vacante</option>
+          {% for v in vacantes_form %}
+          <option value="{{ v.id }}">{{ v.titulo }}{% if v.area %} — {{ v.area }}{% endif %}</option>
+          {% empty %}
+          <option value="" disabled>No hay vacantes disponibles</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="fr"><label>Sube tu CV (PDF)</label>
+        <div class="upload-z" id="uploadZone" onclick="document.getElementById('cv-input').click()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+          <p id="uploadTxt">Clic para seleccionar PDF</p>
+          <input type="file" id="cv-input" name="cv" accept=".pdf" style="display:none" required onchange="mostrarNombreCV(this)">
+        </div>
+      </div>
+      <button type="submit" class="btn-full">Enviar Postulación</button>
+    </form>
   </div>
 </div>
 
@@ -342,7 +416,7 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
     </div>
     <div class="ft-col">
       <h5>Contacto</h5>
-      <a href="#">Av. Juárez #704, Poza Rica, Ver.</a>
+      <span style="display:block;font-size:13px;color:var(--muted);margin-bottom:7px;">Av. Juárez #704, Poza Rica, Ver.</span>
       <a href="tel:7821602295">782 160 2295</a>
       <a href="mailto:grupovr@inbursaasesores.com">grupovr@inbursaasesores.com</a>
     </div>
@@ -363,18 +437,45 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
   </div>
   <div class="float-item">
     <div class="float-tooltip">WhatsApp</div>
-    <button class="fab fab-wa" onclick="window.open('https://wa.me/527821602295','_blank')">
+    <button class="fab fab-wa" onclick="window.open('https://wa.me/527891079756','_blank')">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.1 1.524 5.823L0 24l6.335-1.499A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.885.916-3.636-.235-.374A9.861 9.861 0 012.106 12C2.106 6.58 6.58 2.106 12 2.106S21.894 6.58 21.894 12 17.42 21.894 12 21.894z"/></svg>
     </button>
   </div>
 </div>
 
+<!-- Lightbox de imágenes de vacantes -->
+<div class="vac-lightbox" id="vacLightbox" onclick="if(event.target===this) cerrarLightbox()">
+  <button class="vac-lightbox-close" onclick="cerrarLightbox()" aria-label="Cerrar">✕</button>
+  <div class="vac-lightbox-nav" id="vacLightboxNav" style="display:none;">
+    <button class="vac-lightbox-arrow" onclick="lightboxSiguiente(-1)" aria-label="Anterior">‹</button>
+    <button class="vac-lightbox-arrow" onclick="lightboxSiguiente(1)" aria-label="Siguiente">›</button>
+  </div>
+  <img id="vacLightboxImg" src="" alt="Imagen de la vacante">
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
 <script>
 // Animación al hacer scroll
 var obs = new IntersectionObserver(function(entries){
   entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('vis'); });
 }, {threshold: 0.12});
 document.querySelectorAll('.anim').forEach(function(el){ obs.observe(el); });
+
+// Tabs de "Trabaja con Nosotros"
+function setTab(btn, tabId) {
+  document.querySelectorAll('#reclutamiento .tp').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelectorAll('#reclutamiento .rec-info').forEach(function(d){ d.style.display='none'; });
+  btn.classList.add('on');
+  document.getElementById('tab-'+tabId).style.display='block';
+}
+
+// Muestra el nombre del CV seleccionado en el formulario de postulación
+function mostrarNombreCV(input) {
+  if (input.files && input.files[0]) {
+    document.getElementById('uploadZone').style.borderColor = '#22c55e';
+    document.getElementById('uploadTxt').textContent = '✓ ' + input.files[0].name;
+  }
+}
 </script>
 </body>
 </html>

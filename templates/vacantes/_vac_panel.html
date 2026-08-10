@@ -1,0 +1,38 @@
+{% if lista %}
+  {% with principal=lista.0 %}
+  <div class="vac-card anim" style="margin-top:.75rem;">
+    <div class="vac-main">
+      {% if principal.imagen %}
+        <div class="vac-thumb" style="background-image:url('{{ principal.imagen.url }}');" onclick="abrirLightbox('{{ principal.imagen.url }}')" role="button" aria-label="Ver imagen de {{ principal.titulo }}"></div>
+      {% else %}
+        <div class="vac-thumb-ph"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg></div>
+      {% endif %}
+      <div>
+        <div class="vac-area">{{ principal.area }}</div>
+        <div class="vac-title">{{ principal.titulo }}</div>
+        <p class="vac-desc">{{ principal.descripcion|linebreaksbr }}</p>
+        <div class="vac-tags">
+          <span class="vtag blue">{{ principal.get_modalidad_display }}</span>
+          {% if principal.ubicacion %}<span class="vtag">{{ principal.ubicacion }}</span>{% endif %}
+          {% if principal.fecha_limite %}<span class="vtag">Cierra: {{ principal.fecha_limite|date:"d/m/Y" }}</span>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% if principal.pdf_convocatoria or principal.imagen %}
+    <div class="vac-right">
+      {% if principal.pdf_convocatoria %}
+      <a href="{{ principal.pdf_convocatoria.url }}" target="_blank" class="badge-pdf">📄 Ver convocatoria</a>
+      {% endif %}
+      {% if principal.imagen %}
+      <button type="button" class="badge-img" onclick="abrirLightbox('{{ principal.imagen.url }}')">🖼 Ver imágenes</button>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+  {% endwith %}
+  {% if lista|length > 1 %}
+  <div class="vac-grid" style="margin-top:1rem;">
+    {% include 'vacantes/_vac_cards.html' with lista=lista|slice:"1:" %}
+  </div>
+  {% endif %}
+{% endif %}

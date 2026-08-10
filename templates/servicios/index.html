@@ -97,6 +97,42 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
 .fab:hover{transform:scale(1.1);}
 .fab-wa{background:#25d366;box-shadow:0 4px 16px rgba(37,211,102,.4);}
 .fab-call{background:var(--blue);box-shadow:0 4px 16px rgba(21,96,189,.4);}
+
+/* MENÚ MÓVIL */
+.nav-burger{display:none;background:none;border:none;cursor:pointer;padding:6px;flex-direction:column;gap:4px;}
+.nav-burger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:.25s;}
+.nav-burger.on span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+.nav-burger.on span:nth-child(2){opacity:0;}
+.nav-burger.on span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .svc-big-grid{grid-template-columns:repeat(2,1fr);}
+  .ft-grid{grid-template-columns:1fr 1fr;gap:1.75rem;}
+}
+@media(max-width:768px){
+  .topbar{padding:6px 1.25rem;font-size:10px;}
+  .topbar > div:first-child a:nth-child(2){display:none;}
+  nav{padding:0 1.25rem;}
+  .nav-links{position:fixed;top:58px;left:0;right:0;bottom:0;background:rgba(6,12,22,0.98);backdrop-filter:blur(10px);flex-direction:column;height:auto;max-height:0;overflow:hidden;transition:max-height .3s ease;z-index:199;}
+  .nav-links.on{max-height:calc(100vh - 58px);overflow-y:auto;}
+  .nav-links li{width:100%;}
+  .nav-links li a{height:auto;padding:16px 1.25rem;width:100%;border-bottom:0.5px solid var(--border);border-left:3px solid transparent;}
+  .nav-links li a:hover,.nav-links li a.act{border-bottom-color:var(--border);border-left-color:var(--blue);}
+  .btn-nav{display:none;}
+  .nav-burger{display:flex;}
+  .page-hero{padding:2.5rem 1.25rem 2rem;}
+  .page-hero h1{font-size:28px;}
+  .tabs-bar{padding:0 1.25rem;}
+  .sec{padding:2.5rem 1.25rem;}
+  .svc-big-grid{grid-template-columns:1fr;}
+  .cta-band{padding:2.5rem 1.25rem;flex-direction:column;text-align:center;align-items:stretch;}
+  footer{padding:2rem 1.25rem 1.25rem;}
+  .ft-grid{grid-template-columns:1fr;gap:1.75rem;}
+  .ft-bottom{flex-direction:column;gap:6px;text-align:center;}
+  .float-wrap{bottom:1rem;right:1rem;}
+  .fab{width:46px;height:46px;}
+}
 </style>
 </head>
 <body>
@@ -116,7 +152,7 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
     <div class="logo-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
     <div style="margin-left:8px;"><div class="logo-txt">GRUPO V&amp;R</div><div class="logo-sub">Consultores · Agente de Seguros S.A.</div></div>
   </div>
-  <ul class="nav-links">
+  <ul class="nav-links" id="navLinks">
     <li><a href="/">Inicio</a></li>
     <li><a href="/servicios/" class="act">Servicios</a></li>
     <li><a href="/vacantes/">Vacantes</a></li>
@@ -126,6 +162,9 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
     Agendar Cita
   </a>
+  <button class="nav-burger" id="navBurger" onclick="toggleNavMovil()" aria-label="Abrir menú" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- PAGE HERO -->
@@ -152,15 +191,21 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
     <div class="svc-big anim"
          data-cat="{% if servicio.categoria == 'personal' %}personal{% elif servicio.categoria == 'inversion' %}inversion{% else %}empresa{% endif %}">
       <div class="svc-big-img {% if servicio.categoria == 'personal' %}bg-medico{% elif servicio.categoria == 'inversion' %}bg-inversion{% else %}bg-empresa{% endif %}">
-        {% if servicio.icono_clase %}
-        <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">
-          <span style="font-size:64px;opacity:.8;">{{ servicio.icono_clase }}</span>
-        </div>
-        {% else %}
-        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-        {% endif %}
+        {% if servicio.imagen %}
+<img
+    src="{{ servicio.imagen.url }}"
+    alt="{{ servicio.nombre }}"
+    style="
+        width:100%;
+        height:100%;
+        object-fit:cover;
+    ">
+{% else %}
+<svg width="80" height="80" viewBox="0 0 24 24" fill="none"
+stroke="rgba(255,255,255,0.3)" stroke-width="1">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+</svg>
+{% endif %}
       </div>
       <div class="svc-big-body">
         <p style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px;font-weight:600;">
@@ -219,7 +264,7 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
 <!-- FLOTANTES -->
 <div class="float-wrap">
   <div class="float-item"><div class="float-tooltip">Llamar</div><button class="fab fab-call" onclick="window.location.href='tel:7821602295'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></button></div>
-  <div class="float-item"><div class="float-tooltip">WhatsApp</div><button class="fab fab-wa" onclick="window.open('https://wa.me/527821602295','_blank')"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.1 1.524 5.823L0 24l6.335-1.499A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.885.916-3.636-.235-.374A9.861 9.861 0 012.106 12C2.106 6.58 6.58 2.106 12 2.106S21.894 6.58 21.894 12 17.42 21.894 12 21.894z"/></svg></button></div>
+  <div class="float-item"><div class="float-tooltip">WhatsApp</div><button class="fab fab-wa" onclick="window.open('https://wa.me/527891079756','_blank')"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.1 1.524 5.823L0 24l6.335-1.499A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.885.916-3.636-.235-.374A9.861 9.861 0 012.106 12C2.106 6.58 6.58 2.106 12 2.106S21.894 6.58 21.894 12 17.42 21.894 12 21.894z"/></svg></button></div>
 </div>
 
 <script>
@@ -239,6 +284,28 @@ var obs=new IntersectionObserver(function(entries){
   entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('vis');});
 },{threshold:0.15});
 document.querySelectorAll('.anim').forEach(function(el){obs.observe(el);});
+
+// Menú móvil
+function toggleNavMovil(){
+  var links = document.getElementById('navLinks');
+  var burger = document.getElementById('navBurger');
+  var abierto = links.classList.toggle('on');
+  burger.classList.toggle('on', abierto);
+  burger.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+}
+document.querySelectorAll('#navLinks a').forEach(function(a){
+  a.addEventListener('click', function(){
+    document.getElementById('navLinks').classList.remove('on');
+    document.getElementById('navBurger').classList.remove('on');
+    document.getElementById('navBurger').setAttribute('aria-expanded','false');
+  });
+});
+window.addEventListener('resize', function(){
+  if(window.innerWidth > 768){
+    document.getElementById('navLinks').classList.remove('on');
+    document.getElementById('navBurger').classList.remove('on');
+  }
+});
 </script>
 </body>
 </html>

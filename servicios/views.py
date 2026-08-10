@@ -27,7 +27,6 @@ def detalle_ajax(request, serv_id):
         'categoria_display': s.get_categoria_display(),
         'descripcion_corta': s.descripcion_corta,
         'descripcion':       s.descripcion,
-        'icono_clase':       s.icono_clase or '',
         'orden':             s.orden,
         'activo':            s.activo,
     })
@@ -38,7 +37,7 @@ def detalle_ajax(request, serv_id):
 @require_POST
 def editar_ajax(request, serv_id):
     s = get_object_or_404(Servicio, id=serv_id)
-    form = ServicioForm(request.POST, instance=s)
+    form = ServicioForm(request.POST, request.FILES, instance=s)
     if not form.is_valid():
         errores = '; '.join(
             f'{f}: {", ".join(e)}' for f, e in form.errors.items()
@@ -94,7 +93,7 @@ def eliminar_ajax(request, serv_id):
 @login_required
 @require_POST
 def crear_ajax(request):
-    form = ServicioForm(request.POST)
+    form = ServicioForm(request.POST, request.FILES)
 
     if not form.is_valid():
         errores = '; '.join(

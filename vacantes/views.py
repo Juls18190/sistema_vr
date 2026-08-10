@@ -1,4 +1,6 @@
 import os
+from datetime import date
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -9,32 +11,66 @@ from .forms  import VacanteForm
 from historial.models import registrar
 
 
-# ── Vista pública: lista de vacantes activas ──────────────────────────────────
+# ── Vista pública: lista de vacantes activas y NO vencidas ────────────────────
 def index(request):
-    vacantes = Vacante.objects.filter(estado='activa').order_by('-creada')
-    return render(request, 'vacantes/index.html', {'vacantes': vacantes})
+    Vacante.sincronizar_vencidas()
+    vacantes_general        = Vacante.objects.filter(estado='activa').order_by('-creada')
+    vacantes_estudiantes    = vacantes_general.filter(publico_objetivo='estudiantes')
+    vacantes_jubilados      = vacantes_general.filter(publico_objetivo='jubilados')
+    vacantes_amas_casa      = vacantes_general.filter(publico_objetivo='amas_casa')
+    vacantes_profesionistas = vacantes_general.filter(publico_objetivo='profesionistas')
 
+    # Abre por defecto la primera categoría que sí tenga vacantes activas
+    tab_inicial = 'general'
+    for clave, qs in (
+        ('estudiantes', vacantes_estudiantes),
+        ('jubilados', vacantes_jubilados),
+        ('amas', vacantes_amas_casa),
+        ('profesionistas', vacantes_profesionistas),
+    ):
+        if qs.exists():
+            tab_inicial = clave
+            break
 
+    context = {
+        'vacantes':                vacantes_general,
+        'vacantes_form':            Vacante.objects.filter(estado='activa').order_by('titulo'),
+        'vacantes_general':         vacantes_general,
+        'vacantes_estudiantes':     vacantes_estudiantes,
+        'vacantes_jubilados':       vacantes_jubilados,
+        'vacantes_amas_casa':       vacantes_amas_casa,
+        'vacantes_profesionistas':  vacantes_profesionistas,
+        'tab_inicial':              tab_inicial,
+        'hay_vacantes':             vacantes_general.exists(),
+    }
+    return render(request, 'vacantes/index.html', context)
 # ── Admin: lista todas las vacantes con filtros y KPIs ───────────────────────
 @login_required
 def lista(request):
+    Vacante.sincronizar_vencidas()
+
     qs       = Vacante.objects.all()
     estado   = request.GET.get('estado', '')
     busqueda = request.GET.get('q', '')
+    publico  = request.GET.get('publico_objetivo', '')
 
     if estado:
         qs = qs.filter(estado=estado)
+    if publico:
+        qs = qs.filter(publico_objetivo=publico)
     if busqueda:
         qs = qs.filter(titulo__icontains=busqueda) | qs.filter(area__icontains=busqueda)
 
     contexto = {
-        'vacantes':      qs,
-        'total':         Vacante.objects.count(),
-        'activas':       Vacante.objects.filter(estado='activa').count(),
-        'pausadas':      Vacante.objects.filter(estado='pausada').count(),
-        'cerradas':      Vacante.objects.filter(estado='cerrada').count(),
-        'estado_filtro': estado,
-        'busqueda':      busqueda,
+        'vacantes':         qs,
+        'total':            Vacante.objects.count(),
+        'activas':          Vacante.objects.filter(estado='activa').count(),
+        'pausadas':         Vacante.objects.filter(estado='pausada').count(),
+        'cerradas':         Vacante.objects.filter(estado='cerrada').count(),
+        'vencidas':         Vacante.objects.filter(estado='vencida').count(),
+        'estado_filtro':    estado,
+        'publico_filtro':   publico,
+        'busqueda':         busqueda,
     }
     return render(request, 'vacantes/lista.html', contexto)
 
@@ -76,6 +112,7 @@ def editar(request, vacante_id):
             'modalidad':   vacante.modalidad,
             'sueldo':      vacante.sueldo      or '',
             'estado':      vacante.estado,
+            'publico_objetivo': vacante.publico_objetivo,
             'fecha_limite': str(vacante.fecha_limite) if vacante.fecha_limite else '',
             'pdf_url':     vacante.pdf_convocatoria.url if vacante.pdf_convocatoria else '',
             'img_url':     vacante.imagen.url           if vacante.imagen           else '',

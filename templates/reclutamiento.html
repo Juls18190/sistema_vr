@@ -20,10 +20,11 @@
   <div class="rec-grid">
     <div class="anim-left">
       <div class="tab-pills">
-        <button class="tp on" onclick="setTab(this,'estudiantes')">Estudiantes</button>
-        <button class="tp" onclick="setTab(this,'jubilados')">Jubilados</button>
-        <button class="tp" onclick="setTab(this,'amas')">Amas de Casa</button>
-        <button class="tp" onclick="setTab(this,'profesionistas')">Profesionistas</button>
+        {% if vacantes_estudiantes %}<button class="tp{% if tab_inicial == 'estudiantes' %} on{% endif %}" onclick="setTab(this,'estudiantes')">Estudiantes</button>{% endif %}
+        {% if vacantes_jubilados %}<button class="tp{% if tab_inicial == 'jubilados' %} on{% endif %}" onclick="setTab(this,'jubilados')">Jubilados</button>{% endif %}
+        {% if vacantes_amas_casa %}<button class="tp{% if tab_inicial == 'amas' %} on{% endif %}" onclick="setTab(this,'amas')">Amas de Casa</button>{% endif %}
+        {% if vacantes_profesionistas %}<button class="tp{% if tab_inicial == 'profesionistas' %} on{% endif %}" onclick="setTab(this,'profesionistas')">Profesionistas</button>{% endif %}
+        <button class="tp{% if tab_inicial == 'general' %} on{% endif %}" onclick="setTab(this,'general')">General</button>
       </div>
       <div class="rec-info" id="tab-estudiantes">
         <h3>Programa Semillero de Talento <span class="rec-tag">ITS Poza Rica</span></h3>
@@ -34,6 +35,16 @@
           <li><span class="cdot"></span>Flexibilidad de horarios</li>
           <li><span class="cdot"></span>Convenciones nacionales e internacionales</li>
         </ul>
+        <h4 style="font-size:13px;font-weight:600;color:var(--txt2);margin:1.25rem 0 .75rem;">Vacantes disponibles</h4>
+        {% if vacantes_estudiantes %}
+        <ul class="checklist">
+          {% for v in vacantes_estudiantes %}
+          <li><span class="cdot"></span>{{ v.titulo }}{% if v.ubicacion %} — {{ v.ubicacion }}{% endif %}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="subp" style="font-size:13px;">No existen vacantes disponibles para esta categoría.</p>
+        {% endif %}
       </div>
       <div class="rec-info" id="tab-jubilados" style="display:none">
         <h3>Oportunidad para Jubilados</h3>
@@ -44,6 +55,16 @@
           <li><span class="cdot"></span>Capacitación completa incluida</li>
           <li><span class="cdot"></span>Red de apoyo constante</li>
         </ul>
+        <h4 style="font-size:13px;font-weight:600;color:var(--txt2);margin:1.25rem 0 .75rem;">Vacantes disponibles</h4>
+        {% if vacantes_jubilados %}
+        <ul class="checklist">
+          {% for v in vacantes_jubilados %}
+          <li><span class="cdot"></span>{{ v.titulo }}{% if v.ubicacion %} — {{ v.ubicacion }}{% endif %}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="subp" style="font-size:13px;">No existen vacantes disponibles para esta categoría.</p>
+        {% endif %}
       </div>
       <div class="rec-info" id="tab-amas" style="display:none">
         <h3>Programa para Amas de Casa</h3>
@@ -54,6 +75,16 @@
           <li><span class="cdot"></span>Comisiones semanales</li>
           <li><span class="cdot"></span>Comunidad de mujeres emprendedoras</li>
         </ul>
+        <h4 style="font-size:13px;font-weight:600;color:var(--txt2);margin:1.25rem 0 .75rem;">Vacantes disponibles</h4>
+        {% if vacantes_amas_casa %}
+        <ul class="checklist">
+          {% for v in vacantes_amas_casa %}
+          <li><span class="cdot"></span>{{ v.titulo }}{% if v.ubicacion %} — {{ v.ubicacion }}{% endif %}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="subp" style="font-size:13px;">No existen vacantes disponibles para esta categoría.</p>
+        {% endif %}
       </div>
       <div class="rec-info" id="tab-profesionistas" style="display:none">
         <h3>Carrera para Profesionistas</h3>

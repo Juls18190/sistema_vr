@@ -14,4 +14,6 @@ urlpatterns = [
     path('<int:prospecto_id>/expediente/ajax/', views.expediente_ajax,    name='expediente_ajax'),
     path('<int:prospecto_id>/seguimiento/',     views.agregar_seguimiento,name='agregar_seguimiento'),
     path('<int:prospecto_id>/convertir/',       views.convertir,          name='convertir'),
+    path('<int:prospecto_id>/estado/ajax/',     views.cambiar_estado_ajax,name='cambiar_estado_ajax'),
+    path('<int:prospecto_id>/mensaje/<str:clave>/ajax/', views.mensaje_generado_ajax, name='mensaje_generado_ajax'),
 ]
