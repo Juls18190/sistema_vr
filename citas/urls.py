@@ -21,14 +21,14 @@ urlpatterns = [
 
     # Estado
     path(
-        'admin/<int:cita_id>/estado/',
-        views.cambiar_estado,
-        name='cambiar_estado'
+    'admin/<int:cita_id>/estado/',
+    views.cambiar_estado,
+    name='cambiar_estado'
     ),
     path(
-        'admin/<int:cita_id>/estado/ajax/',
-        views.cambiar_estado_ajax,
-        name='cambiar_estado_ajax'
+    'admin/<int:cita_id>/estado/ajax/',
+    views.cambiar_estado_ajax,
+    name='cambiar_estado_ajax'
     ),
 
     # Asesor

@@ -2780,58 +2780,10 @@ document.addEventListener('DOMContentLoaded', function() {
 var _estadoBadgeCita = {
   pendiente:  '<span class="badge b-yellow">Pendiente</span>',
   confirmada: '<span class="badge b-green">Confirmada</span>',
-  completada: '<span class="badge b-gray">Completada</span>',
+  completada:   '<span class="badge b-blue">Atendida</span>',
   cancelada:  '<span class="badge b-red">Cancelada</span>',
 };
 
-// ── Ver detalle y cambiar estado ──────────────────────────────────────────────
-function verDetalleCita(id) {
-  var loading = document.getElementById('dc-loading');
-  var body    = document.getElementById('dc-body');
-  var msg     = document.getElementById('dc-estado-msg');
-
-  loading.style.display = 'block';
-  body.style.display    = 'none';
-  if (msg) { msg.style.display = 'none'; msg.textContent = ''; }
-  document.getElementById('modal-detalle-cita').style.display = 'flex';
-
-  fetch('/citas/admin/' + id + '/detalle/ajax/', {
-    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-  })
-  .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-  .then(function(d) {
-    document.getElementById('dc-cita-id').value            = d.id;
-    document.getElementById('dc-nombre').textContent        = d.nombre_cliente + ' ' + d.apellidos_cliente;
-    document.getElementById('dc-correo').textContent        = d.correo;
-    document.getElementById('dc-telefono').textContent      = d.telefono;
-    document.getElementById('dc-fecha-hora').textContent    = d.fecha + ' a las ' + d.hora;
-    document.getElementById('dc-motivo').textContent        = d.motivo_display + (d.motivo_otro ? ': ' + d.motivo_otro : '');
-    document.getElementById('dc-asesor').textContent        = d.asesor || '— Sin asignar';
-    document.getElementById('dc-creada').textContent        = d.creada;
-
-    var cBloque = document.getElementById('dc-comentarios-bloque');
-    if (d.comentarios) {
-      document.getElementById('dc-comentarios').textContent = d.comentarios;
-      cBloque.style.display = '';
-    } else {
-      cBloque.style.display = 'none';
-    }
-
-    document.querySelectorAll('.dc-estado-btn').forEach(function(btn) {
-      var activo = btn.dataset.e === d.estado;
-      btn.style.opacity    = activo ? '1'   : '0.45';
-      btn.style.fontWeight = activo ? '700' : '600';
-      btn.style.boxShadow  = activo ? '0 0 0 2px var(--blue)' : 'none';
-    });
-
-    loading.style.display = 'none';
-    body.style.display    = 'block';
-  })
-  .catch(function(err) {
-    loading.innerHTML = '<p style="color:#dc2626;font-size:13px;">Error al cargar la cita. Intenta de nuevo.</p>';
-    console.error(err);
-  });
-}
 
 // ── Flujo Cita → Prospecto ────────────────────────────────────────────────────
 function ejecutarAsignarProspecto() {
@@ -2919,45 +2871,6 @@ function ejecutarAsignarProspecto() {
   });
 }
 
-
-function guardarEstadoCita(nuevoEstado) {
-  var id  = document.getElementById('dc-cita-id').value;
-  var msg = document.getElementById('dc-estado-msg');
-
-  fetch('/citas/admin/' + id + '/estado/ajax/', {
-    method:  'POST',
-    headers: { 'X-CSRFToken': getCsrf() },
-    body:    new URLSearchParams({ estado: nuevoEstado }),
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    if (!data.ok) { toast('Error al cambiar el estado.', 'error'); return; }
-
-    var celdaEstado = document.getElementById('estado-c-' + id);
-    if (celdaEstado) celdaEstado.innerHTML = _estadoBadgeCita[data.estado] || data.estado_display;
-
-    var fila = document.getElementById('fila-c-' + id);
-    if (fila) fila.dataset.estado = data.estado;
-
-    document.querySelectorAll('.dc-estado-btn').forEach(function(btn) {
-      var activo = btn.dataset.e === data.estado;
-      btn.style.opacity    = activo ? '1'   : '0.45';
-      btn.style.fontWeight = activo ? '700' : '600';
-      btn.style.boxShadow  = activo ? '0 0 0 2px var(--blue)' : 'none';
-    });
-
-    if (msg) {
-      msg.textContent   = '✓ Estado actualizado a "' + data.estado_display + '"';
-      msg.style.display = 'block';
-      setTimeout(function() { msg.style.display = 'none'; }, 2500);
-    }
-
-    // Actualizar KPIs
-    _recalcularKpisCitas();
-    toast('Estado actualizado: ' + data.estado_display, 'success');
-  })
-  .catch(function() { toast('Error de conexión.', 'error'); });
-}
 
 // ── Eliminar ──────────────────────────────────────────────────────────────────
 function confirmarEliminarCita(id, nombre) {
@@ -4567,7 +4480,7 @@ function ejecutarEliminarVacante() {
 var _estadoBadgeCita = {
   pendiente:  '<span class="badge b-yellow">Pendiente</span>',
   confirmada: '<span class="badge b-green">Confirmada</span>',
-  completada: '<span class="badge b-gray">Completada</span>',
+  completada:   '<span class="badge b-blue">Atendida</span>',
   cancelada:  '<span class="badge b-red">Cancelada</span>',
 };
 
@@ -4619,16 +4532,16 @@ document.getElementById('modal-ver-cita').addEventListener('click', function(e) 
 });
 
 function verDetalleCita(id) {
-  var loading = document.getElementById('dc-loading');
-  var body    = document.getElementById('dc-body');
-  var msg     = document.getElementById('dc-estado-msg');
+  window.citaEstadoId = id;
 
-  loading.style.display = 'block';
-  body.style.display    = 'none';
-  if (msg) { msg.style.display = 'none'; msg.textContent = ''; }
+  var msg = document.getElementById('dc-estado-msg');
+
+  if (msg) {
+    msg.style.display = 'none';
+    msg.textContent = '';
+  }
 
   document.getElementById('modal-detalle-cita').style.display = 'flex';
-
   fetch('/citas/admin/' + id + '/detalle/ajax/', {
     headers: { 'X-Requested-With': 'XMLHttpRequest' }
   })
@@ -4661,18 +4574,16 @@ function verDetalleCita(id) {
       btn.style.fontWeight = activo ? '700' : '600';
       btn.style.boxShadow  = activo ? '0 0 0 2px var(--blue)' : 'none';
     });
-
-    loading.style.display = 'none';
-    body.style.display    = 'block';
+  
   })
   .catch(function(err) {
-    loading.innerHTML = '<p style="color:#dc2626;font-size:13px;">Error al cargar la cita. Intenta de nuevo.</p>';
-    console.error(err);
-  });
+  console.error(err);
+  
+});
 }
 
 function guardarEstadoCita(nuevoEstado) {
-  var id  = document.getElementById('dc-cita-id').value;
+  var id = window.citaEstadoId;
   var msg = document.getElementById('dc-estado-msg');
 
   fetch('/citas/admin/' + id + '/estado/ajax/', {
@@ -4700,11 +4611,7 @@ function guardarEstadoCita(nuevoEstado) {
       btn.style.boxShadow  = activo ? '0 0 0 2px var(--blue)' : 'none';
     });
 
-    if (msg) {
-      msg.textContent    = '✓ Estado actualizado a "' + data.estado_display + '"';
-      msg.style.display  = 'block';
-      setTimeout(function() { msg.style.display = 'none'; }, 2500);
-    }
+    
 
     toast('Estado de cita actualizado: ' + data.estado_display, 'success');
   })
@@ -6010,96 +5917,186 @@ function toggleActivoServicio(id, btnEl) {
   </div>
 </div>
 
-<!-- ══ MODAL: DETALLE / CAMBIAR ESTADO DE CITA ══════════════════════════════ -->
+<!-- ══ MODAL: CAMBIAR ESTADO DE CITA ══════════════════════════════ -->
 
-<div id="modal-detalle-cita" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none';">
-  <div style="background:#fff;width:540px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
-      <div style="font-size:16px;font-weight:700;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" style="vertical-align:-2px;margin-right:6px;"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg>
-        Detalle de cita
-      </div>
-      <button onclick="document.getElementById('modal-detalle-cita').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
-    </div>
+<div id="modal-detalle-cita"
+     style="
+       display:none;
+       position:fixed;
+       inset:0;
+       background:rgba(0,0,0,.45);
+       z-index:9999;
+       align-items:center;
+       justify-content:center;
+       padding:20px;
+     "
+     onclick="if(event.target===this)this.style.display='none';">
 
-    <!-- Spinner -->
-    <div id="dc-loading" style="text-align:center;padding:2rem;color:var(--txt3);font-size:13px;">
-      <div style="width:28px;height:28px;border:3px solid var(--bdr);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;"></div>
-      Cargando…
-    </div>
+  <div style="
+       background:#fff;
+       width:360px;
+       max-width:100%;
+       border-radius:14px;
+       padding:22px;
+       font-family:var(--ff);
+       box-shadow:0 20px 50px rgba(0,0,0,.18);
+     ">
 
-    <!-- Contenido -->
-    <div id="dc-body" style="display:none;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;margin-bottom:1.25rem;">
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;">Cliente</div>
-          <div id="dc-nombre" style="font-weight:600;color:var(--txt);"></div>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;">Contacto</div>
-          <div id="dc-correo" style="color:var(--txt2);"></div>
-          <div id="dc-telefono" style="color:var(--txt2);font-size:12px;"></div>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;">Fecha y hora</div>
-          <div id="dc-fecha-hora" style="color:var(--txt2);"></div>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;">Motivo</div>
-          <div id="dc-motivo" style="color:var(--txt2);"></div>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;">Asesor asignado</div>
-          <div id="dc-asesor" style="color:var(--txt2);margin-bottom:6px;"></div>
-          <select id="dc-asesor-select" style="width:100%;border:1px solid var(--bdr);border-radius:7px;padding:7px 10px;font-size:12px;font-family:var(--ff);color:var(--txt2);outline:none;background:#fff;">
-            <option value="">— Seleccionar asesor —</option>
-            {% for a in asesores %}
-            <option value="{{ a.id }}">{{ a.get_full_name|default:a.username }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;">Registrada</div>
-          <div id="dc-creada" style="color:var(--txt2);font-size:12px;"></div>
-        </div>
-        <div id="dc-comentarios-bloque" style="grid-column:1/3;display:none;">
-          <div style="font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;">Comentarios</div>
-          <div id="dc-comentarios" style="color:var(--txt2);background:var(--gray2);border-radius:6px;padding:8px 10px;font-size:12px;line-height:1.5;"></div>
-        </div>
+    <!-- ENCABEZADO -->
+
+    <div style="
+         display:flex;
+         align-items:center;
+         justify-content:space-between;
+         margin-bottom:18px;
+       ">
+
+      <div style="
+           font-size:16px;
+           font-weight:700;
+           color:var(--txt);
+         ">
+        Cambiar estado
       </div>
 
-      <!-- Cambiar estado -->
-      <div style="border-top:1px solid var(--bdr);padding-top:1rem;">
-        <div style="font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:8px;">Cambiar estado</div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <input type="hidden" id="dc-cita-id" value="">
-          <button onclick="guardarEstadoCita('pendiente')"  class="dc-estado-btn" data-e="pendiente"  style="padding:6px 14px;border-radius:20px;border:2px solid #eab308;background:#fefce8;color:#a16207;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--ff);">Pendiente</button>
-          <button onclick="guardarEstadoCita('confirmada')" class="dc-estado-btn" data-e="confirmada" style="padding:6px 14px;border-radius:20px;border:2px solid #22c55e;background:#f0fdf4;color:#15803d;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--ff);">Confirmada</button>
-          <button onclick="guardarEstadoCita('completada')" class="dc-estado-btn" data-e="completada" style="padding:6px 14px;border-radius:20px;border:2px solid #94a3b8;background:#f8fafc;color:#475569;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--ff);">Completada</button>
-          <button onclick="guardarEstadoCita('cancelada')"  class="dc-estado-btn" data-e="cancelada"  style="padding:6px 14px;border-radius:20px;border:2px solid #ef4444;background:#fef2f2;color:#dc2626;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--ff);">Cancelada</button>
-        </div>
-        <div id="dc-estado-msg" style="display:none;font-size:12px;color:#15803d;margin-top:8px;"></div>
-      </div>
+      <button
+        type="button"
+        onclick="document.getElementById('modal-detalle-cita').style.display='none'"
+        style="
+          background:none;
+          border:none;
+          font-size:22px;
+          cursor:pointer;
+          color:var(--txt3);
+          line-height:1;
+        ">
+        ×
+      </button>
+
     </div>
 
-    <div style="border-top:1px solid var(--bdr);padding-top:1rem;margin-top:1rem;">
-      <div style="font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:8px;">Asignación rápida</div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <button id="dc-btn-asignar" onclick="ejecutarAsignarProspecto()"
-          style="display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border:none;padding:9px 16px;border-radius:7px;font-size:12px;font-family:var(--ff);font-weight:600;cursor:pointer;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-          Asignar asesor y crear prospecto
-        </button>
-        <button onclick="document.getElementById('modal-detalle-cita').style.display='none'"
-          style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">
-          Cerrar
-        </button>
-      </div>
-      <div id="dc-asignar-msg" style="display:none;font-size:12px;margin-top:8px;padding:7px 10px;border-radius:6px;"></div>
+    <!-- ID DE LA CITA -->
+
+    <input
+      type="hidden"
+      id="dc-cita-id"
+      value=""
+    >
+
+    <!-- ESTADOS -->
+
+    <div style="
+         display:flex;
+         flex-direction:column;
+         gap:9px;
+       ">
+
+      <!-- PENDIENTE -->
+
+      <button
+        type="button"
+        onclick="guardarEstadoCita('pendiente')"
+        class="dc-estado-btn"
+        data-e="pendiente"
+        style="
+          width:100%;
+          padding:11px 14px;
+          border-radius:8px;
+          border:2px solid #eab308;
+          background:#fefce8;
+          color:#a16207;
+          font-size:13px;
+          font-weight:600;
+          cursor:pointer;
+          font-family:var(--ff);
+        ">
+        🟡 Pendiente
+      </button>
+
+      <!-- CONFIRMADA -->
+
+      <button
+        type="button"
+        onclick="guardarEstadoCita('confirmada')"
+        class="dc-estado-btn"
+        data-e="confirmada"
+        style="
+          width:100%;
+          padding:11px 14px;
+          border-radius:8px;
+          border:2px solid #22c55e;
+          background:#f0fdf4;
+          color:#15803d;
+          font-size:13px;
+          font-weight:600;
+          cursor:pointer;
+          font-family:var(--ff);
+        ">
+        🟢 Confirmada
+      </button>
+
+      <!-- COMPLETADA -->
+
+      <button
+        type="button"
+        onclick="guardarEstadoCita('completada')"
+        class="dc-estado-btn"
+        data-e="completada"
+        style="
+          width:100%;
+          padding:11px 14px;
+          border-radius:8px;
+          border:2px solid #94a3b8;
+          background:#f8fafc;
+          color:#475569;
+          font-size:13px;
+          font-weight:600;
+          cursor:pointer;
+          font-family:var(--ff);
+        ">
+        ⚪ Completada
+      </button>
+
+      <!-- CANCELADA -->
+
+      <button
+        type="button"
+        onclick="guardarEstadoCita('cancelada')"
+        class="dc-estado-btn"
+        data-e="cancelada"
+        style="
+          width:100%;
+          padding:11px 14px;
+          border-radius:8px;
+          border:2px solid #ef4444;
+          background:#fef2f2;
+          color:#dc2626;
+          font-size:13px;
+          font-weight:600;
+          cursor:pointer;
+          font-family:var(--ff);
+        ">
+        🔴 Cancelada
+      </button>
+
     </div>
+
+    <!-- MENSAJE -->
+
+    <div
+      id="dc-estado-msg"
+      style="
+        display:none;
+        font-size:12px;
+        color:#15803d;
+        margin-top:10px;
+        text-align:center;
+      ">
+    </div>
+
   </div>
-</div>
 
+</div>
 <!-- ══ MODAL: VER CITA (solo lectura) ════════════════════════════════════════ -->
 <div id="modal-ver-cita" class="modal-detalle">
   <div class="md-box">
