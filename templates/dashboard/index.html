@@ -5811,86 +5811,202 @@ function toggleActivoServicio(id, btnEl) {
   </div>
 </div>
 
-<!-- ══ MODAL: EDITAR CITA ════════════════════════════════════════════════════ -->
-<div id="modal-editar-cita" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none';">
-  <div style="background:#fff;width:600px;max-width:95%;max-height:90vh;overflow:auto;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
-      <div style="font-size:16px;font-weight:700;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" style="vertical-align:-2px;margin-right:6px;"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
-        Editar cita
+
+<!-- ══ MODAL: CAMBIAR CITA ═════════════════════════════════════════════════ -->
+<div id="modal-editar-cita"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;"
+     onclick="if(event.target===this)this.style.display='none';">
+
+  <div style="background:#fff;width:430px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
+
+    <!-- Encabezado -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+
+      <div style="font-size:16px;font-weight:700;color:var(--txt);">
+        <svg width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="var(--blue)" stroke-width="2"
+             style="vertical-align:-2px;margin-right:6px;">
+          <path d="M8 2v4"/>
+          <path d="M16 2v4"/>
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <path d="M3 10h18"/>
+          <path d="M12 14v4"/>
+          <path d="M9 17h6"/>
+        </svg>
+        Cambiar cita
       </div>
-      <button onclick="document.getElementById('modal-editar-cita').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+
+      <button
+        type="button"
+        onclick="document.getElementById('modal-editar-cita').style.display='none'"
+        style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">
+        ×
+      </button>
+
     </div>
-    <div id="ec-loading" style="text-align:center;padding:2rem;color:var(--txt3);font-size:13px;">
-      <div style="width:28px;height:28px;border:3px solid var(--bdr);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;"></div>
+
+    <div id="ec-loading"
+         style="text-align:center;padding:2rem;color:var(--txt3);font-size:13px;">
+      <div style="width:28px;height:28px;border:3px solid var(--bdr);
+                  border-top-color:var(--blue);border-radius:50%;
+                  animation:spin .7s linear infinite;margin:0 auto 10px;">
+      </div>
       Cargando…
     </div>
+
     <form id="form-editar-cita" style="display:none;">
+
       {% csrf_token %}
-      <input type="hidden" id="ec-cita-id" value="">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+
+      <!-- ID de la cita -->
+      <input type="hidden" id="ec-cita-id" name="cita_id">
+
+      <!-- Estos campos permanecen ocultos porque el backend los necesita -->
+      <input type="hidden" id="ec-nombre" name="nombre">
+      <input type="hidden" id="ec-apellidos" name="apellidos">
+      <input type="hidden" id="ec-correo" name="correo">
+      <input type="hidden" id="ec-telefono" name="telefono">
+
+      <!-- Fecha y hora -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
         <div>
-          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Nombre *</label>
-          <input id="ec-nombre" name="nombre" type="text" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
+          <label style="display:block;font-size:12px;font-weight:600;
+                        color:var(--txt3);margin-bottom:5px;">
+            Nueva fecha *
+          </label>
+
+          <input
+            id="ec-fecha"
+            name="fecha"
+            type="date"
+            required
+            style="width:100%;border:1px solid var(--bdr);
+                   border-radius:8px;padding:10px 12px;
+                   font-size:13px;font-family:var(--ff);
+                   color:var(--txt2);outline:none;">
         </div>
+
         <div>
-          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Apellidos *</label>
-          <input id="ec-apellidos" name="apellidos" type="text" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
+          <label style="display:block;font-size:12px;font-weight:600;
+                        color:var(--txt3);margin-bottom:5px;">
+            Nueva hora *
+          </label>
+
+          <input
+            id="ec-hora"
+            name="hora"
+            type="time"
+            required
+            style="width:100%;border:1px solid var(--bdr);
+                   border-radius:8px;padding:10px 12px;
+                   font-size:13px;font-family:var(--ff);
+                   color:var(--txt2);outline:none;">
         </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Correo *</label>
-          <input id="ec-correo" name="correo" type="email" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
-        </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Teléfono *</label>
-          <input id="ec-telefono" name="telefono" type="tel" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
-        </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Fecha *</label>
-          <input id="ec-fecha" name="fecha" type="date" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
-        </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Hora *</label>
-          <input id="ec-hora" name="hora" type="time" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
-        </div>
-        <div style="grid-column:1/3;">
-          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Motivo *</label>
-          <select id="ec-motivo" name="motivo" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;background:#fff;">
-            <option value="seguro_vida">Seguro de vida</option>
-            <option value="medico">Gastos médicos mayores</option>
-            <option value="auto">Seguro de auto</option>
-            <option value="hogar">Seguro de hogar</option>
-            <option value="inversion">Inversión y ahorro</option>
-            <option value="empresa">Empresarial</option>
-            <option value="otro">Otro</option>
-          </select>
-        </div>
-        <div style="grid-column:1/3;" id="ec-otro-bloque">
-          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Especificar motivo</label>
-          <input id="ec-motivo-otro" name="motivo_otro" type="text" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
-        </div>
-        {% if es_admin %}
-        <div style="grid-column:1/3;">
-          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Asesor asignado</label>
-          <select id="ec-asesor" name="asesor_id" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;background:#fff;">
-            <option value="">— Sin asignar —</option>
-            {% for a in asesores %}
-            <option value="{{ a.id }}">{{ a.get_full_name|default:a.username }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        {% endif %}
-        <div style="grid-column:1/3;">
-          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Comentarios</label>
-          <textarea id="ec-comentarios" name="comentarios" rows="2" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;resize:vertical;"></textarea>
-        </div>
+
       </div>
-      <div id="ec-error" style="display:none;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 12px;border-radius:7px;font-size:12px;margin-top:1rem;"></div>
+
+      <!-- Motivo -->
+      <div style="margin-top:14px;">
+
+        <label style="display:block;font-size:12px;font-weight:600;
+                      color:var(--txt3);margin-bottom:5px;">
+          Motivo de la cita *
+        </label>
+
+        <select
+          id="ec-motivo"
+          name="motivo"
+          required
+          style="width:100%;border:1px solid var(--bdr);
+                 border-radius:8px;padding:10px 12px;
+                 font-size:13px;font-family:var(--ff);
+                 color:var(--txt2);outline:none;background:#fff;">
+
+          <option value="seguro_vida">Seguro de vida</option>
+          <option value="medico">Gastos médicos mayores</option>
+          <option value="auto">Seguro de auto</option>
+          <option value="hogar">Seguro de hogar</option>
+          <option value="inversion">Inversión y ahorro</option>
+          <option value="empresa">Empresarial</option>
+          <option value="otro">Otro</option>
+
+        </select>
+
+      </div>
+
+      <!-- Otro motivo -->
+      <div id="ec-otro-bloque" style="display:none;margin-top:14px;">
+
+        <label style="display:block;font-size:12px;font-weight:600;
+                      color:var(--txt3);margin-bottom:5px;">
+          Especificar motivo
+        </label>
+
+        <input
+          id="ec-motivo-otro"
+          name="motivo_otro"
+          type="text"
+          style="width:100%;border:1px solid var(--bdr);
+                 border-radius:8px;padding:10px 12px;
+                 font-size:13px;font-family:var(--ff);
+                 color:var(--txt2);outline:none;">
+
+      </div>
+
+      <!-- Comentarios -->
+      <div style="margin-top:14px;">
+
+        <label style="display:block;font-size:12px;font-weight:600;
+                      color:var(--txt3);margin-bottom:5px;">
+          Comentarios
+        </label>
+
+        <textarea
+          id="ec-comentarios"
+          name="comentarios"
+          rows="2"
+          style="width:100%;border:1px solid var(--bdr);
+                 border-radius:8px;padding:10px 12px;
+                 font-size:13px;font-family:var(--ff);
+                 color:var(--txt2);outline:none;resize:vertical;"
+          placeholder="Información adicional..."></textarea>
+
+      </div>
+
+      <div id="ec-error"
+           style="display:none;background:#fee2e2;color:#dc2626;
+                  border:1px solid #fecaca;padding:8px 12px;
+                  border-radius:7px;font-size:12px;margin-top:1rem;">
+      </div>
+
+      <!-- Botones -->
       <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;">
-        <button type="button" onclick="document.getElementById('modal-editar-cita').style.display='none'" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
-        <button type="submit" id="ec-btn-guardar" style="background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">✓ Guardar cambios</button>
+
+        <button
+          type="button"
+          onclick="document.getElementById('modal-editar-cita').style.display='none'"
+          style="background:var(--gray2);color:var(--txt2);
+                 border:1px solid var(--bdr);padding:8px 18px;
+                 border-radius:7px;font-size:13px;
+                 font-family:var(--ff);cursor:pointer;">
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          id="ec-btn-guardar"
+          style="background:var(--blue);color:#fff;border:none;
+                 padding:9px 20px;border-radius:7px;
+                 font-size:13px;font-family:var(--ff);
+                 cursor:pointer;font-weight:600;">
+          ✓ Guardar cambios
+        </button>
+
       </div>
+
     </form>
+
   </div>
 </div>
 
