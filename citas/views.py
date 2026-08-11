@@ -185,6 +185,7 @@ def detalle_ajax(request, cita_id):
         'estado':           cita.estado,
         'estado_display':   cita.get_estado_display(),
         'asesor':           cita.asesor.get_full_name() or cita.asesor.username if cita.asesor else '',
+        'asesor_id':        cita.asesor.id if cita.asesor else None,
         'creada':           timezone.localtime(cita.creada).strftime('%d/%m/%Y %H:%M'),
     })
     
@@ -252,132 +253,6 @@ def crear_ajax(request):
         return JsonResponse({'ok': False, 'error': 'Fecha u hora con formato inválido.'}, status=400)
     except Exception as e:
         return JsonResponse({'ok': False, 'error': str(e)}, status=400)
-
-# ── API JSON: flujo completo Cita → Prospecto ────────────────────────────────
-@login_required
-def asignar_y_crear_prospecto_ajax(request, cita_id):
-    """
-    Flujo de un solo clic:
-    1. Asigna el asesor seleccionado a la cita.
-    2. Crea el Prospecto (o lo recupera si ya existe por correo).
-    3. Asigna el mismo asesor al Prospecto.
-    4. Registra ambas acciones en el Historial.
-    5. Devuelve JSON para actualizar el dashboard sin recargar.
-    """
-    if request.method != 'POST':
-        return JsonResponse({'ok': False, 'error': 'Método no permitido.'}, status=405)
-
-    from django.contrib.auth.models import User as UserModel
-    from prospectos.models import Prospecto
-
-    # ── Permisos ──────────────────────────────────────────────────────────────
-    try:
-        es_admin = request.user.perfil.es_admin
-    except Exception:
-        es_admin = request.user.is_superuser
-    if not es_admin:
-        return JsonResponse({'ok': False, 'error': 'Sin permisos de administrador.'}, status=403)
-
-    cita = get_object_or_404(Cita, id=cita_id)
-
-    # ── 1. Asesor ─────────────────────────────────────────────────────────────
-    asesor_id = request.POST.get('asesor_id', '').strip()
-    if not asesor_id:
-        return JsonResponse({'ok': False, 'error': 'Debes seleccionar un asesor.'}, status=400)
-
-    asesor = get_object_or_404(UserModel, id=asesor_id, is_active=True)
-    nombre_asesor = asesor.get_full_name() or asesor.username
-
-    cita.asesor = asesor
-    cita.save(update_fields=['asesor'])
-
-    registrar(
-        usuario=request.user,
-        accion=f'Asesor "{nombre_asesor}" asignado a cita #{cita_id} '
-               f'({cita.nombre_cliente} {cita.apellidos_cliente})',
-        modulo='citas',
-        objeto_id=cita_id,
-        request=request,
-    )
-
-    # ── 2. Mapeo motivo cita → interes prospecto ──────────────────────────────
-    # Cita.MOTIVO_CHOICES y Prospecto.INTERES_CHOICES comparten los mismos valores
-    # excepto 'otro' (Cita) que no existe en Prospecto → se mapea a 'general'
-    motivo_a_interes = {
-        'seguro_vida': 'seguro_vida',
-        'medico':      'medico',
-        'auto':        'auto',
-        'hogar':       'hogar',
-        'inversion':   'inversion',
-        'empresa':     'empresa',
-        'otro':        'general',
-    }
-    interes = motivo_a_interes.get(cita.motivo, 'general')
-
-    # ── 3. Crear o recuperar Prospecto por correo ─────────────────────────────
-    prospecto, creado = Prospecto.objects.get_or_create(
-        correo=cita.correo,
-        defaults={
-            'nombre':            f'{cita.nombre_cliente} {cita.apellidos_cliente}'.strip(),
-            'telefono':          cita.telefono,
-            'interes':           interes,
-            'servicios_interes': interes,          # copia motivo → servicios de interés
-            'mensaje':           cita.comentarios or '',
-            'estado':            'nuevo',
-            'tipo_registro':     'prospecto',
-            'asesor_asignado':   asesor,
-        }
-    )
-
-    if not creado:
-        # Prospecto existente: actualizar asesor y rellenar servicios si estaba vacío
-        campos = ['asesor_asignado']
-        prospecto.asesor_asignado = asesor
-        if not prospecto.servicios_interes:
-            prospecto.servicios_interes = interes
-            campos.append('servicios_interes')
-        prospecto.save(update_fields=campos)
-
-    # Primer seguimiento automático — solo si el prospecto es nuevo
-    if creado:
-        from prospectos.models import SeguimientoProspecto
-        motivo_label = dict(cita.MOTIVO_CHOICES).get(cita.motivo, cita.motivo)
-        texto_seg = (
-            f'Prospecto creado automáticamente desde cita #{cita_id}.\n'
-            f'Motivo: {motivo_label}.'
-        )
-        if cita.comentarios:
-            texto_seg += f'\nObservaciones de la cita: {cita.comentarios}'
-        SeguimientoProspecto.objects.create(
-            prospecto  = prospecto,
-            asesor     = asesor,
-            comentario = texto_seg,
-        )
-
-    registrar(
-        usuario=request.user,
-        accion=(
-            f'Prospecto creado automáticamente desde cita #{cita_id}: '
-            f'{prospecto.nombre} ({prospecto.correo})'
-            if creado else
-            f'Prospecto #{prospecto.id} ({prospecto.nombre}) '
-            f'actualizado desde cita #{cita_id} — asesor: {nombre_asesor}'
-        ),
-        modulo='prospectos',
-        objeto_id=prospecto.id,
-        request=request,
-    )
-
-    return JsonResponse({
-        'ok':              True,
-        'asesor_id':       asesor.id,
-        'asesor_nombre':   nombre_asesor,
-        'prospecto_id':    prospecto.id,
-        'prospecto_nuevo': creado,
-        'prospecto_nombre': prospecto.nombre,
-        'prospectos_total': Prospecto.objects.count(),
-        'prospectos_nuevos': Prospecto.objects.filter(estado='nuevo').count(),
-    })
 
 # ── API JSON: flujo completo Cita → Prospecto ────────────────────────────────
 @login_required
@@ -579,6 +454,20 @@ def editar_ajax(request, cita_id):
         cita.motivo            = motivo
         cita.motivo_otro       = request.POST.get('motivo_otro', '').strip()
         cita.comentarios       = request.POST.get('comentarios', '').strip()
+
+        # Asesor: solo administradores pueden asignarlo/cambiarlo desde Editar.
+        try:
+            es_admin = request.user.perfil.es_admin
+        except Exception:
+            es_admin = request.user.is_superuser
+        if es_admin and 'asesor_id' in request.POST:
+            asesor_id = request.POST.get('asesor_id', '').strip()
+            if asesor_id:
+                from django.contrib.auth.models import User as UserModel
+                cita.asesor = get_object_or_404(UserModel, id=asesor_id, is_active=True)
+            else:
+                cita.asesor = None
+
         cita.save()
 
         registrar(
@@ -598,8 +487,8 @@ def editar_ajax(request, cita_id):
             'fecha':          str(cita.fecha),
             'hora':           cita.hora.strftime('%H:%M'),
             'motivo_display': cita.get_motivo_display(),
+            'asesor_nombre':  (cita.asesor.get_full_name() or cita.asesor.username) if cita.asesor else '',
         })
-
     except (ValueError, IndexError):
         return JsonResponse({'ok': False, 'error': 'Fecha u hora con formato inválido.'}, status=400)
     except Exception as e:

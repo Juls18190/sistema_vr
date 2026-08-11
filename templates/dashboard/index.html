@@ -921,15 +921,6 @@ tr:hover td{background:#fafbfc;}
         {% else %}
             <span style="font-size:11px;color:var(--txt3);">Sin asignar</span>
         {% endif %}
-        {% if request.user.perfil.es_admin or request.user.is_superuser %}
-        <button class="act-btn" style="margin-top:3px;" title="Asignar asesor"
-            onclick="abrirAsignarAsesor({{ cita.id }}, '{{ cita.nombre_cliente|escapejs }} {{ cita.apellidos_cliente|escapejs }}', {{ cita.asesor.id|default:'null' }})">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                <line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
-            </svg>
-        </button>
-        {% endif %}
     </td>
 
     <td id="estado-c-{{ cita.id }}">
@@ -945,11 +936,11 @@ tr:hover td{background:#fafbfc;}
     </td>
 
     <td>
-        <button class="act-btn" title="Ver / cambiar estado"
-            onclick="verDetalleCita({{ cita.id }})">
+        <button class="act-btn" title="Ver cita"
+            onclick="abrirVerCita({{ cita.id }})">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                 <circle cx="12" cy="12" r="3"/>
-                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/>
             </svg>
         </button>
         <button class="act-btn" title="Editar cita"
@@ -957,6 +948,12 @@ tr:hover td{background:#fafbfc;}
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                 <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/>
+            </svg>
+        </button>
+        <button class="act-btn" title="Cambiar estado"
+            onclick="verDetalleCita({{ cita.id }})">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/>
             </svg>
         </button>
         <button class="act-btn act-btn-del" title="Eliminar cita"
@@ -1502,11 +1499,19 @@ tr:hover td{background:#fafbfc;}
               </div>
             </div>
             <div class="pcard-footer">
-              <button class="pcard-btn" onclick="abrirExpediente({{ p.id }})" title="Ver expediente completo">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Expediente
-              </button>
-              
+              <span class="act-btn" title="Ver prospecto" onclick="verProspectoDesdeCard({{ p.id }})">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </span>
+              <span class="act-btn" title="Editar prospecto" onclick="editarProspectoDesdeCard({{ p.id }})">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
+              </span>
+              <span class="act-btn" title="Enviar mensaje" onclick="mensajeProspectoDesdeCard({{ p.id }})">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+              </span>
+              <span class="act-btn act-btn-del" title="Eliminar prospecto" style="margin-left:auto;"
+                    onclick="abrirModalEliminarProspecto({{ p.id }}, '{{ p.nombre|escapejs }}')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </span>
             </div>
           </div>
           {% empty %}
@@ -2059,6 +2064,7 @@ tr:hover td{background:#fafbfc;}
   </div>
 </div>
 
+
   <!-- MODAL CAMBIO DE ESTADO — POSTULANTES (dashboard) -->
 <div id="modal-estado-dash" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(2px);">
   <div style="background:#fff;border-radius:14px;padding:1.75rem;width:430px;max-width:95vw;animation:fadeInUp .25s ease both;">
@@ -2539,6 +2545,9 @@ function abrirEditarCita(id) {
     document.getElementById('ec-motivo-otro').value = d.motivo_otro || '';
     document.getElementById('ec-comentarios').value = d.comentarios || '';
 
+    var selAsesorEC = document.getElementById('ec-asesor');
+    if (selAsesorEC) selAsesorEC.value = d.asesor_id || '';
+
     var otroBloque = document.getElementById('ec-otro-bloque');
     otroBloque.style.display = (d.motivo === 'otro') ? '' : 'none';
 
@@ -2745,6 +2754,13 @@ document.addEventListener('DOMContentLoaded', function() {
         fila.cells[1].textContent = data.motivo_display;
         fila.cells[2].textContent = data.fecha;
         fila.cells[3].textContent = data.hora;
+
+        var celdaAsesorEC = document.getElementById('asesor-c-' + data.id);
+        if (celdaAsesorEC) {
+          celdaAsesorEC.innerHTML = data.asesor_nombre
+            ? '<div style="font-size:12px;font-weight:600;color:var(--txt2);">' + data.asesor_nombre + '</div>'
+            : '<span style="font-size:11px;color:var(--txt3);">Sin asignar</span>';
+        }
 
         fila.style.background = '#eff6ff';
         setTimeout(function() {
@@ -3032,8 +3048,14 @@ document.addEventListener('DOMContentLoaded', function() {
           '<td>—</td>' +
           '<td id="estado-c-' + data.id + '">' + _estadoBadgeCita[data.estado] + '</td>' +
           '<td>' +
-            '<button class="act-btn" title="Ver / cambiar estado" onclick="verDetalleCita(' + data.id + ')">' +
-              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg>' +
+            '<button class="act-btn" title="Ver cita" onclick="abrirVerCita(' + data.id + ')">' +
+              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+            '</button>' +
+            '<button class="act-btn" title="Editar cita" onclick="abrirEditarCita(' + data.id + ')">' +
+              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>' +
+            '</button>' +
+            '<button class="act-btn" title="Cambiar estado" onclick="verDetalleCita(' + data.id + ')">' +
+              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>' +
             '</button>' +
             '<button class="act-btn act-btn-del" title="Eliminar cita" onclick="confirmarEliminarCita(' + data.id + ', \'' + data.nombre_cliente + ' ' + data.apellidos_cliente + '\')">' +
               '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>' +
@@ -3471,7 +3493,69 @@ var _pfiltroActivo = '';
 
 var _expIdActual = null;
 var _expTelefonoActual = '';
+var _expAbrirEditarPendiente = false;
+var _expAbrirWhatsappPendiente = false;
 
+function editarProspectoDesdeCard(id){
+  _expAbrirEditarPendiente = true;
+  abrirExpediente(id);
+}
+
+function mensajeProspectoDesdeCard(id){
+  _expAbrirWhatsappPendiente = true;
+  abrirExpediente(id);
+}
+
+// ── Modal flotante VER PROSPECTO (solo lectura) ───────────────────────────────
+function verProspectoDesdeCard(id){
+  var modal = document.getElementById('modal-ver-prospecto');
+  modal.classList.add('show');
+
+  ['ver-p-nombre','ver-p-correo','ver-p-telefono','ver-p-interes','ver-p-asesor','ver-p-tipo','ver-p-referido','ver-p-fecha'].forEach(function(campId){
+    var el = document.getElementById(campId);
+    if (el) el.textContent = 'Cargando…';
+  });
+  document.getElementById('ver-p-estado').innerHTML = '';
+  document.getElementById('ver-p-notas-wrap').style.display = 'none';
+
+  fetch('/prospectos/' + id + '/expediente/ajax/', {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (!d.ok) { toast('No se pudo cargar la información del prospecto.', 'error'); return; }
+
+    document.getElementById('ver-p-nombre').textContent   = d.nombre;
+    document.getElementById('ver-p-correo').textContent   = d.correo || '—';
+    document.getElementById('ver-p-telefono').textContent = d.telefono || '—';
+    document.getElementById('ver-p-interes').textContent  = d.interes_display || '—';
+    document.getElementById('ver-p-asesor').textContent   = d.asesor || 'Sin asignar';
+    document.getElementById('ver-p-tipo').textContent     = d.tipo_registro_display || '—';
+    document.getElementById('ver-p-referido').textContent = d.es_referido ? 'Sí' : 'No';
+    document.getElementById('ver-p-fecha').textContent    = d.fecha_alta || '—';
+
+    var estadoBadge = {
+      nuevo:'<span class="badge b-blue">Nuevo</span>',
+      contactado:'<span class="badge b-yellow">Contactado</span>',
+      convertido:'<span class="badge b-green">Convertido</span>',
+      descartado:'<span class="badge b-gray">Descartado</span>',
+    };
+    document.getElementById('ver-p-estado').innerHTML = estadoBadge[d.estado] || d.estado_display;
+
+    var notasWrap = document.getElementById('ver-p-notas-wrap');
+    if (d.notas) {
+      document.getElementById('ver-p-notas').textContent = d.notas;
+      notasWrap.style.display = '';
+    } else {
+      notasWrap.style.display = 'none';
+    }
+  })
+  .catch(function(){ toast('Error de conexión al cargar el prospecto.', 'error'); });
+}
+
+function cerrarModalVerProspecto(){
+  document.getElementById('modal-ver-prospecto').classList.remove('show');
+}
 // ── Acciones rápidas del expediente: Llamar / WhatsApp / Agendar cita ─────────
 function llamarProspectoExp() {
   if (!_expTelefonoActual) return;
@@ -3609,8 +3693,17 @@ function _poblarExpediente(d) {
   // Mostrar contenido
   document.getElementById('exp-loading').style.display   = 'none';
   document.getElementById('exp-contenido').style.display = '';
-}
 
+  // Si el clic vino del ícono ✏ Editar o 💬 Mensaje de la tarjeta, continuar automáticamente
+  if (_expAbrirEditarPendiente) {
+    _expAbrirEditarPendiente = false;
+    document.getElementById('exp-modal-editar').classList.add('show');
+  }
+  if (_expAbrirWhatsappPendiente) {
+    _expAbrirWhatsappPendiente = false;
+    whatsappProspectoExp();
+  }
+}
 function _renderTimeline(segs) {
   var tl    = document.getElementById('exp-timeline');
   var count = document.getElementById('exp-seg-count');
@@ -3751,25 +3844,58 @@ function _precargarCheckboxes(prefijo, valoresCSV) {
   });
 }
 
-// ── PROSPECTOS: Eliminar desde el Expediente (AJAX + regreso automático al listado) ──
-function abrirModalEliminarProspecto(id, nombre) {
-  if (!confirm('¿Eliminar permanentemente a "' + nombre + '"? Esta acción no se puede deshacer.')) return;
+// ── PROSPECTOS: Eliminar (tarjeta o Expediente) — modal propio + AJAX + regreso al listado ──
+var _prospEliminarId = null;
+var _prospEliminarNombre = null;
+var _prospEliminando = false;
 
-  fetch('/prospectos/' + id + '/eliminar/', {
+function abrirModalEliminarProspecto(id, nombre) {
+  _prospEliminarId = id;
+  _prospEliminarNombre = nombre;
+  _prospEliminando = false;
+  document.getElementById('me-nombre-target-prospecto').textContent = nombre;
+  var btn = document.getElementById('me-btn-confirm-prospecto');
+  btn.disabled = false;
+  btn.textContent = 'Sí, eliminar';
+  document.getElementById('modal-eliminar-prospecto').classList.add('show');
+}
+
+function cerrarModalEliminarProspecto() {
+  document.getElementById('modal-eliminar-prospecto').classList.remove('show');
+}
+
+document.getElementById('modal-eliminar-prospecto').addEventListener('click', function(e) {
+  if (e.target === this) cerrarModalEliminarProspecto();
+});
+
+function ejecutarEliminarProspecto() {
+  if (!_prospEliminarId || _prospEliminando) return;
+  _prospEliminando = true;
+  var btn = document.getElementById('me-btn-confirm-prospecto');
+  btn.disabled = true;
+  btn.textContent = 'Eliminando…';
+
+  fetch('/prospectos/' + _prospEliminarId + '/eliminar/', {
     method: 'POST',
     headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': getCsrf() },
   })
     .then(function(r) { return r.json(); })
     .then(function(data) {
+      _prospEliminando = false;
+      cerrarModalEliminarProspecto();
       if (!data.ok) { toast(data.error || 'No se pudo eliminar.', 'error'); return; }
-      toast('Prospecto "' + data.nombre + '" eliminado.', 'success');
+      toast('Prospecto <strong>' + _prospEliminarNombre + '</strong> eliminado', 'success');
       var card = document.getElementById('pcard-' + data.id);
       if (card) card.remove();
       if (document.getElementById('p-expediente').classList.contains('on') && _expIdActual === data.id) {
         regresarAProspectos();
       }
     })
-    .catch(function() { toast('Error de conexión al eliminar.', 'error'); });
+    .catch(function() {
+      _prospEliminando = false;
+      cerrarModalEliminarProspecto();
+      toast('Error de conexión al eliminar.', 'error');
+    });
 }
 
 function regresarAProspectos() {
@@ -3933,7 +4059,11 @@ function _insertarTarjetaProspecto(d){
         '<div class="pcard-row">' + (d.asesor ? d.asesor : '<span style="color:var(--txt3);font-style:italic;">Sin asignar</span>') + '</div>' +
       '</div>' +
     '</div>' +
-    '<div class="pcard-footer"><button class="pcard-btn" onclick="abrirExpediente(' + d.id + ')" title="Ver expediente completo">Expediente</button></div>';
+    '<div class="pcard-footer">' +
+      '<span class="act-btn" title="Ver prospecto" onclick="verProspectoDesdeCard(' + d.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>' +
+      '<span class="act-btn" title="Editar prospecto" onclick="editarProspectoDesdeCard(' + d.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg></span>' +
+      '<span class="act-btn" title="Enviar mensaje" onclick="mensajeProspectoDesdeCard(' + d.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></span>' +
+      '<span class="act-btn act-btn-del" title="Eliminar prospecto" style="margin-left:auto;" onclick="abrirModalEliminarProspecto(' + d.id + ', \'' + d.nombre.replace(/'/g,"\\'") + '\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></span></div>';
   grid.insertBefore(card, grid.firstChild);
 }
 function _actualizarKpisProspectosNuevo(){
@@ -4440,6 +4570,53 @@ var _estadoBadgeCita = {
   completada: '<span class="badge b-gray">Completada</span>',
   cancelada:  '<span class="badge b-red">Cancelada</span>',
 };
+
+function abrirVerCita(id) {
+  var m = document.getElementById('modal-ver-cita');
+  m.classList.add('show');
+  ['vc-nombre','vc-motivo','vc-correo','vc-telefono','vc-fecha-hora','vc-asesor','vc-creada'].forEach(function(i){
+    var el = document.getElementById(i); if (el) el.textContent = 'Cargando…';
+  });
+  document.getElementById('vc-avatar').textContent = '…';
+  document.getElementById('vc-estado-badge').innerHTML = '';
+  document.getElementById('vc-row-comentarios').style.display = 'none';
+
+  fetch('/citas/admin/' + id + '/detalle/ajax/', {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(function(d) {
+    var iniciales = (d.nombre_cliente || '?').charAt(0).toUpperCase() + (d.apellidos_cliente || '?').charAt(0).toUpperCase();
+    document.getElementById('vc-avatar').textContent      = iniciales;
+    document.getElementById('vc-nombre').textContent      = d.nombre_cliente + ' ' + d.apellidos_cliente;
+    document.getElementById('vc-motivo').textContent      = d.motivo_display + (d.motivo_otro ? ': ' + d.motivo_otro : '');
+    document.getElementById('vc-correo').textContent      = d.correo;
+    document.getElementById('vc-telefono').textContent    = d.telefono;
+    document.getElementById('vc-fecha-hora').textContent  = d.fecha + ' a las ' + d.hora;
+    document.getElementById('vc-asesor').textContent      = d.asesor || '— Sin asignar';
+    document.getElementById('vc-creada').textContent      = d.creada;
+    document.getElementById('vc-estado-badge').innerHTML  = _estadoBadgeCita[d.estado] || d.estado_display;
+
+    var bloqueComentarios = document.getElementById('vc-row-comentarios');
+    if (d.comentarios) {
+      document.getElementById('vc-comentarios').textContent = d.comentarios;
+      bloqueComentarios.style.display = 'flex';
+    } else {
+      bloqueComentarios.style.display = 'none';
+    }
+  })
+  .catch(function(err) {
+    toast('Error al cargar la cita.', 'error');
+    console.error(err);
+  });
+}
+
+function cerrarVerCita() {
+  document.getElementById('modal-ver-cita').classList.remove('show');
+}
+document.getElementById('modal-ver-cita').addEventListener('click', function(e) {
+  if (e.target === this) cerrarVerCita();
+});
 
 function verDetalleCita(id) {
   var loading = document.getElementById('dc-loading');
@@ -5513,6 +5690,34 @@ function toggleActivoServicio(id, btnEl) {
   </div>
 </div>
 
+<!-- ══ MODAL: VER PROSPECTO (solo lectura) ══════════════════════════════════ -->
+<div class="modal-overlay" id="modal-ver-prospecto">
+  <div class="modal" style="width:420px;max-height:85vh;overflow-y:auto;">
+    <div class="modal-header">
+      <div class="modal-title">👁️ Ver prospecto</div>
+      <button class="modal-close" onclick="cerrarModalVerProspecto()">×</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.85rem;font-size:13px;color:var(--txt2);">
+      <div><strong style="color:var(--txt);">Nombre:</strong> <span id="ver-p-nombre">—</span></div>
+      <div><strong style="color:var(--txt);">Correo:</strong> <span id="ver-p-correo">—</span></div>
+      <div><strong style="color:var(--txt);">Teléfono:</strong> <span id="ver-p-telefono">—</span></div>
+      <div><strong style="color:var(--txt);">Interés:</strong> <span id="ver-p-interes">—</span></div>
+      <div><strong style="color:var(--txt);">Estado:</strong> <span id="ver-p-estado">—</span></div>
+      <div><strong style="color:var(--txt);">Asesor asignado:</strong> <span id="ver-p-asesor">—</span></div>
+      <div><strong style="color:var(--txt);">Tipo de registro:</strong> <span id="ver-p-tipo">—</span></div>
+      <div><strong style="color:var(--txt);">Referido:</strong> <span id="ver-p-referido">—</span></div>
+      <div><strong style="color:var(--txt);">Fecha de alta:</strong> <span id="ver-p-fecha">—</span></div>
+      <div id="ver-p-notas-wrap" style="display:none;">
+        <strong style="color:var(--txt);">Notas:</strong>
+        <div id="ver-p-notas" style="margin-top:4px;white-space:pre-wrap;"></div>
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:1.25rem;">
+      <button type="button" class="btn-cancel" onclick="cerrarModalVerProspecto()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ MODAL: NUEVA CITA DESDE DASHBOARD ════════════════════════════════════ -->
 <div id="modal-nueva-cita" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none';">
   <div style="background:#fff;width:620px;max-width:95%;max-height:90vh;overflow:auto;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
@@ -5664,6 +5869,17 @@ function toggleActivoServicio(id, btnEl) {
           <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Especificar motivo</label>
           <input id="ec-motivo-otro" name="motivo_otro" type="text" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
         </div>
+        {% if es_admin %}
+        <div style="grid-column:1/3;">
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Asesor asignado</label>
+          <select id="ec-asesor" name="asesor_id" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;background:#fff;">
+            <option value="">— Sin asignar —</option>
+            {% for a in asesores %}
+            <option value="{{ a.id }}">{{ a.get_full_name|default:a.username }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        {% endif %}
         <div style="grid-column:1/3;">
           <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Comentarios</label>
           <textarea id="ec-comentarios" name="comentarios" rows="2" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;resize:vertical;"></textarea>
@@ -5764,6 +5980,55 @@ function toggleActivoServicio(id, btnEl) {
         </button>
       </div>
       <div id="dc-asignar-msg" style="display:none;font-size:12px;margin-top:8px;padding:7px 10px;border-radius:6px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: VER CITA (solo lectura) ════════════════════════════════════════ -->
+<div id="modal-ver-cita" class="modal-detalle">
+  <div class="md-box">
+    <div class="md-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="md-avatar" id="vc-avatar">--</div>
+        <div>
+          <div class="md-title" id="vc-nombre">—</div>
+          <div class="md-sub" id="vc-motivo">—</div>
+        </div>
+      </div>
+      <button class="md-close" onclick="cerrarVerCita()">×</button>
+    </div>
+    <div class="md-body">
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div><div class="md-label">Correo</div><div class="md-val" id="vc-correo">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div><div class="md-label">Teléfono</div><div class="md-val" id="vc-telefono">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div><div class="md-label">Fecha y hora</div><div class="md-val" id="vc-fecha-hora">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></div>
+        <div><div class="md-label">Asesor asignado</div><div class="md-val" id="vc-asesor">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="md-label">Estado actual</div><div class="md-val" id="vc-estado-badge">—</div></div>
+      </div>
+      <div class="md-row" id="vc-row-comentarios" style="display:none;">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div><div class="md-label">Comentarios</div><div class="md-val" id="vc-comentarios">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div><div class="md-label">Registrada</div><div class="md-val" id="vc-creada">—</div></div>
+      </div>
+    </div>
+    <div class="md-actions">
+      <button class="md-btn-secondary" onclick="cerrarVerCita()">Cerrar</button>
     </div>
   </div>
 </div>

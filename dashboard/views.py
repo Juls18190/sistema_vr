@@ -87,6 +87,13 @@ def index(request):
         # Citas cuya fecha de cita (no de creación) es hoy
         citas_hoy = Cita.objects.filter(fecha=hoy.date()).count()
 
+        # Rol del usuario actual (para mostrar/ocultar el selector de asesor en modales)
+        es_admin_dashboard = (
+            request.user.perfil.es_admin
+            if getattr(request.user, 'perfil', None)
+            else request.user.is_superuser
+        )
+
         contexto = {
             # ── KPIs principales (tarjetas del dashboard) ──────────────────
             'citas_pendientes':         Cita.objects.filter(estado='pendiente').count(),
@@ -150,6 +157,7 @@ def index(request):
             # ── Listas para selects ───────────────────────────────────────
             'vacantes_activas_lista':   Vacante.objects.filter(activa=True).order_by('titulo'),
             'asesores':                 User.objects.filter(is_active=True).order_by('first_name', 'username'),
+            'es_admin':                 es_admin_dashboard,
 
             # ── Datos para gráficas ───────────────────────────────────────
             'chart_meses':     meses_labels,
