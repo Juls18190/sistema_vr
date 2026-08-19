@@ -1,315 +1,111 @@
-{% extends "base.html" %}
-
-{% block title %}Postulación — Grupo V&R Consultores{% endblock %}
-
-{% block extra_css %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Postulación enviada — Grupo V&R</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
 <style>
-/* ─── Variables base (mismas que el sitio) ─── */
-:root{
-  --dark:#0a1628;--dark2:#0f1e35;--blue:#1560BD;--blue2:#3a82e8;
-  --accent:#4fc3f7;--text:#e8edf5;--muted:#8899aa;
-  --border:rgba(255,255,255,0.09);--ff:'Sora',sans-serif;
-}
+:root{--dark:#0a1628;--dark2:#0f1e35;--blue:#1560BD;--blue2:#3a82e8;--accent:#4fc3f7;--text:#e8edf5;--muted:#8899aa;--border:rgba(255,255,255,0.09);--ff:'Sora',sans-serif;--fd:'Sora',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--ff);background:var(--dark);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
 
-/* ─── Hero ─────────────────────────────────── */
-.form-hero{
-  background:linear-gradient(135deg,#060f20 0%,#091828 55%,#0c2040 100%);
-  padding:3.5rem 2.5rem 3rem;
-  border-bottom:0.5px solid var(--border);
-  position:relative;overflow:hidden;
-}
-.form-hero::before{
-  content:'';position:absolute;top:-80px;right:-80px;
-  width:350px;height:350px;border-radius:50%;
-  background:radial-gradient(circle,rgba(21,96,189,.18) 0%,transparent 70%);
-}
-.form-hero-tag{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);font-weight:600;margin-bottom:8px;}
-.form-hero h1{font-family:'Playfair Display',serif;font-size:36px;font-weight:600;color:#fff;margin-bottom:10px;line-height:1.2;}
-.form-hero p{font-size:14px;color:rgba(255,255,255,.7);max-width:500px;line-height:1.7;}
+nav{background:rgba(10,22,40,0.97);padding:0 2.5rem;display:flex;align-items:center;justify-content:space-between;height:58px;border-bottom:0.5px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.logo-box{width:36px;height:36px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.logo-txt{font-size:14px;font-weight:600;color:#fff;}
+.logo-sub{font-size:10px;color:var(--muted);}
 
-/* ─── Pasos indicadores ─────────────────────── */
-.steps-bar{display:flex;align-items:center;gap:0;margin-top:1.75rem;}
-.step-item{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.45);}
-.step-item.done{color:var(--accent);}
-.step-dot{width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
-.step-item.done .step-dot{background:var(--blue);border-color:var(--blue);color:#fff;}
-.step-line{width:40px;height:1px;background:rgba(255,255,255,.15);margin:0 4px;}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes checkDraw{0%{stroke-dashoffset:50}100%{stroke-dashoffset:0}}
 
-/* ─── Layout del formulario ─────────────────── */
-.form-outer{background:var(--dark);min-height:60vh;padding:3rem 1.5rem;}
-.form-wrap{max-width:660px;margin:0 auto;}
+.main{flex:1;display:flex;align-items:center;justify-content:center;padding:3rem 1.5rem;}
+.card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:16px;padding:3rem 2.5rem;max-width:500px;width:100%;text-align:center;animation:fadeInUp .6s ease both;}
 
-/* ─── Tarjeta ────────────────────────────────── */
-.fcard{
-  background:rgba(255,255,255,0.04);
-  border:0.5px solid var(--border);
-  border-radius:16px;padding:2rem;
-  margin-bottom:1.25rem;
-}
-.fcard-title{
-  font-size:15px;font-weight:600;color:#fff;
-  margin-bottom:1.5rem;padding-bottom:1rem;
-  border-bottom:0.5px solid var(--border);
-  display:flex;align-items:center;gap:8px;
-}
+.check-circle{width:80px;height:80px;background:rgba(34,197,94,0.12);border:2px solid rgba(34,197,94,0.35);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.75rem;animation:scaleIn .5s ease .15s both;}
+.check-circle svg polyline{stroke-dasharray:50;stroke-dashoffset:50;animation:checkDraw .5s ease .55s forwards;}
 
-/* ─── Grupos de campo ────────────────────────── */
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-.fr{margin-bottom:1rem;}
-.fr label{
-  display:block;font-size:11px;font-weight:600;
-  color:var(--muted);margin-bottom:6px;
-  text-transform:uppercase;letter-spacing:.4px;
-}
-.fr input,.fr select,.fr textarea{
-  width:100%;
-  background:rgba(255,255,255,0.05);
-  border:0.5px solid var(--border);
-  border-radius:8px;padding:11px 14px;
-  font-size:13px;font-family:var(--ff);
-  color:var(--text);outline:none;
-  transition:border-color .2s,background .2s;
-}
-.fr input:focus,.fr select:focus,.fr textarea:focus{
-  border-color:rgba(21,96,189,.65);
-  background:rgba(21,96,189,.06);
-}
-.fr input::placeholder,.fr textarea::placeholder{color:rgba(255,255,255,.2);}
-.fr select option{background:#0f1e35;color:var(--text);}
-.fr textarea{min-height:90px;resize:vertical;}
-.fr .hint{font-size:11px;color:rgba(255,255,255,.3);margin-top:5px;}
+.card h2{font-family:var(--fd);font-size:26px;color:#fff;margin-bottom:.75rem;}
+.card p{font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:1.75rem;}
 
-/* ─── Zona de upload ─────────────────────────── */
-.upload-z{
-  border:1px dashed rgba(255,255,255,.18);
-  border-radius:10px;padding:1.5rem;
-  text-align:center;cursor:pointer;
-  transition:all .25s;
-}
-.upload-z:hover{border-color:var(--blue);background:rgba(21,96,189,.05);}
-.upload-z.ok{border-color:#22c55e;background:rgba(34,197,94,.05);}
-.upload-z p{font-size:12px;color:var(--muted);margin-top:8px;}
-.upload-z.ok p{color:#4ade80;}
-.upload-z input[type=file]{display:none;}
+.info-box{background:rgba(21,96,189,0.08);border:0.5px solid rgba(21,96,189,0.22);border-radius:10px;padding:1.1rem 1.25rem;margin-bottom:1.75rem;text-align:left;}
+.ib-row{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--muted);margin-bottom:8px;}
+.ib-row:last-child{margin-bottom:0;}
+.ib-dot{width:5px;height:5px;background:var(--accent);border-radius:50%;flex-shrink:0;margin-top:6px;}
+.ib-row strong{color:rgba(255,255,255,.85);}
 
-/* ─── Vacante seleccionada (preview) ─────────── */
-.vac-preview{
-  display:none;
-  background:rgba(21,96,189,.1);
-  border:0.5px solid rgba(21,96,189,.25);
-  border-radius:8px;padding:10px 14px;
-  margin-top:8px;font-size:13px;color:var(--accent);
-}
-.vac-preview.show{display:flex;align-items:center;gap:8px;}
+.btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-home{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;border:none;padding:12px 26px;border-radius:8px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;text-decoration:none;transition:all .2s;box-shadow:0 4px 14px rgba(21,96,189,.35);}
+.btn-home:hover{background:var(--blue2);transform:translateY(-1px);}
+.btn-vac{display:inline-flex;align-items:center;gap:8px;background:rgba(79,195,247,0.1);color:var(--accent);border:0.5px solid rgba(79,195,247,0.3);padding:12px 22px;border-radius:8px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:500;text-decoration:none;transition:all .2s;}
+.btn-vac:hover{background:rgba(79,195,247,0.18);}
 
-/* ─── Botones ────────────────────────────────── */
-.btn-full{
-  width:100%;background:var(--blue);color:#fff;border:none;
-  padding:14px;border-radius:9px;font-size:14px;font-weight:700;
-  font-family:var(--ff);cursor:pointer;transition:all .2s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.btn-full:hover{background:var(--blue2);transform:translateY(-2px);box-shadow:0 6px 20px rgba(21,96,189,.4);}
-.btn-full:active{transform:translateY(0);}
-
-.btn-li{
-  width:100%;background:rgba(255,255,255,.04);color:var(--muted);
-  border:0.5px solid var(--border);padding:11px;border-radius:9px;
-  font-size:13px;font-family:var(--ff);cursor:pointer;
-  margin-top:.625rem;transition:all .2s;
-}
-.btn-li:hover{background:rgba(255,255,255,.07);color:var(--text);}
-
-/* ─── Texto legal ────────────────────────────── */
-.legal{font-size:11px;color:rgba(255,255,255,.28);text-align:center;margin-top:1rem;line-height:1.6;}
-.legal a{color:rgba(255,255,255,.45);text-decoration:underline;}
-
-/* ─── Vacante desde URL seleccionada (info box) ─ */
-.selected-vac-box{
-  background:rgba(21,96,189,.1);border:0.5px solid rgba(21,96,189,.3);
-  border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.5rem;
-  display:flex;align-items:center;gap:12px;
-}
-.svb-ico{width:36px;height:36px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.svb-txt{font-size:13px;color:var(--text);}
-.svb-txt strong{color:#fff;display:block;margin-bottom:2px;}
+footer{background:#05101c;border-top:0.5px solid var(--border);padding:1.25rem 2.5rem;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);}
 </style>
-{% endblock %}
+</head>
+<body>
 
-{% block content %}
-<!-- ─── HERO ─────────────────────────────────────────────── -->
-<div class="form-hero">
-  <div class="form-hero-tag">Únete al equipo</div>
-  <h1>Formulario de Postulación</h1>
-  <p>Completa tu información y sube tu CV. Te contactaremos en máximo 48 horas hábiles.</p>
+<nav>
+  <div class="nav-logo">
+    <div class="logo-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div style="margin-left:8px;">
+      <div class="logo-txt">GRUPO V&amp;R</div>
+      <div class="logo-sub">Consultores · Agente de Seguros S.A.</div>
+    </div>
+  </div>
+</nav>
 
-  <div class="steps-bar">
-    <div class="step-item done">
-      <div class="step-dot">1</div>
-      <span>Tus datos</span>
+<div class="main">
+  <div class="card">
+
+    <!-- Ícono animado -->
+    <div class="check-circle">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
     </div>
-    <div class="step-line"></div>
-    <div class="step-item">
-      <div class="step-dot">2</div>
-      <span>CV</span>
+
+    <h2>¡Postulación enviada!</h2>
+    <p>Hemos recibido tu información y CV correctamente.<br>Nuestro equipo revisará tu perfil y se pondrá en contacto contigo pronto.</p>
+
+    <!-- Qué sigue -->
+    <div class="info-box">
+      <div class="ib-row">
+        <div class="ib-dot"></div>
+        <div><strong>Revisión en 48 hrs</strong> — Analizaremos tu perfil y CV en máximo 2 días hábiles.</div>
+      </div>
+      <div class="ib-row">
+        <div class="ib-dot"></div>
+        <div><strong>Te contactamos</strong> — Si tu perfil es compatible, te llamaremos o escribiremos para una entrevista.</div>
+      </div>
+      <div class="ib-row">
+        <div class="ib-dot"></div>
+        <div><strong>Dudas</strong> — Escríbenos a <strong>grupovr@inbursaasesores.com</strong> o al <strong>782 160 2295</strong>.</div>
+      </div>
     </div>
-    <div class="step-line"></div>
-    <div class="step-item">
-      <div class="step-dot">3</div>
-      <span>Confirmación</span>
+
+    <div class="btns">
+      <a href="/" class="btn-home">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Ir al inicio
+      </a>
+      <a href="/vacantes/" class="btn-vac">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+        Ver más vacantes
+      </a>
     </div>
+
   </div>
 </div>
 
-<!-- ─── FORMULARIO ────────────────────────────────────────── -->
-<div class="form-outer">
-  <div class="form-wrap">
+<footer>
+  <span>© 2026 Grupo V&amp;R Consultores</span>
+  <span>grupovr@inbursaasesores.com · 782 160 2295</span>
+</footer>
 
-    {# Si viene desde /vacantes/ con ?vacante=ID, mostramos la vacante seleccionada #}
-    {% for v in vacantes %}
-      {% if request.GET.vacante == v.id|stringformat:"s" %}
-      <div class="selected-vac-box">
-        <div class="svb-ico">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-        </div>
-        <div class="svb-txt">
-          <strong>{{ v.titulo }}</strong>
-          {{ v.area }} · {{ v.get_modalidad_display }}
-        </div>
-      </div>
-      {% endif %}
-    {% endfor %}
-
-    <form method="POST" action="{% url 'postulantes:crear' %}" enctype="multipart/form-data" id="formPostulacion">
-      {% csrf_token %}
-
-      <!-- ── Sección 1: Datos personales ── -->
-      <div class="fcard">
-        <div class="fcard-title">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          Datos personales
-        </div>
-
-        <div class="fgrid">
-          <div class="fr">
-            <label>Nombre completo *</label>
-            <input type="text" name="nombre" placeholder="Tu nombre completo" required>
-          </div>
-          <div class="fr">
-            <label>Correo electrónico *</label>
-            <input type="email" name="correo" placeholder="correo@ejemplo.com" required>
-          </div>
-        </div>
-
-        <div class="fgrid">
-          <div class="fr">
-            <label>Teléfono</label>
-            <input type="tel" name="telefono" placeholder="782 000 0000">
-            <p class="hint">Opcional, para contactarte más rápido</p>
-          </div>
-          <div class="fr">
-            <label>LinkedIn</label>
-            <input type="url" name="linkedin" placeholder="linkedin.com/in/tu-perfil">
-            <p class="hint">Opcional</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── Sección 2: Vacante y CV ── -->
-      <div class="fcard">
-        <div class="fcard-title">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-          Vacante y CV
-        </div>
-
-        <div class="fr">
-          <label>Vacante de interés</label>
-          <select name="vacante" id="selectVacante" onchange="mostrarVacante(this)">
-            <option value="">— Selecciona una vacante —</option>
-            {% for v in vacantes %}
-              <option value="{{ v.id }}"
-                data-area="{{ v.area }}"
-                data-modalidad="{{ v.get_modalidad_display }}"
-                {% if request.GET.vacante == v.id|stringformat:"s" %}selected{% endif %}>
-                {{ v.titulo }}
-              </option>
-            {% empty %}
-              <option value="" disabled>Sin vacantes disponibles por el momento</option>
-            {% endfor %}
-          </select>
-          <div class="vac-preview" id="vacPreview">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            <span id="vacPreviewTxt"></span>
-          </div>
-          <p class="hint">Si no encuentras la vacante que buscas, déjalo en blanco y explícanos en tu mensaje.</p>
-        </div>
-
-        <div class="fr">
-          <label>CV en PDF *</label>
-          <div class="upload-z" id="uploadZone" onclick="document.getElementById('cvInput').click()">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
-            <p id="uploadTxt">Haz clic aquí para seleccionar tu CV en PDF</p>
-            <input type="file" id="cvInput" name="cv" accept=".pdf" required
-              onchange="mostrarCV(this)">
-          </div>
-          <p class="hint" style="margin-top:6px;">Solo archivos PDF · Máximo 5 MB</p>
-        </div>
-      </div>
-
-      <!-- ── Botones ── -->
-      <button type="submit" class="btn-full" id="btnEnviar">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        Enviar mi postulación
-      </button>
-
-      <p class="legal">
-        Al enviar este formulario aceptas nuestro
-        <a href="#">Aviso de Privacidad</a>.
-        Tus datos serán usados únicamente para el proceso de selección.
-      </p>
-    </form>
-  </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-/* Mostrar nombre del vacante seleccionado */
-function mostrarVacante(sel) {
-  var opt = sel.options[sel.selectedIndex];
-  var preview = document.getElementById('vacPreview');
-  var txt     = document.getElementById('vacPreviewTxt');
-  if (opt && opt.value) {
-    txt.textContent = opt.text + ' · ' + opt.dataset.area + ' · ' + opt.dataset.modalidad;
-    preview.classList.add('show');
-  } else {
-    preview.classList.remove('show');
-  }
-}
-
-/* Mostrar nombre del archivo PDF */
-function mostrarCV(input) {
-  if (input.files && input.files[0]) {
-    var archivo = input.files[0];
-    var zona    = document.getElementById('uploadZone');
-    var txt     = document.getElementById('uploadTxt');
-    zona.classList.add('ok');
-    txt.textContent = '✓ ' + archivo.name + ' (' + (archivo.size / 1024 / 1024).toFixed(2) + ' MB)';
-  }
-}
-
-/* Inicializar preview si viene con ?vacante= en la URL */
-document.addEventListener('DOMContentLoaded', function() {
-  var sel = document.getElementById('selectVacante');
-  if (sel && sel.value) mostrarVacante(sel);
-
-  /* Feedback visual al enviar */
-  document.getElementById('formPostulacion').addEventListener('submit', function() {
-    var btn = document.getElementById('btnEnviar');
-    btn.textContent = 'Enviando...';
-    btn.disabled = true;
-    btn.style.opacity = '.75';
-  });
-});
-</script>
-{% endblock %}
+</body>
+</html>

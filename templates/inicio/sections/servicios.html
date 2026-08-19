@@ -20,15 +20,15 @@
 
                 <div class="svc-card">
 
-                    <div class="svc-img-wrap">
-
-                        {% if s.imagen %}
-                            <img src="{{ s.imagen.url }}" class="svc-img">
-                        {% else %}
-                            <img src="{% static 'img/default-servicio.jpg' %}" class="svc-img">
-                        {% endif %}
-
-                    </div>
+                    {% if s.imagen %}
+                        <div class="svc-img-wrap">
+                            <img src="{{ s.imagen.url }}" class="svc-img" alt="{{ s.nombre }}">
+                        </div>
+                    {% else %}
+                        <div class="svc-img-wrap svc-img-wrap-vacio">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                    {% endif %}
 
                     <div class="svc-body">
 

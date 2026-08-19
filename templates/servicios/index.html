@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}Inicio — Grupo V&R Consultores{% endblock %}
+{% load static %}
+{% block title %}Servicios — Grupo V&R Consultores{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -10,7 +11,7 @@
   --dark:#0a1628;--dark2:#0f1e35;--blue:#1560BD;--blue2:#3a82e8;
   --accent:#4fc3f7;--text:#e8edf5;--muted:#8899aa;
   --border:rgba(255,255,255,0.09);
-  --ff:'Sora',sans-serif;--fd:'Playfair Display',serif;
+  --ff:'Sora',sans-serif;--fd:'Sora',sans-serif;
   /* Alias semánticos del mismo sistema de color */
   --primary:var(--blue);--primary-light:var(--blue2);--primary-dark:#204a6b;
   --background:var(--dark);
@@ -202,6 +203,12 @@ box-shadow:0 8px 25px rgba(0,0,0,.25);
 }
 
 /* ══ SERVICIOS (flyers) ══ */
+.page-hero{background:linear-gradient(135deg,#060f20 0%,#091828 50%,#0c2040 100%);padding:4rem 2.5rem 3rem;position:relative;overflow:hidden;border-bottom:0.5px solid var(--border);}
+.page-hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(21,96,189,0.15) 0%,transparent 70%);border-radius:50%;}
+.page-hero-tag{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);font-weight:600;margin-bottom:8px;}
+.page-hero h1{font-family:var(--fd);font-size:38px;font-weight:600;color:#fff;margin-bottom:12px;line-height:1.2;}
+.page-hero p{font-size:15px;color:rgba(255,255,255,.7);max-width:560px;line-height:1.7;}
+@media(max-width:560px){ .page-hero{padding:3rem 1.25rem 2rem;} }
 .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
 .svc-card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;transition:all .25s;}
 .svc-card:hover{border-color:rgba(21,96,189,.4);transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.3);}
@@ -469,15 +476,44 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
 {% endblock %}
 
 {% block content %}
-{% include 'inicio/sections/hero.html' %}
-{% include 'inicio/sections/stats.html' %}
-{% include 'inicio/sections/nosotros.html' %}
-{% include 'inicio/sections/servicios.html' %}
-{% include 'inicio/sections/vacantes_destacadas.html' %}
-{% include 'inicio/sections/beneficios.html' %}
+
+<!-- HERO propio de Servicios (no el del landing) -->
+<div class="page-hero">
+  <div class="page-hero-tag">Lo que ofrecemos</div>
+  <h1>Nuestros Servicios</h1>
+  <p>Soluciones integrales para cada etapa de tu vida: seguros, inversión, ahorro y asesoría financiera personalizada por expertos.</p>
+</div>
+
+<!-- CATÁLOGO COMPLETO (todos los servicios activos, no solo un destacado) -->
+<div class="sec">
+  <div class="svc-grid">
+    {% if servicios %}
+      {% for s in servicios %}
+        <div class="svc-card">
+          {% if s.imagen %}
+            <div class="svc-img-wrap">
+              <img src="{{ s.imagen.url }}" class="svc-img" alt="{{ s.nombre }}">
+            </div>
+          {% else %}
+            <div class="svc-img-wrap svc-img-wrap-vacio">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+          {% endif %}
+          <div class="svc-body">
+            <h3>{{ s.nombre }}</h3>
+            <p>{{ s.descripcion|default:s.descripcion_corta }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p style="grid-column:1/-1;text-align:center;color:var(--muted);padding:2rem 0;">
+        Por el momento no hay servicios publicados.
+      </p>
+    {% endif %}
+  </div>
+</div>
+
 {% include 'inicio/sections/cta.html' %}
-{% include 'inicio/sections/testimonios.html' %}
-{% include 'inicio/sections/faq.html' %}
 {% include 'inicio/sections/citas.html' %}
 {% include 'inicio/sections/ubicacion.html' %}
 
