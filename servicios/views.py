@@ -6,6 +6,7 @@ from django.views.decorators.http import require_POST
 from .models import Servicio
 from .forms import ServicioForm
 from historial.models import registrar
+from usuarios.permisos import solo_admin
 
 
 def index(request):
@@ -15,6 +16,7 @@ def index(request):
 
 # ── AJAX: detalle de un servicio ──────────────────────────────────────────────
 @login_required
+@solo_admin
 def detalle_ajax(request, serv_id):
     if request.method != 'GET':
         return JsonResponse({'ok': False}, status=405)
@@ -34,6 +36,7 @@ def detalle_ajax(request, serv_id):
 
 # ── AJAX: editar un servicio ──────────────────────────────────────────────────
 @login_required
+@solo_admin
 @require_POST
 def editar_ajax(request, serv_id):
     s = get_object_or_404(Servicio, id=serv_id)
@@ -68,6 +71,7 @@ def editar_ajax(request, serv_id):
 
 # ── AJAX: eliminar un servicio ────────────────────────────────────────────────
 @login_required
+@solo_admin
 @require_POST
 def eliminar_ajax(request, serv_id):
     s = get_object_or_404(Servicio, id=serv_id)
@@ -91,6 +95,7 @@ def eliminar_ajax(request, serv_id):
 
 # ── AJAX: crear un nuevo servicio ─────────────────────────────────────────────
 @login_required
+@solo_admin
 @require_POST
 def crear_ajax(request):
     form = ServicioForm(request.POST, request.FILES)
@@ -123,6 +128,7 @@ def crear_ajax(request):
         'activos':           Servicio.objects.filter(activo=True).count(),
     })
 @login_required
+@solo_admin
 @require_POST
 def toggle_activo_ajax(request, serv_id):
     s = get_object_or_404(Servicio, id=serv_id)

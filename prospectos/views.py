@@ -181,6 +181,7 @@ def editar(request, prospecto_id):
     if not permitido:
         return err
 
+    es_admin, _ = _rol(request.user)
     es_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
     if request.method == 'POST':
@@ -190,7 +191,13 @@ def editar(request, prospecto_id):
 
         form = ProspectoForm(post_data, request.FILES, instance=prospecto)
         if form.is_valid():
-            p = form.save()
+            p = form.save(commit=False)
+            # Un Asesor no puede reasignar el prospecto a otro asesor desde
+            # este formulario; solo Admin tiene permitido cambiar la
+            # asignación. Se conserva el valor original si no es admin.
+            if not es_admin:
+                p.asesor_asignado = prospecto.asesor_asignado
+            p.save()
             registrar(
                 usuario=request.user,
                 accion=f'Prospecto #{prospecto_id} ({p.nombre}) actualizado',
@@ -263,11 +270,14 @@ def expediente(request, prospecto_id):
     if not permitido:
         return err
 
+    es_admin, _ = _rol(request.user)
+
     return render(request, 'prospectos/expediente.html', {
         'prospecto':    prospecto,
         'seguimientos': prospecto.seguimientos.select_related('asesor').all(),
         'form_seg':     SeguimientoForm(),
         'asesores':     User.objects.filter(is_active=True),
+        'es_admin':     es_admin,
     })
 
 
@@ -318,6 +328,7 @@ def expediente_ajax(request, prospecto_id):
         'telefono':                  p.telefono,
         'es_referido':               p.es_referido,
         'nombre_referente':          p.nombre_referente or '',
+        'interes':                   p.interes,
         'interes_display':           p.get_interes_display(),
         'estado':                    p.estado,
         'estado_display':            p.get_estado_display(),

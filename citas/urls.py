@@ -63,4 +63,16 @@ urlpatterns = [
         views.eliminar,
         name='eliminar'
     ),
+    path(
+        'admin/<int:cita_id>/eliminar/ajax/',
+        views.eliminar_ajax,
+        name='eliminar_ajax'
+    ),
+
+    # Mensajes
+    path(
+        'admin/<int:cita_id>/mensaje/<str:clave>/ajax/',
+        views.mensaje_generado_ajax,
+        name='mensaje_generado_ajax'
+    ),
 ]

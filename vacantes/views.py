@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from .models import Vacante
 from .forms  import VacanteForm
 from historial.models import registrar
+from usuarios.permisos import solo_admin
 
 
 # ── Vista pública: lista de vacantes activas y NO vencidas ────────────────────
@@ -46,6 +47,7 @@ def index(request):
     return render(request, 'vacantes/index.html', context)
 # ── Admin: lista todas las vacantes con filtros y KPIs ───────────────────────
 @login_required
+@solo_admin
 def lista(request):
     Vacante.sincronizar_vencidas()
 
@@ -77,6 +79,7 @@ def lista(request):
 
 # ── Admin: crear vacante ──────────────────────────────────────────────────────
 @login_required
+@solo_admin
 def crear(request):
     if request.method == 'POST':
         form = VacanteForm(request.POST, request.FILES)
@@ -98,6 +101,7 @@ def crear(request):
 
 # ── Admin: datos JSON para modal editar (GET) y guardar cambios (POST) ────────
 @login_required
+@solo_admin
 def editar(request, vacante_id):
     vacante = get_object_or_404(Vacante, id=vacante_id)
 
@@ -147,6 +151,7 @@ def editar(request, vacante_id):
 
 # ── Admin: cambiar estado por AJAX ────────────────────────────────────────────
 @login_required
+@solo_admin
 def toggle_estado(request, vacante_id):
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'Método no permitido'}, status=405)
@@ -175,6 +180,7 @@ def toggle_estado(request, vacante_id):
 
 # ── Admin: eliminar vacante ───────────────────────────────────────────────────
 @login_required
+@solo_admin
 def eliminar(request, vacante_id):
     v = get_object_or_404(Vacante, id=vacante_id)
     if request.method == 'POST':

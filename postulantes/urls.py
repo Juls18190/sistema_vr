@@ -16,4 +16,5 @@ urlpatterns = [
     path('admin/<int:post_id>/eliminar/ajax/', views.eliminar_ajax,       name='eliminar_ajax'),
     path('admin/<int:post_id>/detalle/ajax/',  views.detalle_ajax,        name='detalle_ajax'),
     path('admin/<int:post_id>/nota/ajax/',     views.guardar_nota_ajax,   name='guardar_nota_ajax'),
+    path('admin/<int:post_id>/mensaje/<str:clave>/ajax/', views.mensaje_generado_ajax, name='mensaje_generado_ajax'),
 ]

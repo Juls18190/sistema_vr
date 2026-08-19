@@ -1,0 +1,439 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Dashboard — Grupo V&amp;R Consultores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dark:#0d1b2a;--dark2:#112240;--blue:#1560BD;--blue2:#3a82e8;
+  --border:rgba(255,255,255,0.08);
+  --green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--purple:#8b5cf6;
+  --ff:'Sora',sans-serif;
+  --bg:#f1f5f9;--white:#fff;--gray:#f8fafc;--gray2:#f1f5f9;
+  --txt:#1e293b;--txt2:#334155;--txt3:#64748b;--bdr:#e2e8f0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--ff);background:var(--bg);color:var(--txt);}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+#admin-wrap{display:flex;min-height:100vh;flex-direction:column;}
+
+.atop{
+  background:var(--white);border-bottom:1px solid var(--bdr);
+  padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;
+  height:54px;position:sticky;top:0;z-index:100;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06);
+}
+.atop-brand{display:flex;align-items:center;gap:10px;}
+.ab-mark{width:30px;height:30px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.ab-name{font-size:14px;font-weight:700;color:var(--blue);}
+.ab-name small{font-size:11px;font-weight:400;color:var(--txt3);margin-left:5px;}
+.atop-right{display:flex;align-items:center;gap:10px;position:relative;}
+
+.user-dropdown{
+  position:absolute;top:calc(100% + 8px);right:0;background:var(--white);
+  border:1px solid var(--bdr);border-radius:12px;width:250px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.12);opacity:0;transform:translateY(-6px);
+  pointer-events:none;transition:all .18s ease;z-index:200;
+}
+.user-dropdown.open{opacity:1;transform:translateY(0);pointer-events:all;}
+.ud-header{padding:1rem 1.1rem .75rem;border-bottom:1px solid var(--bdr);}
+.ud-nombre{font-size:14px;font-weight:700;color:var(--txt);}
+.ud-meta{font-size:11px;color:var(--txt3);margin-top:2px;}
+.ud-items{padding:.4rem 0;}
+.ud-item{display:flex;align-items:center;gap:10px;padding:9px 1.1rem;font-size:13px;color:var(--txt2);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;font-family:var(--ff);text-align:left;text-decoration:none;}
+.ud-item:hover{background:var(--gray);}
+.ud-item svg{flex-shrink:0;color:var(--txt3);}
+.ud-sep{height:1px;background:var(--bdr);margin:.3rem 0;}
+.ud-item.danger{color:#dc2626;}
+.ud-item.danger svg{color:#dc2626;}
+.ud-item.danger:hover{background:#fee2e2;}
+
+.user-chip{display:flex;align-items:center;gap:8px;background:var(--gray);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;cursor:pointer;transition:background .2s;}
+.user-chip:hover{background:var(--gray2);}
+.uav{width:26px;height:26px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;}
+.user-chip span{font-size:12px;color:var(--txt2);font-weight:500;}
+
+.abody{display:flex;flex:1;}
+
+.sidebar{width:220px;background:var(--dark2);flex-shrink:0;display:flex;flex-direction:column;border-right:0.5px solid var(--border);}
+.sb-sec{padding:.6rem 0;}
+.sb-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.28);padding:0 1.25rem;margin-bottom:.4rem;font-weight:600;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 1.25rem;font-size:13px;color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;border-left:2px solid transparent;user-select:none;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.8);}
+.sb-item.on{background:rgba(21,96,189,.15);color:#fff;border-left-color:var(--blue);}
+.sb-item svg{width:15px;height:15px;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600;}
+.sb-badge.red{background:var(--red);}
+.sb-logout{margin-top:auto;border-top:0.5px solid var(--border);padding:.6rem 0;}
+
+.acontent{flex:1;padding:1.75rem;overflow:auto;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px;}
+.page-title{font-size:20px;font-weight:700;color:var(--txt);}
+.page-sub{font-size:12px;color:var(--txt3);margin-top:2px;}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:1.1rem;}
+.kpi-grid.g4{grid-template-columns:repeat(4,1fr);}
+.kpi{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:1.1rem 1.2rem;display:flex;align-items:flex-start;justify-content:space-between;transition:all .2s;animation:fadeInUp .4s ease both;}
+.kpi:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08);transform:translateY(-2px);}
+.kpi-label{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;font-weight:600;}
+.kpi-num{font-size:26px;font-weight:700;color:var(--txt);line-height:1;}
+.kpi-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ki-blue{background:#dbeafe;}
+.ki-green{background:#dcfce7;}
+.ki-yellow{background:#fef9c3;}
+.ki-purple{background:#ede9fe;}
+.ki-red{background:#fee2e2;}
+.ki-teal{background:#ccfbf1;}
+
+.table-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin-bottom:1.25rem;}
+.tc-head{padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr);flex-wrap:wrap;gap:8px;}
+.tc-head h3{font-size:14px;font-weight:600;color:var(--txt);}
+.tc-link{font-size:12px;color:var(--blue);font-weight:600;text-decoration:none;}
+.tc-link:hover{text-decoration:underline;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--txt3);font-weight:700;padding:.7rem 1.25rem;background:var(--gray);border-bottom:1px solid var(--bdr);}
+td{padding:.75rem 1.25rem;font-size:13px;color:var(--txt2);border-bottom:1px solid var(--gray2);}
+tr:last-child td{border-bottom:none;}
+.empty-row{padding:2rem 1.25rem;text-align:center;color:var(--txt3);font-size:13px;}
+
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600;}
+.b-blue{background:#dbeafe;color:#1d4ed8;}
+.b-green{background:#dcfce7;color:#15803d;}
+.b-yellow{background:#fef9c3;color:#a16207;}
+.b-red{background:#fee2e2;color:#dc2626;}
+.b-gray{background:#f1f5f9;color:var(--txt3);}
+
+.act-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:6px;font-size:11px;font-family:var(--ff);font-weight:600;cursor:pointer;border:1px solid var(--bdr);background:var(--gray2);color:var(--txt2);transition:all .15s;text-decoration:none;}
+.act-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+.pros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+.pros-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;transition:box-shadow .2s,transform .2s;}
+.pros-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.07);transform:translateY(-2px);}
+.pcard-accent{height:4px;}
+.estado-nuevo .pcard-accent{background:linear-gradient(90deg,#1d4ed8,#60a5fa);}
+.estado-contactado .pcard-accent{background:linear-gradient(90deg,#d97706,#fbbf24);}
+.estado-convertido .pcard-accent{background:linear-gradient(90deg,#15803d,#4ade80);}
+.estado-descartado .pcard-accent{background:linear-gradient(90deg,#475569,#94a3b8);}
+.pcard-body{padding:1rem 1.1rem .75rem;}
+.pcard-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:.7rem;}
+.pcard-nombre{font-size:13px;font-weight:700;color:var(--txt);line-height:1.3;}
+.pcard-fecha{font-size:10px;color:var(--txt3);margin-top:2px;}
+.pcard-info{display:flex;flex-direction:column;gap:4px;margin-bottom:.8rem;}
+.pcard-row{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt2);}
+.pcard-nota{font-size:12px;color:var(--txt2);line-height:1.5;background:var(--gray);border-radius:7px;padding:8px 10px;margin-bottom:.8rem;}
+.pcard-footer{border-top:1px solid var(--bdr);padding:.6rem 1.1rem;display:flex;gap:5px;align-items:center;}
+
+.saludo-card{background:linear-gradient(120deg,var(--dark) 0%,var(--dark2) 100%);border-radius:14px;padding:1.5rem 1.75rem;color:#fff;margin-bottom:1.5rem;}
+.saludo-titulo{font-size:20px;font-weight:700;}
+.saludo-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:4px;}
+
+@media(max-width:1100px){.kpi-grid,.kpi-grid.g4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){.sidebar{display:none;}.kpi-grid,.kpi-grid.g4{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<form style="display:none;">{% csrf_token %}</form>
+
+<div id="admin-wrap">
+
+  <!-- TOP BAR -->
+  <div class="atop">
+    <div class="atop-brand">
+      <div class="ab-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <span class="ab-name">ASESOR V&amp;R<small>· Sistema de Gestión</small></span>
+    </div>
+    <div class="atop-right">
+      <div style="position:relative;" id="user-chip-wrap">
+        <div class="user-chip" onclick="toggleUserMenu()" id="user-chip">
+          <div class="uav">{{ request.user.username|slice:":2"|upper }}</div>
+          <span>{{ nombre_asesor }}</span>
+          <svg id="ud-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="2" style="transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="user-dropdown" id="user-dropdown">
+          <div class="ud-header">
+            <div class="ud-nombre">{{ nombre_asesor }}</div>
+            <div class="ud-meta">@{{ request.user.username }}</div>
+            <div class="ud-meta">{{ request.user.email|default:"Sin correo registrado" }}</div>
+            <div class="ud-meta" style="margin-top:4px;">Rol: <strong>Asesor</strong></div>
+          </div>
+          <div class="ud-items">
+            <button class="ud-item" onclick="abrirCambiarPassword()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              Cambiar contraseña
+            </button>
+            <div class="ud-sep"></div>
+            <a class="ud-item danger" href="{% url 'usuarios:logout' %}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Cerrar sesión
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="abody">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-sec">
+        <div class="sb-label">Principal</div>
+        <div class="sb-item on">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </div>
+      </div>
+      <div class="sb-sec">
+        <div class="sb-label">Gestión</div>
+        <a class="sb-item" href="{% url 'dashboard:agenda_asesor' %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Agenda de Citas {% if citas_pendientes %}<span class="sb-badge red">{{ citas_pendientes }}</span>{% endif %}
+        </a>
+        <a class="sb-item" href="{% url 'dashboard:prospectos_asesor' %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Prospectos {% if prospectos_nuevos %}<span class="sb-badge">{{ prospectos_nuevos }}</span>{% endif %}
+        </a>
+      </div>
+      <div class="sb-sec">
+        <div class="sb-label">Sistema</div>
+        <div class="sb-item" onclick="abrirCambiarPassword()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0116 0v1"/></svg>
+          Mi cuenta
+        </div>
+      </div>
+      <div class="sb-logout">
+        <a class="sb-item" style="color:rgba(255,100,100,.7);" href="{% url 'usuarios:logout' %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Cerrar sesión
+        </a>
+      </div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="acontent">
+
+      <div class="saludo-card">
+        <div class="saludo-titulo">{{ saludo }}, {{ nombre_asesor }} 👋</div>
+        <div class="saludo-sub">{{ hoy|date:"l j \d\e F \d\e Y"|capfirst }} — esto es lo que tienes pendiente hoy.</div>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">Citas</div>
+          <div class="page-sub">Resumen de tu agenda</div>
+        </div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi"><div><div class="kpi-label">Hoy</div><div class="kpi-num">{{ citas_hoy_total }}</div></div><div class="kpi-icon ki-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div>
+        <div class="kpi"><div><div class="kpi-label">Pendientes</div><div class="kpi-num">{{ citas_pendientes }}</div></div><div class="kpi-icon ki-yellow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div>
+        <div class="kpi"><div><div class="kpi-label">Confirmadas</div><div class="kpi-num">{{ citas_confirmadas }}</div></div><div class="kpi-icon ki-teal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div>
+        <div class="kpi"><div><div class="kpi-label">Atendidas</div><div class="kpi-num">{{ citas_atendidas }}</div></div><div class="kpi-icon ki-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div></div>
+        <div class="kpi"><div><div class="kpi-label">Próximas</div><div class="kpi-num">{{ proximas_citas|length }}</div></div><div class="kpi-icon ki-purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      </div>
+
+      <div class="table-card">
+        <div class="tc-head">
+          <h3>Citas de hoy</h3>
+          <a class="tc-link" href="{% url 'dashboard:agenda_asesor' %}">Ver agenda completa →</a>
+        </div>
+        <table>
+          <thead><tr><th>Hora</th><th>Cliente</th><th>Motivo</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>
+            {% for c in citas_hoy %}
+            <tr>
+              <td>{{ c.hora|time:"H:i" }}</td>
+              <td>{{ c.nombre_cliente }} {{ c.apellidos_cliente }}</td>
+              <td>{{ c.get_motivo_display }}</td>
+              <td>
+                {% if c.estado == 'pendiente' %}<span class="badge b-yellow">Pendiente</span>
+                {% elif c.estado == 'confirmada' %}<span class="badge b-blue">Confirmada</span>
+                {% elif c.estado == 'completada' %}<span class="badge b-green">Completada</span>
+                {% else %}<span class="badge b-red">Cancelada</span>{% endif %}
+              </td>
+              <td><a class="act-btn" href="{% url 'dashboard:agenda_asesor' %}">Gestionar</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="empty-row">No tienes citas programadas para hoy.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-card">
+        <div class="tc-head">
+          <h3>Próximas citas</h3>
+          <a class="tc-link" href="{% url 'dashboard:agenda_asesor' %}">Ver todas →</a>
+        </div>
+        <table>
+          <thead><tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Motivo</th><th>Estado</th></tr></thead>
+          <tbody>
+            {% for c in proximas_citas %}
+            <tr>
+              <td>{{ c.fecha|date:"d/m/Y" }}</td>
+              <td>{{ c.hora|time:"H:i" }}</td>
+              <td>{{ c.nombre_cliente }} {{ c.apellidos_cliente }}</td>
+              <td>{{ c.get_motivo_display }}</td>
+              <td>
+                {% if c.estado == 'pendiente' %}<span class="badge b-yellow">Pendiente</span>
+                {% else %}<span class="badge b-blue">Confirmada</span>{% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="empty-row">No tienes próximas citas registradas.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="page-header" style="margin-top:.5rem;">
+        <div>
+          <div class="page-title">Prospectos</div>
+          <div class="page-sub">Tu cartera asignada</div>
+        </div>
+      </div>
+      <div class="kpi-grid g4">
+        <div class="kpi"><div><div class="kpi-label">Total</div><div class="kpi-num">{{ prospectos_total }}</div></div><div class="kpi-icon ki-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div></div>
+        <div class="kpi"><div><div class="kpi-label">Nuevos</div><div class="kpi-num">{{ prospectos_nuevos }}</div></div><div class="kpi-icon ki-yellow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div></div>
+        <div class="kpi"><div><div class="kpi-label">Contactados</div><div class="kpi-num">{{ prospectos_contactados }}</div></div><div class="kpi-icon ki-teal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.35 1.9.66 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.31 1.85.53 2.81.66A2 2 0 0122 16.92z"/></svg></div></div>
+        <div class="kpi"><div><div class="kpi-label">Convertidos</div><div class="kpi-num">{{ prospectos_convertidos }}</div></div><div class="kpi-icon ki-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div></div>
+      </div>
+
+      <div class="tc-head" style="background:var(--white);border:1px solid var(--bdr);border-radius:12px 12px 0 0;margin-bottom:0;">
+        <h3>Mis prospectos</h3>
+        <a class="tc-link" href="{% url 'dashboard:prospectos_asesor' %}">Ver todos →</a>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--bdr);border-top:none;border-radius:0 0 12px 12px;padding:1.1rem;margin-bottom:1.5rem;">
+        <div class="pros-grid">
+          {% for p in mis_prospectos %}
+          <div class="pros-card estado-{{ p.estado }}">
+            <div class="pcard-accent"></div>
+            <div class="pcard-body">
+              <div class="pcard-top">
+                <div>
+                  <div class="pcard-nombre">{{ p.nombre }}</div>
+                  <div class="pcard-fecha">{{ p.fecha|date:"d/m/Y" }}</div>
+                </div>
+                {% if p.estado == 'nuevo' %}<span class="badge b-blue">Nuevo</span>
+                {% elif p.estado == 'contactado' %}<span class="badge b-yellow">Contactado</span>
+                {% elif p.estado == 'convertido' %}<span class="badge b-green">Convertido</span>
+                {% else %}<span class="badge b-gray">Descartado</span>{% endif %}
+              </div>
+              <div class="pcard-info">
+                <div class="pcard-row">📞 {{ p.telefono }}</div>
+                <div class="pcard-row">✉️ {{ p.correo }}</div>
+                <div class="pcard-row">💼 {{ p.get_interes_display }}</div>
+              </div>
+              {% if p.mensaje %}
+              <div class="pcard-nota">{{ p.mensaje|truncatechars:110 }}</div>
+              {% elif p.notas %}
+              <div class="pcard-nota">{{ p.notas|truncatechars:110 }}</div>
+              {% endif %}
+            </div>
+            <div class="pcard-footer">
+              <a class="act-btn" href="{% url 'prospectos:expediente' p.id %}">Ver expediente</a>
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty-row">Aún no tienes prospectos asignados.</div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal cambiar contraseña (reutiliza el endpoint existente /usuarios/password/ajax/) -->
+<div class="modal-overlay" id="modal-cambiar-password" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:380px;max-width:92vw;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:15px;font-weight:700;">Cambiar contraseña</div>
+      <button onclick="cerrarCambiarPassword()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+    </div>
+    <div id="cp-error" style="display:none;background:#fee2e2;color:#dc2626;font-size:12px;padding:8px 10px;border-radius:7px;margin-bottom:10px;"></div>
+    <div style="margin-bottom:10px;">
+      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Contraseña actual</label>
+      <input type="password" id="cp-actual" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
+    </div>
+    <div style="margin-bottom:10px;">
+      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Nueva contraseña</label>
+      <input type="password" id="cp-nueva" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Confirmar nueva contraseña</label>
+      <input type="password" id="cp-confirmacion" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
+    </div>
+    <button id="cp-btn" onclick="guardarCambiarPassword()" style="width:100%;background:var(--blue);color:#fff;border:none;padding:10px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Guardar</button>
+  </div>
+</div>
+
+<script>
+function toggleUserMenu(){
+  var dd = document.getElementById('user-dropdown');
+  dd.classList.toggle('open');
+}
+document.addEventListener('click', function(e){
+  var wrap = document.getElementById('user-chip-wrap');
+  if (wrap && !wrap.contains(e.target)) document.getElementById('user-dropdown').classList.remove('open');
+});
+
+function abrirCambiarPassword(){
+  document.getElementById('user-dropdown').classList.remove('open');
+  document.getElementById('cp-error').style.display = 'none';
+  document.getElementById('cp-actual').value = '';
+  document.getElementById('cp-nueva').value = '';
+  document.getElementById('cp-confirmacion').value = '';
+  document.getElementById('modal-cambiar-password').style.display = 'flex';
+}
+function cerrarCambiarPassword(){
+  document.getElementById('modal-cambiar-password').style.display = 'none';
+}
+function guardarCambiarPassword(){
+  var btn = document.getElementById('cp-btn');
+  var errDiv = document.getElementById('cp-error');
+  var csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  var body = new URLSearchParams();
+  body.append('password_actual', document.getElementById('cp-actual').value);
+  body.append('password_nueva', document.getElementById('cp-nueva').value);
+  body.append('password_confirmacion', document.getElementById('cp-confirmacion').value);
+
+  btn.disabled = true;
+  btn.textContent = 'Guardando…';
+  errDiv.style.display = 'none';
+
+  fetch('{% url "usuarios:cambiar_password_ajax" %}', {
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': csrf,
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: body.toString()
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    btn.disabled = false;
+    btn.textContent = 'Guardar';
+    if (data.ok) {
+      cerrarCambiarPassword();
+    } else {
+      errDiv.textContent = data.error || 'No se pudo actualizar la contraseña.';
+      errDiv.style.display = 'block';
+    }
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Guardar';
+    errDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+    errDiv.style.display = 'block';
+  });
+}
+</script>
+</body>
+</html>

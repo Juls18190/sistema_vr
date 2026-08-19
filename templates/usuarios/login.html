@@ -25,11 +25,12 @@ body{font-family:var(--ff);background:var(--dark);min-height:100vh;display:flex;
 .fr label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px;font-weight:500;}
 .fr-inner{position:relative;}
 .fr-inner svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;}
-.fr input{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid var(--border);border-radius:8px;padding:11px 40px 11px 40px;font-size:13px;color:var(--text);font-family:var(--ff);outline:none;transition:border-color .2s,box-shadow .2s;}
+.fr input{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid var(--border);border-radius:8px;padding:11px 44px 11px 40px;font-size:13px;color:var(--text);font-family:var(--ff);outline:none;transition:border-color .2s,box-shadow .2s;}
 .fr input:focus{border-color:rgba(21,96,189,.7);box-shadow:0 0 0 3px rgba(21,96,189,.15);}
 .fr input::placeholder{color:var(--muted);}
-.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:2px;transition:color .2s;}
+.eye-btn{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--muted);padding:0;transition:color .2s;z-index:2;}
 .eye-btn:hover{color:var(--accent);}
+.eye-btn svg{pointer-events:none;}
 .remember-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;font-size:12px;}
 .remember-row label{display:flex;align-items:center;gap:6px;color:var(--muted);cursor:pointer;}
 .remember-row input[type=checkbox]{accent-color:var(--blue);}
@@ -86,15 +87,16 @@ body{font-family:var(--ff);background:var(--dark);min-height:100vh;display:flex;
       <div class="fr-inner">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
         <input type="password" name="password" id="password" placeholder="••••••••" required autocomplete="current-password">
-        <button type="button" class="eye-btn" onclick="toggleEye()">
-          <svg id="eye-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <button type="button" class="eye-btn" onclick="toggleEye()" aria-label="Mostrar u ocultar contraseña">
+          <svg id="eye-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-icon-visible><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg id="eye-icon-off" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;" data-icon-hidden><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a19.7 19.7 0 015.06-6.06M9.9 4.24A10.4 10.4 0 0112 4c7 0 11 8 11 8a19.66 19.66 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
         </button>
       </div>
     </div>
 
     <div class="remember-row">
       <label><input type="checkbox" name="remember"> Recordar sesión</label>
-      <a href="#">¿Olvidaste tu contraseña?</a>
+      <a href="{% url 'usuarios:password_reset' %}">¿Olvidaste tu contraseña?</a>
     </div>
 
     <button type="submit" class="btn-login">
@@ -110,18 +112,16 @@ body{font-family:var(--ff);background:var(--dark);min-height:100vh;display:flex;
 
 function toggleEye(){
   var inp = document.getElementById('password');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
+  var iconOn  = document.getElementById('eye-icon');
+  var iconOff = document.getElementById('eye-icon-off');
+  var oculto  = inp.type === 'password';
+  inp.type = oculto ? 'text' : 'password';
+  iconOn.style.display  = oculto ? 'none' : '';
+  iconOff.style.display = oculto ? '' : 'none';
 }
 
 </script>
 
-{% if error %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('error-box').classList.add('show');
-    document.getElementById('error-msg').innerText = "{{ error }}";
-});
-</script>
-{% endif %}
+
 </body>
 </html>

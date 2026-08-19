@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,13 +20,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+# ─────────────────────────────────────────────
+# FASE D (punto 15-16): SECRET_KEY, DEBUG, ALLOWED_HOSTS y las credenciales
+# de la base de datos ya NO están escritos aquí en texto plano. Se leen del
+# archivo `.env` (ignorado por git, ver .gitignore) mediante python-decouple.
+#
+# Si `.env` no existe todavía, `config()` usa el valor por default indicado
+# abajo (el mismo que ya traía el proyecto), así que no se rompe nada en
+# desarrollo aunque falte crear el archivo. Ver `.env.example` para la
+# plantilla de qué variables definir.
+# ─────────────────────────────────────────────
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-bjr9f01^!29_h_#4x-9c2y%=d5$3&jzh2!mnsnu2w*gwx*dv=5'
+SECRET_KEY = config(
+    'SECRET_KEY',
+    default='django-insecure-bjr9f01^!29_h_#4x-9c2y%=d5$3&jzh2!mnsnu2w*gwx*dv=5',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
 
 
 # Application definition
@@ -46,6 +61,7 @@ INSTALLED_APPS = [
     'historial',
     'prospectos',
     'inicio',
+    'reportes',
 ]
 
 MIDDLEWARE = [
@@ -85,11 +101,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'vr_consultores',
-        'USER': 'postgres',
-        'PASSWORD': 'hunter117',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': config('DB_NAME', default='vr_consultores'),
+        'USER': config('DB_USER', default='postgres'),
+        'PASSWORD': config('DB_PASSWORD', default=''),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
         }
 }
 
@@ -148,21 +164,52 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/usuarios/login/'
 
 # ─────────────────────────────────────────────
+# SESIONES Y CSRF (FASE D — punto 7)
+# ─────────────────────────────────────────────
+# DESARROLLO (HTTP local): las cookies *_SECURE deben quedar en False,
+# porque exigir HTTPS aquí rompería el login en `runserver` (127.0.0.1
+# sirve por HTTP). HTTPONLY y SAMESITE sí se pueden activar sin romper
+# nada, y ya dan protección real contra robo de cookie vía JavaScript
+# (XSS) y contra CSRF entre sitios.
+SESSION_COOKIE_HTTPONLY = True          # la cookie de sesión no es legible desde JS
+SESSION_COOKIE_SAMESITE = 'Lax'         # no se envía en peticiones cross-site
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # la sesión termina al cerrar el navegador
+SESSION_COOKIE_SECURE = False           # ⚠️ cambiar a True en producción (HTTPS)
+
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False              # ⚠️ cambiar a True en producción (HTTPS)
+
+# PRODUCCIÓN: cuando el sitio ya sirva por HTTPS, cambiar las dos líneas
+# marcadas arriba (SESSION_COOKIE_SECURE y CSRF_COOKIE_SECURE) a True.
+# Sin HTTPS, el navegador nunca enviaría esas cookies y nadie podría
+# iniciar sesión, así que NO se activan mientras el proyecto corra en HTTP.
+
+# ─────────────────────────────────────────────
 # ARCHIVOS ESTÁTICOS (para producción)
 # ─────────────────────────────────────────────
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # ─────────────────────────────────────────────
 # CORREO ELECTRÓNICO (para recuperación de contraseña)
-# Cambia estos datos por los de tu correo real
 # ─────────────────────────────────────────────
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'tucorreo@gmail.com'       # ← Cambia esto
-EMAIL_HOST_PASSWORD = 'tu_contraseña_app'    # ← Cambia esto (contraseña de aplicación de Google)
-DEFAULT_FROM_EMAIL = 'Grupo V&R <tucorreo@gmail.com>'
+# Envío real vía Gmail SMTP. El usuario y la contraseña de aplicación se
+# leen desde .env (nunca escritos aquí en texto plano). Si EMAIL_HOST_USER
+# o EMAIL_HOST_PASSWORD no están definidos en .env, se cae automáticamente
+# al backend de consola (imprime el correo en la terminal) para no romper
+# el flujo de pruebas si alguien clona el proyecto sin credenciales.
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+
+if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+DEFAULT_FROM_EMAIL = f'Grupo V&R <{EMAIL_HOST_USER}>' if EMAIL_HOST_USER else 'Grupo V&R <no-responder@grupovr.local>'
 
 # Archivos subidos por usuarios (CVs, imágenes, etc.)
 MEDIA_URL = '/media/'

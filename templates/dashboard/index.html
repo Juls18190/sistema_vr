@@ -553,7 +553,7 @@ tr:hover td{background:#fafbfc;}
             </div>
           </div>
           <div class="np-footer">
-            <a href="#" onclick="cerrarNotif(); nav('historial', null);">Ver historial completo</a>
+            <a href="#" onclick="cerrarNotif(); nav('historial', null); aplicarFiltrosHistorial();">Ver historial completo</a>
           </div>
         </div>
       </div>
@@ -636,18 +636,22 @@ tr:hover td{background:#fafbfc;}
       </div>
       <div class="sb-sec">
         <div class="sb-label">Sistema</div>
+        {% if es_admin %}
         <div class="sb-item" onclick="nav('usuarios',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           Usuarios
         </div>
-        <div class="sb-item" onclick="nav('historial',this)">
+        {% endif %}
+        <div class="sb-item" onclick="nav('historial',this);aplicarFiltrosHistorial();">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           Historial
         </div>
+        {% if es_admin %}
         <div class="sb-item" onclick="nav('reportes',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           Reportes
         </div>
+        {% endif %}
       </div>
       <div class="sb-logout">
         <div class="sb-item" style="color:rgba(255,100,100,.7);" onclick="window.location.href='/usuarios/logout/'">
@@ -842,7 +846,7 @@ tr:hover td{background:#fafbfc;}
               {% endfor %}
             </div>
 
-            <a href="/citas/admin/" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:12px;color:var(--blue);text-decoration:none;font-weight:600;border-top:1px solid var(--bdr);padding-top:10px;">
+            <a href="#" onclick="nav('citas', null); return false;" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:12px;color:var(--blue);text-decoration:none;font-weight:600;border-top:1px solid var(--bdr);padding-top:10px;">
               Ver agenda completa →
             </a>
           </div>
@@ -950,11 +954,9 @@ tr:hover td{background:#fafbfc;}
                 <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/>
             </svg>
         </button>
-        <button class="act-btn" title="Cambiar estado"
-            onclick="verDetalleCita({{ cita.id }})">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/>
-            </svg>
+        <button class="act-btn" title="Enviar mensaje"
+            onclick="abrirMensajeCita({{ cita.id }})">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
         </button>
         <button class="act-btn act-btn-del" title="Eliminar cita"
             onclick="confirmarEliminarCita({{ cita.id }}, '{{ cita.nombre_cliente|escapejs }} {{ cita.apellidos_cliente|escapejs }}')">
@@ -1229,6 +1231,15 @@ tr:hover td{background:#fafbfc;}
 
             </span>
 
+            <!-- Enviar mensaje -->
+            <span class="act-btn"
+                  title="Enviar mensaje"
+                  onclick="abrirMensajePostulante({{ p.id }})">
+
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+
+            </span>
+
             <!-- Eliminar -->
             <span class="act-btn act-btn-del"
                   title="Eliminar postulante"
@@ -1434,7 +1445,7 @@ tr:hover td{background:#fafbfc;}
             <div class="pkpi-num" style="color:var(--blue);">{{ prospectos_total }}</div>
             <div class="pkpi-label">Total</div>
           </div>
-          <div class="pkpi" id="pkpi-nuevo" onclick="filtrarProspectos('nuevo')">
+          <div class="pkpi" id="pkpi-prosp-nuevo" onclick="filtrarProspectos('nuevo')">
             <div class="pkpi-num" style="color:#1d4ed8;">{{ prospectos_nuevos }}</div>
             <div class="pkpi-label">Nuevos</div>
           </div>
@@ -1789,9 +1800,9 @@ tr:hover td{background:#fafbfc;}
         <div class="page-header">
           <div>
             <div class="page-title">Gestión de Usuarios</div>
-            <div class="page-sub">{{ usuarios_total }} usuario{{ usuarios_total|pluralize }} activo{{ usuarios_total|pluralize }}</div>
+            <div class="page-sub" id="usuarios-page-sub" data-total="{{ usuarios_total }}">{{ usuarios_total }} usuario{{ usuarios_total|pluralize }} registrado{{ usuarios_total|pluralize }} · {{ usuarios_activos_total }} activo{{ usuarios_activos_total|pluralize }}</div>
           </div>
-          <a class="btn-new" href="/admin/auth/user/add/" target="_blank">+ Nuevo usuario</a>
+          <button type="button" class="btn-new" onclick="abrirModalNuevoUsuario()">+ Nuevo usuario</button>
         </div>
 
         <!-- Búsqueda usuarios -->
@@ -1824,6 +1835,10 @@ tr:hover td{background:#fafbfc;}
                 {{ u.email|default:"— Sin correo" }}
               </div>
               <div class="ucard-info-row">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Registrado: {{ u.date_joined|date:"d/m/Y" }}
+              </div>
+              <div class="ucard-info-row">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 Último acceso:
                 {% if u.last_login %}{{ u.last_login|date:"d/m/Y H:i" }}{% else %}Nunca{% endif %}
@@ -1844,13 +1859,31 @@ tr:hover td{background:#fafbfc;}
                   <span class="badge b-red" style="margin-left:4px;">Inactivo</span>
                 {% endif %}
               </div>
-              <a href="/admin/auth/user/{{ u.id }}/change/" target="_blank"
-                 style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--txt3);text-decoration:none;border:1px solid var(--bdr);border-radius:6px;padding:3px 9px;transition:all .15s;"
-                 onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'"
-                 onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--txt3)'">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
-                Editar
-              </a>
+              <div style="display:flex;gap:4px;">
+                <button type="button" class="act-btn" title="Ver usuario" onclick="abrirVerUsuario({{ u.id }})">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button type="button" class="act-btn" title="Editar usuario" onclick="abrirEditarUsuario({{ u.id }})">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
+                </button>
+                {% if u.is_superuser %}
+                <button type="button" class="act-btn" title="Los Superadministradores se gestionan desde /admin/" disabled style="opacity:.35;cursor:not-allowed;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </button>
+                {% elif u.id == request.user.id %}
+                <button type="button" class="act-btn" title="No puedes desactivar tu propia cuenta" disabled style="opacity:.35;cursor:not-allowed;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </button>
+                {% elif u.is_active %}
+                <button type="button" class="act-btn act-btn-del" title="Desactivar usuario" onclick="confirmarCambioEstadoUsuario({{ u.id }}, true, '{{ u.get_full_name|default:u.username|escapejs }}')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </button>
+                {% else %}
+                <button type="button" class="act-btn" title="Activar usuario" onclick="confirmarCambioEstadoUsuario({{ u.id }}, false, '{{ u.get_full_name|default:u.username|escapejs }}')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 019.9-2"/></svg>
+                </button>
+                {% endif %}
+              </div>
             </div>
           </div>
           {% empty %}
@@ -1866,10 +1899,44 @@ tr:hover td{background:#fafbfc;}
         <div class="page-header">
           <div><div class="page-title">Historial de Actividad</div><div class="page-sub">Registro de todas las acciones del sistema</div></div>
         </div>
-        <div class="table-card">
-          <div class="tc-head"><h3>Actividad reciente</h3>
-            <div class="tc-actions"><select class="filter-select" id="filtro-modulo-hist" onchange="filtrarHistorial()"><option value="">Todos los módulos</option><option value="citas">Citas</option><option value="postulantes">Postulantes</option><option value="vacantes">Vacantes</option><option value="servicios">Servicios</option><option value="prospectos">Prospectos</option></select></div>
+        <div class="table-card" style="padding:1rem 1.25rem;overflow:visible;margin-bottom:14px;">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+            <div>
+              <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Periodo</label>
+              <select id="hist-periodo" class="filter-select">
+                <option value="">Todo</option>
+                <option value="hoy">Hoy</option>
+                <option value="semana">Esta semana</option>
+                <option value="mes">Este mes</option>
+                <option value="año">Este año</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Módulo</label>
+              <select id="hist-modulo" class="filter-select">
+                <option value="">Todos los módulos</option>
+                <option value="citas">Citas</option>
+                <option value="postulantes">Postulantes</option>
+                <option value="vacantes">Vacantes</option>
+                <option value="servicios">Servicios</option>
+                <option value="usuarios">Usuarios</option>
+                <option value="prospectos">Prospectos</option>
+                <option value="dashboard">Dashboard</option>
+              </select>
+            </div>
+            <button class="btn-new" style="font-size:12px;padding:8px 16px;" onclick="aplicarFiltrosHistorial()">Aplicar filtros</button>
           </div>
+          <div id="hist-error" style="display:none;color:#dc2626;font-size:12px;margin-top:10px;"></div>
+        </div>
+        <div class="table-card" style="padding:1rem;text-align:center;max-width:200px;margin-bottom:14px;">
+          <div style="font-size:22px;font-weight:700;color:var(--txt);" id="hist-kpi-total">{{ historial_total }}</div><div style="font-size:11px;color:var(--txt3);">Acciones registradas</div>
+        </div>
+        <div class="table-card" style="padding:1.25rem;margin-bottom:14px;">
+          <div style="font-size:14px;font-weight:600;color:var(--txt);margin-bottom:10px;">Actividad por módulo</div>
+          <div id="hist-por-modulo" style="font-size:13px;color:var(--txt3);">Aplica un filtro para ver el desglose.</div>
+        </div>
+        <div class="table-card">
+          <div class="tc-head"><h3>Actividad</h3></div>
           <table>
             <thead><tr><th>Usuario</th><th>Acción</th><th>Módulo</th><th>Fecha y hora</th></tr></thead>
             <tbody id="tbody-historial">
@@ -1930,7 +1997,7 @@ tr:hover td{background:#fafbfc;}
             </tbody>
           </table>
           <div class="pg-row">
-            <span class="pg on">Mostrando últimos 15 registros</span>
+            <span class="pg on" id="hist-contador">Mostrando últimos 15 registros</span>
           </div>
         </div>
       </div>
@@ -1940,38 +2007,349 @@ tr:hover td{background:#fafbfc;}
         <div class="page-header">
           <div><div class="page-title">Reportes del Sistema</div><div class="page-sub">Exporta y analiza los datos</div></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-          <div class="table-card" style="padding:1.5rem;overflow:visible;cursor:pointer;" onclick="alert('Generando reporte...')">
+
+        <!-- GRID DE TARJETAS (menú de reportes) -->
+        <div id="reportes-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="table-card" style="padding:1.5rem;overflow:visible;cursor:pointer;" onclick="abrirReportePostulantes()">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:.75rem;">
               <div style="width:40px;height:40px;background:#dbeafe;border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-              <div style="font-size:15px;font-weight:600;color:var(--txt);">Reporte de Postulaciones</div>
+              <div style="font-size:15px;font-weight:600;color:var(--txt);">Reporte de Postulantes</div>
             </div>
-            <p style="font-size:13px;color:var(--txt3);margin-bottom:1rem;line-height:1.6;">Listado completo con filtros por área, estado y fecha.</p>
-            <div style="display:flex;gap:8px;"><button class="btn-new" style="font-size:11px;padding:6px 14px;">Exportar PDF</button><button class="btn-exp" style="font-size:11px;">Exportar Excel</button></div>
+            <p style="font-size:13px;color:var(--txt3);margin-bottom:1rem;line-height:1.6;">Listado completo con filtros por vacante, estado y periodo.</p>
+            <div style="display:flex;gap:8px;"><button class="btn-new" style="font-size:11px;padding:6px 14px;" onclick="event.stopPropagation();abrirReportePostulantes()">Ver reporte</button></div>
           </div>
-          <div class="table-card" style="padding:1.5rem;overflow:visible;cursor:pointer;" onclick="alert('Generando reporte...')">
+          <div class="table-card" style="padding:1.5rem;overflow:visible;cursor:pointer;" onclick="abrirReporteCitas()">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:.75rem;">
               <div style="width:40px;height:40px;background:#dcfce7;border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
               <div style="font-size:15px;font-weight:600;color:var(--txt);">Reporte de Citas</div>
             </div>
             <p style="font-size:13px;color:var(--txt3);margin-bottom:1rem;line-height:1.6;">Citas por asesor, servicio y estado con estadísticas.</p>
-            <div style="display:flex;gap:8px;"><button class="btn-new" style="font-size:11px;padding:6px 14px;">Exportar PDF</button><button class="btn-exp" style="font-size:11px;">Exportar Excel</button></div>
+            <div style="display:flex;gap:8px;"><button class="btn-new" style="font-size:11px;padding:6px 14px;" onclick="event.stopPropagation();abrirReporteCitas()">Ver reporte</button></div>
           </div>
-          <div class="table-card" style="padding:1.5rem;overflow:visible;cursor:pointer;">
+          <div class="table-card" style="padding:1.5rem;overflow:visible;cursor:pointer;" onclick="abrirReporteProspectos()">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:.75rem;">
               <div style="width:40px;height:40px;background:#ede9fe;border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
               <div style="font-size:15px;font-weight:600;color:var(--txt);">Reporte de Prospectos</div>
             </div>
             <p style="font-size:13px;color:var(--txt3);margin-bottom:1rem;line-height:1.6;">Seguimiento por asesor y tasa de conversión.</p>
-            <div style="display:flex;gap:8px;"><button class="btn-new" style="font-size:11px;padding:6px 14px;">Exportar PDF</button><button class="btn-exp" style="font-size:11px;">Exportar Excel</button></div>
+            <div style="display:flex;gap:8px;"><button class="btn-new" style="font-size:11px;padding:6px 14px;" onclick="event.stopPropagation();abrirReporteProspectos()">Ver reporte</button></div>
           </div>
-          <div class="table-card" style="padding:1.5rem;overflow:visible;cursor:pointer;">
+          <div class="table-card" style="padding:1.5rem;overflow:visible;cursor:pointer;" onclick="abrirReporteVacantes()">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:.75rem;">
+              <div style="width:40px;height:40px;background:#ffe4e6;border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#be123c" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg></div>
+              <div style="font-size:15px;font-weight:600;color:var(--txt);">Reporte de Vacantes</div>
+            </div>
+            <p style="font-size:13px;color:var(--txt3);margin-bottom:1rem;line-height:1.6;">Vacantes activas, inactivas y por área.</p>
+            <div style="display:flex;gap:8px;"><button class="btn-new" style="font-size:11px;padding:6px 14px;" onclick="event.stopPropagation();abrirReporteVacantes()">Ver reporte</button></div>
+          </div>
+          <div class="table-card" style="padding:1.5rem;overflow:visible;cursor:pointer;" onclick="abrirReporteServicios()">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:.75rem;">
+              <div style="width:40px;height:40px;background:#d1fae5;border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              <div style="font-size:15px;font-weight:600;color:var(--txt);">Reporte de Servicios</div>
+            </div>
+            <p style="font-size:13px;color:var(--txt3);margin-bottom:1rem;line-height:1.6;">Servicios activos, inactivos y por categoría.</p>
+            <div style="display:flex;gap:8px;"><button class="btn-new" style="font-size:11px;padding:6px 14px;" onclick="event.stopPropagation();abrirReporteServicios()">Ver reporte</button></div>
+          </div>
+          <div class="table-card" style="padding:1.5rem;overflow:visible;cursor:pointer;" onclick="abrirResumenGeneral()">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:.75rem;">
               <div style="width:40px;height:40px;background:#fef9c3;border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-              <div style="font-size:15px;font-weight:600;color:var(--txt);">Reporte General</div>
+              <div style="font-size:15px;font-weight:600;color:var(--txt);">Resumen General</div>
             </div>
-            <p style="font-size:13px;color:var(--txt3);margin-bottom:1rem;line-height:1.6;">Resumen ejecutivo de todos los módulos del sistema.</p>
-            <div style="display:flex;gap:8px;"><button class="btn-new" style="font-size:11px;padding:6px 14px;">Exportar PDF</button><button class="btn-exp" style="font-size:11px;">Exportar Excel</button></div>
+            <p style="font-size:13px;color:var(--txt3);margin-bottom:1rem;line-height:1.6;">Indicadores globales de todos los módulos del sistema.</p>
+            <div style="display:flex;gap:8px;"><button class="btn-new" style="font-size:11px;padding:6px 14px;" onclick="event.stopPropagation();abrirResumenGeneral()">Ver reporte</button></div>
+          </div>
+        </div>
+
+        <!-- PANEL: REPORTE DE CITAS (datos reales vía AJAX) -->
+        <div id="reporte-citas-panel" style="display:none;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <button class="btn-exp" style="font-size:12px;" onclick="volverReportes()">← Volver</button>
+            <div class="page-title" style="font-size:16px;">Reporte de Citas</div>
+          </div>
+
+          <!-- FILTROS -->
+          <div class="table-card" style="padding:1rem 1.25rem;overflow:visible;margin-bottom:14px;">
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+              <div>
+                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Fecha desde</label>
+                <input type="date" id="rc-fecha-desde" class="filter-select" style="padding:7px 10px;">
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Fecha hasta</label>
+                <input type="date" id="rc-fecha-hasta" class="filter-select" style="padding:7px 10px;">
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Asesor</label>
+                <select id="rc-asesor" class="filter-select"><option value="">Todos</option></select>
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Estado</label>
+                <select id="rc-estado" class="filter-select">
+                  <option value="">Todos</option>
+                  <option value="pendiente">Pendiente</option>
+                  <option value="confirmada">Confirmada</option>
+                  <option value="completada">Atendida</option>
+                  <option value="cancelada">Cancelada</option>
+                </select>
+              </div>
+              <button class="btn-new" style="font-size:12px;padding:8px 16px;" onclick="aplicarFiltrosReporteCitas()">Aplicar filtros</button>
+              <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="exportarReporteCitasPDF()">Exportar PDF</button>
+              <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="exportarReporteCitasExcel()">Exportar Excel</button>
+            </div>
+            <div id="rc-error" style="display:none;color:#dc2626;font-size:12px;margin-top:10px;"></div>
+          </div>
+
+          <!-- RESUMEN -->
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px;">
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--txt);" id="rc-kpi-total">—</div><div style="font-size:11px;color:var(--txt3);">Total</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#d97706;" id="rc-kpi-pendientes">—</div><div style="font-size:11px;color:var(--txt3);">Pendientes</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#2563eb;" id="rc-kpi-confirmadas">—</div><div style="font-size:11px;color:var(--txt3);">Confirmadas</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#15803d;" id="rc-kpi-atendidas">—</div><div style="font-size:11px;color:var(--txt3);">Atendidas</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#dc2626;" id="rc-kpi-canceladas">—</div><div style="font-size:11px;color:var(--txt3);">Canceladas</div></div>
+          </div>
+
+          <!-- CITAS POR ASESOR -->
+          <div class="table-card" style="padding:1.25rem;margin-bottom:14px;">
+            <div style="font-size:14px;font-weight:600;color:var(--txt);margin-bottom:10px;">Citas por asesor</div>
+            <div id="rc-por-asesor" style="font-size:13px;color:var(--txt3);">Aplica un filtro para ver datos.</div>
+          </div>
+
+          <!-- LISTADO -->
+          <div class="table-card" style="overflow:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="text-align:left;border-bottom:1px solid var(--border);">
+                  <th style="padding:10px;">Cliente</th>
+                  <th style="padding:10px;">Fecha</th>
+                  <th style="padding:10px;">Hora</th>
+                  <th style="padding:10px;">Motivo</th>
+                  <th style="padding:10px;">Estado</th>
+                  <th style="padding:10px;">Asesor</th>
+                </tr>
+              </thead>
+              <tbody id="rc-listado"><tr><td colspan="6" style="padding:14px;color:var(--txt3);">Aplica un filtro para ver datos.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PANEL: REPORTE DE POSTULANTES -->
+        <div id="reporte-postulantes-panel" style="display:none;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <button class="btn-exp" style="font-size:12px;" onclick="volverReportes()">← Volver</button>
+            <div class="page-title" style="font-size:16px;">Reporte de Postulantes</div>
+          </div>
+          <div class="table-card" style="padding:1rem 1.25rem;overflow:visible;margin-bottom:14px;">
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+              <div>
+                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Periodo</label>
+                <select id="rp-periodo" class="filter-select">
+                  <option value="">Todo</option>
+                  <option value="hoy">Hoy</option>
+                  <option value="semana">Esta semana</option>
+                  <option value="mes">Este mes</option>
+                  <option value="año">Este año</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Vacante</label>
+                <select id="rp-vacante" class="filter-select"><option value="">Todas</option></select>
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Estado</label>
+                <select id="rp-estado" class="filter-select">
+                  <option value="">Todos</option>
+                  <option value="nuevo">Nuevo</option>
+                  <option value="revisado">Revisado</option>
+                  <option value="entrevista">Entrevista</option>
+                  <option value="finalista">Finalista</option>
+                  <option value="contratado">Contratado</option>
+                  <option value="rechazado">Rechazado</option>
+                </select>
+              </div>
+              <button class="btn-new" style="font-size:12px;padding:8px 16px;" onclick="aplicarFiltrosReportePostulantes()">Aplicar filtros</button>
+              <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="exportarReportePostulantesPDF()">Exportar PDF</button>
+              <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="exportarReportePostulantesExcel()">Exportar Excel</button>
+            </div>
+            <div id="rp-error" style="display:none;color:#dc2626;font-size:12px;margin-top:10px;"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;">
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--txt);" id="rp-kpi-total">—</div><div style="font-size:11px;color:var(--txt3);">Total</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:20px;font-weight:700;color:#2563eb;" id="rp-kpi-nuevo">—</div><div style="font-size:11px;color:var(--txt3);">Nuevos</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:20px;font-weight:700;color:#7c3aed;" id="rp-kpi-revisado">—</div><div style="font-size:11px;color:var(--txt3);">Revisados</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:20px;font-weight:700;color:#d97706;" id="rp-kpi-entrevista">—</div><div style="font-size:11px;color:var(--txt3);">Entrevista</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:20px;font-weight:700;color:#15803d;" id="rp-kpi-contratado">—</div><div style="font-size:11px;color:var(--txt3);">Contratados</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:20px;font-weight:700;color:#dc2626;" id="rp-kpi-rechazado">—</div><div style="font-size:11px;color:var(--txt3);">Rechazados</div></div>
+          </div>
+          <div class="table-card" style="padding:1.25rem;margin-bottom:14px;">
+            <div style="font-size:14px;font-weight:600;color:var(--txt);margin-bottom:10px;">Postulantes por vacante</div>
+            <div id="rp-por-vacante" style="font-size:13px;color:var(--txt3);">Aplica un filtro para ver datos.</div>
+          </div>
+          <div class="table-card" style="overflow:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="text-align:left;border-bottom:1px solid var(--border);">
+                  <th style="padding:10px;">Nombre</th>
+                  <th style="padding:10px;">Correo</th>
+                  <th style="padding:10px;">Vacante</th>
+                  <th style="padding:10px;">Estado</th>
+                  <th style="padding:10px;">Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="rp-listado"><tr><td colspan="5" style="padding:14px;color:var(--txt3);">Aplica un filtro para ver datos.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PANEL: REPORTE DE PROSPECTOS -->
+        <div id="reporte-prospectos-panel" style="display:none;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <button class="btn-exp" style="font-size:12px;" onclick="volverReportes()">← Volver</button>
+            <div class="page-title" style="font-size:16px;">Reporte de Prospectos</div>
+          </div>
+          <div class="table-card" style="padding:1rem 1.25rem;overflow:visible;margin-bottom:14px;">
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+              <div>
+                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Periodo</label>
+                <select id="rpr-periodo" class="filter-select">
+                  <option value="">Todo</option>
+                  <option value="hoy">Hoy</option>
+                  <option value="semana">Esta semana</option>
+                  <option value="mes">Este mes</option>
+                  <option value="año">Este año</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Asesor</label>
+                <select id="rpr-asesor" class="filter-select"><option value="">Todos</option></select>
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Estado</label>
+                <select id="rpr-estado" class="filter-select">
+                  <option value="">Todos</option>
+                  <option value="nuevo">Nuevo</option>
+                  <option value="contactado">Contactado</option>
+                  <option value="convertido">Convertido</option>
+                  <option value="descartado">Descartado</option>
+                </select>
+              </div>
+              <button class="btn-new" style="font-size:12px;padding:8px 16px;" onclick="aplicarFiltrosReporteProspectos()">Aplicar filtros</button>
+              <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="exportarReporteProspectosPDF()">Exportar PDF</button>
+              <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="exportarReporteProspectosExcel()">Exportar Excel</button>
+            </div>
+            <div id="rpr-error" style="display:none;color:#dc2626;font-size:12px;margin-top:10px;"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px;">
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--txt);" id="rpr-kpi-total">—</div><div style="font-size:11px;color:var(--txt3);">Total</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#2563eb;" id="rpr-kpi-nuevo">—</div><div style="font-size:11px;color:var(--txt3);">Nuevos</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#d97706;" id="rpr-kpi-contactado">—</div><div style="font-size:11px;color:var(--txt3);">Contactados</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#15803d;" id="rpr-kpi-convertido">—</div><div style="font-size:11px;color:var(--txt3);">Convertidos</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#dc2626;" id="rpr-kpi-descartado">—</div><div style="font-size:11px;color:var(--txt3);">Descartados</div></div>
+          </div>
+          <div class="table-card" style="padding:1.25rem;margin-bottom:14px;">
+            <div style="font-size:14px;font-weight:600;color:var(--txt);margin-bottom:10px;">Prospectos por asesor</div>
+            <div id="rpr-por-asesor" style="font-size:13px;color:var(--txt3);">Aplica un filtro para ver datos.</div>
+          </div>
+          <div class="table-card" style="overflow:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="text-align:left;border-bottom:1px solid var(--border);">
+                  <th style="padding:10px;">Nombre</th>
+                  <th style="padding:10px;">Correo</th>
+                  <th style="padding:10px;">Teléfono</th>
+                  <th style="padding:10px;">Interés</th>
+                  <th style="padding:10px;">Estado</th>
+                  <th style="padding:10px;">Asesor</th>
+                  <th style="padding:10px;">Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="rpr-listado"><tr><td colspan="7" style="padding:14px;color:var(--txt3);">Aplica un filtro para ver datos.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PANEL: REPORTE DE VACANTES -->
+        <div id="reporte-vacantes-panel" style="display:none;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <button class="btn-exp" style="font-size:12px;" onclick="volverReportes()">← Volver</button>
+            <div class="page-title" style="font-size:16px;">Reporte de Vacantes</div>
+            <div style="flex:1;"></div>
+            <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="window.location.href='/reportes/vacantes/pdf/'">Exportar PDF</button>
+            <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="window.location.href='/reportes/vacantes/excel/'">Exportar Excel</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--txt);" id="rv-kpi-total">—</div><div style="font-size:11px;color:var(--txt3);">Total</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#15803d;" id="rv-kpi-activas">—</div><div style="font-size:11px;color:var(--txt3);">Activas</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#dc2626;" id="rv-kpi-inactivas">—</div><div style="font-size:11px;color:var(--txt3);">Inactivas (pausadas/cerradas/vencidas)</div></div>
+          </div>
+          <div class="table-card" style="padding:1.25rem;margin-bottom:14px;">
+            <div style="font-size:14px;font-weight:600;color:var(--txt);margin-bottom:10px;">Vacantes por área</div>
+            <div id="rv-por-area" style="font-size:13px;color:var(--txt3);">Cargando…</div>
+          </div>
+          <div class="table-card" style="overflow:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="text-align:left;border-bottom:1px solid var(--border);">
+                  <th style="padding:10px;">Título</th>
+                  <th style="padding:10px;">Área</th>
+                  <th style="padding:10px;">Modalidad</th>
+                  <th style="padding:10px;">Estado</th>
+                  <th style="padding:10px;">Postulantes</th>
+                  <th style="padding:10px;">Creada</th>
+                </tr>
+              </thead>
+              <tbody id="rv-listado"><tr><td colspan="6" style="padding:14px;color:var(--txt3);">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PANEL: REPORTE DE SERVICIOS -->
+        <div id="reporte-servicios-panel" style="display:none;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <button class="btn-exp" style="font-size:12px;" onclick="volverReportes()">← Volver</button>
+            <div class="page-title" style="font-size:16px;">Reporte de Servicios</div>
+            <div style="flex:1;"></div>
+            <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="window.location.href='/reportes/servicios/pdf/'">Exportar PDF</button>
+            <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="window.location.href='/reportes/servicios/excel/'">Exportar Excel</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--txt);" id="rs-kpi-total">—</div><div style="font-size:11px;color:var(--txt3);">Total</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#15803d;" id="rs-kpi-activos">—</div><div style="font-size:11px;color:var(--txt3);">Activos</div></div>
+            <div class="table-card" style="padding:1rem;text-align:center;"><div style="font-size:22px;font-weight:700;color:#dc2626;" id="rs-kpi-inactivos">—</div><div style="font-size:11px;color:var(--txt3);">Inactivos</div></div>
+          </div>
+          <div class="table-card" style="padding:1.25rem;margin-bottom:14px;">
+            <div style="font-size:14px;font-weight:600;color:var(--txt);margin-bottom:10px;">Distribución por categoría</div>
+            <div id="rs-por-categoria" style="font-size:13px;color:var(--txt3);">Cargando…</div>
+          </div>
+          <div class="table-card" style="overflow:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="text-align:left;border-bottom:1px solid var(--border);">
+                  <th style="padding:10px;">Nombre</th>
+                  <th style="padding:10px;">Categoría</th>
+                  <th style="padding:10px;">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="rs-listado"><tr><td colspan="3" style="padding:14px;color:var(--txt3);">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PANEL: RESUMEN GENERAL -->
+        <div id="resumen-general-panel" style="display:none;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <button class="btn-exp" style="font-size:12px;" onclick="volverReportes()">← Volver</button>
+            <div class="page-title" style="font-size:16px;">Resumen General del Sistema</div>
+            <div style="flex:1;"></div>
+            <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="window.location.href='/reportes/resumen/pdf/'">Exportar PDF</button>
+            <button class="btn-exp" style="font-size:12px;padding:8px 16px;" onclick="window.location.href='/reportes/resumen/excel/'">Exportar Excel</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <div class="table-card" style="padding:1.25rem;text-align:center;"><div style="font-size:26px;font-weight:700;color:var(--txt);" id="rg-prospectos">—</div><div style="font-size:12px;color:var(--txt3);">Prospectos</div></div>
+            <div class="table-card" style="padding:1.25rem;text-align:center;"><div style="font-size:26px;font-weight:700;color:var(--txt);" id="rg-citas">—</div><div style="font-size:12px;color:var(--txt3);">Citas</div></div>
+            <div class="table-card" style="padding:1.25rem;text-align:center;"><div style="font-size:26px;font-weight:700;color:var(--txt);" id="rg-postulantes">—</div><div style="font-size:12px;color:var(--txt3);">Postulantes</div></div>
+            <div class="table-card" style="padding:1.25rem;text-align:center;"><div style="font-size:26px;font-weight:700;color:var(--txt);" id="rg-vacantes">—</div><div style="font-size:12px;color:var(--txt3);">Vacantes</div></div>
+            <div class="table-card" style="padding:1.25rem;text-align:center;"><div style="font-size:26px;font-weight:700;color:var(--txt);" id="rg-servicios">—</div><div style="font-size:12px;color:var(--txt3);">Servicios</div></div>
+            <div class="table-card" style="padding:1.25rem;text-align:center;"><div style="font-size:26px;font-weight:700;color:var(--txt);" id="rg-usuarios">—</div><div style="font-size:12px;color:var(--txt3);">Usuarios activos</div></div>
           </div>
         </div>
       </div>
@@ -2064,6 +2442,33 @@ tr:hover td{background:#fafbfc;}
   </div>
 </div>
 
+<!-- MODAL: MENSAJE (reutilizable — Citas / Postulantes / Prospectos) -->
+<div id="modal-mensaje" class="modal-detalle">
+  <div class="md-box" style="width:520px;">
+    <div class="md-header">
+      <div>
+        <div class="md-title" id="msg-titulo">Mensaje</div>
+        <div class="md-sub" id="msg-sub">—</div>
+      </div>
+      <button class="md-close" onclick="cerrarModalMensaje()">&times;</button>
+    </div>
+    <div class="md-body">
+      <div class="qfr">
+        <label>Plantilla</label>
+        <select id="msg-plantilla-select" class="filter-select" style="width:100%;" onchange="_cargarMensajeSeleccionado()"></select>
+      </div>
+      <div class="qfr" style="margin-bottom:0;">
+        <label>Mensaje generado</label>
+        <textarea id="msg-texto" rows="7" readonly
+          style="width:100%;background:var(--gray);border:1px solid var(--bdr);border-radius:6px;padding:10px 12px;font-size:13px;font-family:var(--ff);color:var(--txt);resize:vertical;"></textarea>
+      </div>
+    </div>
+    <div class="md-actions">
+      <button class="md-btn-secondary" onclick="cerrarModalMensaje()">Cerrar</button>
+      <button class="md-btn-secondary" id="msg-btn-whatsapp" onclick="_enviarMensajeWhatsapp()">💬 Enviar por WhatsApp</button>
+    </div>
+  </div>
+</div>
 
   <!-- MODAL CAMBIO DE ESTADO — POSTULANTES (dashboard) -->
 <div id="modal-estado-dash" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(2px);">
@@ -2545,6 +2950,9 @@ function abrirEditarCita(id) {
     document.getElementById('ec-motivo-otro').value = d.motivo_otro || '';
     document.getElementById('ec-comentarios').value = d.comentarios || '';
 
+    var selEstadoEC = document.getElementById('ec-estado');
+    if (selEstadoEC) selEstadoEC.value = d.estado || 'pendiente';
+
     var selAsesorEC = document.getElementById('ec-asesor');
     if (selAsesorEC) selAsesorEC.value = d.asesor_id || '';
 
@@ -2755,6 +3163,10 @@ document.addEventListener('DOMContentLoaded', function() {
         fila.cells[2].textContent = data.fecha;
         fila.cells[3].textContent = data.hora;
 
+        var celdaEstadoEC = document.getElementById('estado-c-' + data.id);
+        if (celdaEstadoEC) celdaEstadoEC.innerHTML = _estadoBadgeCita[data.estado] || data.estado_display;
+        fila.dataset.estado = data.estado;
+
         var celdaAsesorEC = document.getElementById('asesor-c-' + data.id);
         if (celdaAsesorEC) {
           celdaAsesorEC.innerHTML = data.asesor_nombre
@@ -2842,7 +3254,7 @@ function ejecutarAsignarProspecto() {
     var elTotal  = document.getElementById('pkpi-todos');
     var numTotal = elTotal ? elTotal.querySelector('.pkpi-num') : null;
     if (numTotal) numTotal.textContent = data.prospectos_total;
-    var elNuevo  = document.getElementById('pkpi-nuevo');
+    var elNuevo  = document.getElementById('pkpi-prosp-nuevo');
     var numNuevo = elNuevo ? elNuevo.querySelector('.pkpi-num') : null;
     if (numNuevo) numNuevo.textContent = data.prospectos_nuevos;
 
@@ -2882,12 +3294,19 @@ function confirmarEliminarCita(id, nombre) {
 function ejecutarEliminarCita() {
   var id = document.getElementById('del-cita-id').value;
 
-  fetch('/citas/admin/' + id + '/eliminar/', {
+  fetch('/citas/admin/' + id + '/eliminar/ajax/', {
     method:  'POST',
     headers: { 'X-CSRFToken': getCsrf() },
   })
-  .then(function() {
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
     document.getElementById('modal-del-cita').style.display = 'none';
+
+    if (!data.ok) {
+      toast(data.error || 'No se pudo eliminar la cita.', 'error');
+      return;
+    }
+
     toast('Cita eliminada correctamente.', 'success');
 
     var fila = document.getElementById('fila-c-' + id);
@@ -2907,6 +3326,145 @@ function ejecutarEliminarCita() {
     }
   })
   .catch(function() { toast('Error de conexión al eliminar.', 'error'); });
+}
+
+/* ════════════════════════════════════════════════════════
+   MODAL DE MENSAJES — reutilizable (Citas / Postulantes / Prospectos)
+   ════════════════════════════════════════════════════════ */
+
+var _PLANTILLAS_CITAS = {
+  confirmacion: 'Confirmación de cita',
+  recordatorio: 'Recordatorio de cita',
+  reagendar:    'Reagendar cita',
+  seguimiento:  'Seguimiento posterior',
+  cancelacion:  'Cancelación de cita',
+};
+
+var _PLANTILLAS_POSTULANTES = {
+  confirmacion_recepcion: 'Confirmación de recepción',
+  invitacion_entrevista:  'Invitación a entrevista',
+  seguimiento_proceso:    'Seguimiento del proceso',
+  solicitud_documentos:   'Solicitud de documentos',
+  resultado_positivo:     'Resultado positivo',
+  resultado_negativo:     'Resultado del proceso',
+};
+
+var _PLANTILLAS_PROSPECTOS = {
+  primer_contacto:       'Primer contacto / presentación',
+  seguimiento:            'Seguimiento de prospecto',
+  seguimiento_cotizacion: 'Seguimiento de cotización',
+  recordatorio:           'Recordatorio de atención',
+  no_responde:            'Prospecto no responde',
+  agradecimiento:         'Mensaje de agradecimiento',
+  posterior_asesoria:     'Mensaje posterior a asesoría',
+  mensaje_servicio:       'Mensaje sobre el servicio',
+  conversion:             'Conversión a cliente',
+};
+
+var _msgModulo   = null;
+var _msgObjetoId = null;
+var _msgTelefono = '';
+
+function _urlMensajeAjax(modulo, id, clave) {
+  if (modulo === 'citas')       return '/citas/admin/' + id + '/mensaje/' + clave + '/ajax/';
+  if (modulo === 'postulantes') return '/postulantes/admin/' + id + '/mensaje/' + clave + '/ajax/';
+  return '/prospectos/' + id + '/mensaje/' + clave + '/ajax/';
+}
+
+function _abrirModalMensaje(modulo, id, telefono, nombre, plantillas) {
+  _msgModulo   = modulo;
+  _msgObjetoId = id;
+  _msgTelefono = telefono || '';
+
+  document.getElementById('msg-titulo').textContent = 'Mensaje para ' + (nombre || '');
+  document.getElementById('msg-sub').textContent     = _msgTelefono ? _msgTelefono : 'Sin teléfono registrado';
+
+  var sel = document.getElementById('msg-plantilla-select');
+  sel.innerHTML = '';
+  Object.keys(plantillas).forEach(function(clave) {
+    var opt = document.createElement('option');
+    opt.value = clave;
+    opt.textContent = plantillas[clave];
+    sel.appendChild(opt);
+  });
+
+  document.getElementById('msg-texto').value = '';
+  document.getElementById('modal-mensaje').classList.add('show');
+  _cargarMensajeSeleccionado();
+}
+
+function _cargarMensajeSeleccionado() {
+  var clave = document.getElementById('msg-plantilla-select').value;
+  if (!clave || !_msgModulo || !_msgObjetoId) return;
+
+  document.getElementById('msg-texto').value = 'Generando…';
+
+  fetch(_urlMensajeAjax(_msgModulo, _msgObjetoId, clave), {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(function(r) {
+    if (!r.ok) {
+      return r.text().then(function(txt) {
+        console.error('mensaje_generado_ajax HTTP ' + r.status, txt.slice(0, 500));
+        throw new Error('HTTP ' + r.status);
+      });
+    }
+    return r.json();
+  })
+  .then(function(d) {
+    if (!d.ok) {
+      document.getElementById('msg-texto').value = '';
+      toast('No se pudo generar el mensaje.', 'error');
+      return;
+    }
+    document.getElementById('msg-texto').value = d.texto;
+  })
+  .catch(function(err) {
+    console.error('Error al generar mensaje:', err);
+    document.getElementById('msg-texto').value = '';
+    toast('Error de conexión al generar el mensaje.', 'error');
+  });
+}
+
+function cerrarModalMensaje() {
+  document.getElementById('modal-mensaje').classList.remove('show');
+}
+
+function _enviarMensajeWhatsapp() {
+  var texto = document.getElementById('msg-texto').value.trim();
+  if (!texto) { toast('Genera el mensaje antes de enviarlo.', 'warning'); return; }
+  if (!_msgTelefono) { toast('Este registro no tiene teléfono registrado.', 'warning'); return; }
+
+  var limpio = _msgTelefono.replace(/[\s\-()]/g, '');
+  window.open('https://wa.me/52' + limpio + '?text=' + encodeURIComponent(texto), '_blank');
+}
+
+// ── Punto de entrada: Citas ───────────────────────────────────────────────────
+function abrirMensajeCita(id) {
+  fetch('/citas/admin/' + id + '/detalle/ajax/', {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (!d.ok) { toast('No se pudo cargar la cita.', 'error'); return; }
+    var nombre = (d.nombre_cliente + ' ' + (d.apellidos_cliente || '')).trim();
+    _abrirModalMensaje('citas', id, d.telefono, nombre, _PLANTILLAS_CITAS);
+  })
+  .catch(function() { toast('Error de conexión al cargar la cita.', 'error'); });
+}
+
+// ── Punto de entrada: Postulantes ─────────────────────────────────────────────
+function abrirMensajePostulante(id) {
+  fetch('/postulantes/admin/' + id + '/detalle/ajax/', {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (!d.ok) { toast('No se pudo cargar el postulante.', 'error'); return; }
+    var tel = (d.telefono && d.telefono !== '—') ? d.telefono : '';
+    _abrirModalMensaje('postulantes', id, tel, d.nombre, _PLANTILLAS_POSTULANTES);
+  })
+  .catch(function() { toast('Error de conexión al cargar el postulante.', 'error'); });
 }
 
 // ── Crear desde dashboard ─────────────────────────────────────────────────────
@@ -2967,8 +3525,8 @@ document.addEventListener('DOMContentLoaded', function() {
             '<button class="act-btn" title="Editar cita" onclick="abrirEditarCita(' + data.id + ')">' +
               '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>' +
             '</button>' +
-            '<button class="act-btn" title="Cambiar estado" onclick="verDetalleCita(' + data.id + ')">' +
-              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>' +
+            '<button class="act-btn" title="Enviar mensaje" onclick="abrirMensajeCita(' + data.id + ')">' +
+              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>' +
             '</button>' +
             '<button class="act-btn act-btn-del" title="Eliminar cita" onclick="confirmarEliminarCita(' + data.id + ', \'' + data.nombre_cliente + ' ' + data.apellidos_cliente + '\')">' +
               '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>' +
@@ -3205,8 +3763,8 @@ function _renderNotificaciones(items, total) {
       ? null
       : (_navDestinos[item.tipo] || item.accion_nav || 'dashboard');
     var onclick = item.accion_url
-      ? 'window.location.href="' + item.accion_url + '"'
-      : 'cerrarNotif(); nav("' + destino + '", null);';
+      ? "window.location.href='" + item.accion_url + "'"
+      : "cerrarNotif(); nav('" + destino + "', null);";
 
     return (
       '<div class="np-item" onclick="' + onclick + '">' +
@@ -3343,6 +3901,9 @@ function guardarNuevoPostulante(e) {
           '<span class="act-btn" title="Cambiar estado" onclick="abrirModalEstadoDash(' + data.id + ', \'' + data.estado + '\', \'' + data.nombre.replace(/'/g,"\\'") + '\')">' +
             '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>' +
           '</span>' +
+          '<span class="act-btn" title="Enviar mensaje" onclick="abrirMensajePostulante(' + data.id + ')">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>' +
+          '</span>' +
           '<span class="act-btn act-btn-del" title="Eliminar" onclick="abrirModalEliminar(' + data.id + ', \'' + data.nombre.replace(/'/g,"\\'") + '\', \'' + data.vacante.replace(/'/g,"\\'") + '\')">' +
             '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>' +
           '</span>' +
@@ -3406,6 +3967,9 @@ var _pfiltroActivo = '';
 
 var _expIdActual = null;
 var _expTelefonoActual = '';
+var _expCorreoActual = '';
+var _expNombreActual = '';
+var _expInteresActual = '';
 var _expAbrirEditarPendiente = false;
 var _expAbrirWhatsappPendiente = false;
 
@@ -3415,8 +3979,15 @@ function editarProspectoDesdeCard(id){
 }
 
 function mensajeProspectoDesdeCard(id){
-  _expAbrirWhatsappPendiente = true;
-  abrirExpediente(id);
+  fetch('/prospectos/' + id + '/expediente/ajax/', {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (!d.ok) { toast('No se pudo cargar el prospecto.', 'error'); return; }
+    _abrirModalMensaje('prospectos', id, d.telefono, d.nombre, _PLANTILLAS_PROSPECTOS);
+  })
+  .catch(function(){ toast('Error de conexión al cargar el prospecto.', 'error'); });
 }
 
 // ── Modal flotante VER PROSPECTO (solo lectura) ───────────────────────────────
@@ -3476,15 +4047,35 @@ function llamarProspectoExp() {
 }
 
 function whatsappProspectoExp() {
-  if (!_expTelefonoActual) return;
-  var limpio = _expTelefonoActual.replace(/[\s\-()]/g, '');
-  if (!limpio) return;
-  window.open('https://wa.me/52' + limpio, '_blank');
+  if (!_expIdActual) return;
+  var nombreEl = document.getElementById('exp-nombre');
+  var nombre = nombreEl ? nombreEl.textContent : '';
+  _abrirModalMensaje('prospectos', _expIdActual, _expTelefonoActual, nombre, _PLANTILLAS_PROSPECTOS);
 }
 
 function agendarCitaExp() {
-  var modal = document.getElementById('exp-modal-proximamente');
-  if (modal) modal.classList.add('show');
+  if (!_expIdActual) return;
+
+  var formNC = document.getElementById('form-nueva-cita');
+  if (formNC) formNC.reset();
+  document.getElementById('nc-error').style.display = 'none';
+
+  var partes    = (_expNombreActual || '').trim().split(' ');
+  var nombre    = partes.shift() || '';
+  var apellidos = partes.join(' ');
+
+  document.getElementById('nc-nombre').value    = nombre;
+  document.getElementById('nc-apellidos').value = apellidos;
+  document.getElementById('nc-correo').value    = _expCorreoActual || '';
+  document.getElementById('nc-telefono').value  = _expTelefonoActual || '';
+
+  // El interés del prospecto comparte 6 de 7 claves con Cita.MOTIVO_CHOICES
+  // ('general' de Prospecto no tiene equivalente directo en Cita → se deja sin preseleccionar).
+  var motivosValidos = ['seguro_vida', 'medico', 'auto', 'hogar', 'inversion', 'empresa'];
+  var motivoSel = document.getElementById('nc-motivo');
+  motivoSel.value = motivosValidos.indexOf(_expInteresActual) !== -1 ? _expInteresActual : '';
+
+  document.getElementById('modal-nueva-cita').style.display = 'flex';
 }
 
 function abrirExpediente(id) {
@@ -3538,6 +4129,9 @@ function _poblarExpediente(d) {
   document.getElementById('exp-telefono').innerHTML =
     d.telefono ? '<a href="tel:'+d.telefono+'">'+d.telefono+'</a>' : '—';
   _expTelefonoActual = d.telefono || '';
+  _expCorreoActual   = d.correo || '';
+  _expNombreActual   = d.nombre || '';
+  _expInteresActual  = d.interes || '';
   var btnLlamar = document.getElementById('exp-btn-llamar');
   var btnWhats  = document.getElementById('exp-btn-whatsapp');
   if (btnLlamar) btnLlamar.style.display = d.telefono ? '' : 'none';
@@ -3657,55 +4251,6 @@ function enviarSeguimientoExp(e) {
     abrirExpediente(_expIdActual);
   })
   .catch(function() { toast('Error al guardar el seguimiento.', 'error'); });
-}
-
-// ── Tipo de registro: toggle Prospecto / Cliente ──────────────────────────────
-function cambiarTipoRegistro(tipo) {
-  document.getElementById('exp-edit-tipo').value = tipo;
-
-  var badge = document.getElementById('exp-form-tipo-badge');
-  var bloqSI = document.getElementById('bloque-servicios-interes');
-  var bloqPR = document.getElementById('bloque-promociones');
-
-  if (tipo === 'prospecto') {
-    if (badge) { badge.textContent = '🔵 Prospecto'; badge.className = 'badge b-blue'; }
-    bloqSI.style.display = '';
-    bloqPR.style.display = 'none';
-  } else {
-    if (badge) { badge.textContent = '✅ Cliente'; badge.className = 'badge b-green'; }
-    bloqSI.style.display = 'none';
-    bloqPR.style.display = '';
-  }
-}
-
-// Actualizar estilo visual de los multi-check al hacer clic
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.multi-check-item input[type=checkbox]').forEach(function(cb) {
-    cb.addEventListener('change', function() {
-      var item = cb.closest('.multi-check-item');
-      if (cb.checked) {
-        item.classList.add('checked');
-      } else {
-        item.classList.remove('checked');
-      }
-    });
-  });
-});
-
-// Precarga del tipo al abrir el expediente (extiende _precargarModalEditar)
-function _precargarTipoRegistro(tipo) {
-  tipo = tipo || 'prospecto';
-  cambiarTipoRegistro(tipo);
-}
-
-// Precargar checkboxes de servicios/promociones desde string CSV "seguro_vida,auto"
-function _precargarCheckboxes(prefijo, valoresCSV) {
-  var valores = valoresCSV ? valoresCSV.split(',') : [];
-  document.querySelectorAll('input[name="' + prefijo + '"]').forEach(function(cb) {
-    var checked = valores.indexOf(cb.value) !== -1;
-    cb.checked = checked;
-    cb.closest('.multi-check-item').classList.toggle('checked', checked);
-  });
 }
 
 // ── Tipo de registro: toggle Prospecto / Cliente ──────────────────────────────
@@ -3980,7 +4525,7 @@ function _insertarTarjetaProspecto(d){
   grid.insertBefore(card, grid.firstChild);
 }
 function _actualizarKpisProspectosNuevo(){
-  ['pkpi-todos','pkpi-nuevo'].forEach(function(id){
+  ['pkpi-todos','pkpi-prosp-nuevo'].forEach(function(id){
     var el = document.getElementById(id);
     if (!el) return;
     var num = el.querySelector('.pkpi-num');
@@ -4000,11 +4545,59 @@ function filtrarUsuariosInput(texto) {
     card.style.display = (!busq || (card.dataset.nombre || '').indexOf(busq) !== -1) ? '' : 'none';
   });
 }
-function filtrarHistorial(){
-  var modulo=(document.getElementById('filtro-modulo-hist').value||'').toLowerCase();
-  document.querySelectorAll('#tbody-historial tr').forEach(function(tr){
-    tr.style.display=(!modulo||(tr.dataset.modulo||'')===modulo)?'':'none';
-  });
+function aplicarFiltrosHistorial(){
+  var errBox = document.getElementById('hist-error');
+  errBox.style.display = 'none';
+
+  var params = new URLSearchParams();
+  var pe = document.getElementById('hist-periodo').value;
+  var mo = document.getElementById('hist-modulo').value;
+  if (pe) params.set('periodo', pe);
+  if (mo) params.set('modulo', mo);
+
+  fetch('/historial/actividad/ajax/?' + params.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!data.ok){
+        errBox.textContent = data.error || 'No se pudo cargar el historial.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      document.getElementById('hist-kpi-total').textContent = data.resumen.total;
+
+      var porMod = document.getElementById('hist-por-modulo');
+      porMod.innerHTML = data.por_modulo.length
+        ? data.por_modulo.map(function(m){
+            return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>' + m.modulo + '</span><strong>' + m.total + '</strong></div>';
+          }).join('')
+        : 'Sin actividad registrada.';
+
+      var badgeClase = {citas:'b-green', postulantes:'b-blue', vacantes:'b-yellow', usuarios:'b-purple', prospectos:'b-gray', dashboard:'b-blue'};
+
+      var tbody = document.getElementById('tbody-historial');
+      tbody.innerHTML = data.listado.length
+        ? data.listado.map(function(h){
+            var cls = badgeClase[h.modulo] || '';
+            return '<tr data-modulo="' + h.modulo + '">' +
+              '<td style="font-weight:600;">' + h.usuario + '</td>' +
+              '<td>' + h.accion + '</td>' +
+              '<td><span class="badge ' + cls + '">' + h.modulo_label + '</span></td>' +
+              '<td>' + h.fecha + '</td></tr>';
+          }).join('')
+        : '<tr><td colspan="4" style="text-align:center;padding:20px;color:#64748b;">No hay actividad registrada.</td></tr>';
+
+      var contador = document.getElementById('hist-contador');
+      if (contador) {
+        contador.textContent = data.listado.length < data.resumen.total
+          ? 'Mostrando ' + data.listado.length + ' de ' + data.resumen.total + ' registros'
+          : 'Mostrando ' + data.listado.length + ' registro' + (data.listado.length === 1 ? '' : 's');
+      }
+    })
+    .catch(function(){
+      errBox.textContent = 'Error de conexión. Intenta de nuevo.';
+      errBox.style.display = 'block';
+    });
 }
 
 /* ─── EXPORTAR PDF (sin cambios) ─── */
@@ -4026,10 +4619,18 @@ function nav(id,el){
   var page=document.getElementById('p-'+id);
   if(page)page.classList.add('on');
   document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('on');});
-  if(el)el.classList.add('on');
+  if(el){
+    el.classList.add('on');
+  } else {
+    // Sin referencia directa al <div> del sidebar (p.ej. clic desde una
+    // notificación o desde un botón "Ver más →"): lo localizamos por su
+    // onclick para que el sidebar SIEMPRE refleje la sección activa.
+    var item = document.querySelector('.sb-item[onclick*="nav(\'' + id + '\'"]');
+    if (item) item.classList.add('on');
+  }
 }
 
-/* ─── FILTRO PERIODO (hardcodeado, no toca BD) ─── */
+/* ─── FILTRO PERIODO (real — consulta /dashboard/kpis/ con datos de PostgreSQL) ─── */
 // ── KPIs y actividad con filtro por periodo ───────────────────────────────────
 var _periodoActual = 'mes';
 var _cargandoKpis  = false;
@@ -4199,25 +4800,6 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 <script>
-function cambiarEstado(id, nuevoEstado){
-  fetch(`/cambiar-estado/${id}/`, {
-    method: 'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'X-CSRFToken': getCookie('csrftoken')
-    },
-    body: JSON.stringify({
-      estado: nuevoEstado
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if(data.success){
-      location.reload();
-    }
-  })
-}
-
 function abrirModalVacante(){
   document.getElementById('modal-vacante').style.display='flex';
 }
@@ -4616,41 +5198,6 @@ function guardarEstadoCita(nuevoEstado) {
     toast('Estado de cita actualizado: ' + data.estado_display, 'success');
   })
   .catch(function() { toast('Error de conexión.', 'error'); });
-}
-
-function confirmarEliminarCita(id, nombre) {
-  document.getElementById('del-cita-id').value           = id;
-  document.getElementById('del-cita-nombre').textContent = nombre;
-  document.getElementById('modal-del-cita').style.display = 'flex';
-}
-
-function ejecutarEliminarCita() {
-  var id = document.getElementById('del-cita-id').value;
-
-  fetch('/citas/admin/' + id + '/eliminar/', {
-    method:  'POST',
-    headers: { 'X-CSRFToken': getCsrf() },
-  })
-  .then(function() {
-    document.getElementById('modal-del-cita').style.display = 'none';
-    toast('Cita eliminada correctamente.', 'success');
-
-    var fila = document.getElementById('fila-c-' + id);
-    if (fila) {
-      fila.style.transition = 'opacity .3s';
-      fila.style.opacity    = '0';
-      setTimeout(function() {
-        fila.remove();
-        var tbody = document.getElementById('tbody-citas');
-        if (tbody && tbody.querySelectorAll('tr[data-cita-id]').length === 0) {
-          var tr = document.createElement('tr');
-          tr.innerHTML = '<td colspan="7" style="text-align:center;padding:20px;color:#64748b;">No hay citas registradas.</td>';
-          tbody.appendChild(tr);
-        }
-      }, 300);
-    }
-  })
-  .catch(function() { toast('Error de conexión al eliminar.', 'error'); });
 }
 
 /* ════════════════════════════════════════════════════════
@@ -5861,6 +6408,59 @@ function toggleActivoServicio(id, btnEl) {
 
       </div>
 
+      <!-- Estado -->
+      <div style="margin-top:14px;">
+
+        <label style="display:block;font-size:12px;font-weight:600;
+                      color:var(--txt3);margin-bottom:5px;">
+          Estado *
+        </label>
+
+        <select
+          id="ec-estado"
+          name="estado"
+          required
+          style="width:100%;border:1px solid var(--bdr);
+                 border-radius:8px;padding:10px 12px;
+                 font-size:13px;font-family:var(--ff);
+                 color:var(--txt2);outline:none;background:#fff;">
+
+          <option value="pendiente">Pendiente</option>
+          <option value="confirmada">Confirmada</option>
+          <option value="completada">Completada</option>
+          <option value="cancelada">Cancelada</option>
+
+        </select>
+
+      </div>
+
+      {% if es_admin %}
+      <!-- Asesor -->
+      <div style="margin-top:14px;">
+
+        <label style="display:block;font-size:12px;font-weight:600;
+                      color:var(--txt3);margin-bottom:5px;">
+          Asesor asignado
+        </label>
+
+        <select
+          id="ec-asesor"
+          name="asesor_id"
+          style="width:100%;border:1px solid var(--bdr);
+                 border-radius:8px;padding:10px 12px;
+                 font-size:13px;font-family:var(--ff);
+                 color:var(--txt2);outline:none;background:#fff;">
+
+          <option value="">— Sin asignar —</option>
+          {% for a in asesores %}
+          <option value="{{ a.id }}">{{ a.get_full_name|default:a.username }}</option>
+          {% endfor %}
+
+        </select>
+
+      </div>
+      {% endif %}
+
       <!-- Comentarios -->
       <div style="margin-top:14px;">
 
@@ -6461,6 +7061,869 @@ function toggleActivoServicio(id, btnEl) {
     </form>
   </div>
 </div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     FASE C — GESTIÓN DE USUARIOS: MODALES
+     Mismo patrón visual que los modales de Servicios (modal-servicio,
+     modal-ver-servicio, modal-editar-servicio).
+════════════════════════════════════════════════════════════════════════ -->
+
+<!-- ══ MODAL: NUEVO USUARIO ═══════════════════════════════════════════════ -->
+<div id="modal-nuevo-usuario" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)cerrarModalNuevoUsuario();">
+  <div style="background:#fff;width:520px;max-width:95%;max-height:90vh;overflow:auto;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+      <div style="font-size:16px;font-weight:700;">Nuevo usuario</div>
+      <button type="button" onclick="cerrarModalNuevoUsuario()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+    </div>
+    <form id="form-nuevo-usuario">
+      {% csrf_token %}
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Nombre *</label>
+            <input name="first_name" type="text" class="campo" placeholder="Nombre" required>
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Apellidos</label>
+            <input name="last_name" type="text" class="campo" placeholder="Apellidos">
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Nombre de usuario *</label>
+          <input name="username" type="text" class="campo" placeholder="usuario.sistema" required>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Correo electrónico * <span style="font-weight:400;">(se usará para recuperación de contraseña)</span></label>
+          <input name="email" type="email" class="campo" placeholder="correo@vryconsultores.com" required>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Rol *</label>
+          <select name="rol" class="campo" required>
+            <option value="">— Selecciona —</option>
+            <option value="admin">Administrador</option>
+            <option value="asesor">Asesor</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Contraseña *</label>
+            <input name="password" type="password" class="campo" placeholder="Mínimo 8 caracteres" required>
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Confirmar contraseña *</label>
+            <input name="password_confirmacion" type="password" class="campo" placeholder="Repite la contraseña" required>
+          </div>
+        </div>
+      </div>
+      <div id="nu-error" style="display:none;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 12px;border-radius:7px;font-size:12px;margin-top:1rem;"></div>
+    </form>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;">
+      <button type="button" onclick="cerrarModalNuevoUsuario()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
+      <button type="button" id="nu-btn-guardar" onclick="guardarNuevoUsuario()" style="background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Crear usuario</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: VER USUARIO ═════════════════════════════════════════════════ -->
+<div id="modal-ver-usuario" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)cerrarModalVerUsuario();">
+  <div style="background:#fff;width:460px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+      <div style="font-size:16px;font-weight:700;">Detalle del usuario</div>
+      <button type="button" onclick="cerrarModalVerUsuario()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+    </div>
+    <div id="ver-usuario-body" style="font-size:13px;color:var(--txt2);line-height:1.9;">
+      <p style="text-align:center;color:var(--txt3);">Cargando…</p>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:1.25rem;gap:8px;">
+      <button type="button" onclick="cerrarModalVerUsuario()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cerrar</button>
+      <button type="button" id="ver-usuario-btn-editar" onclick="verEditarDesdeVer()" style="background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Editar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: EDITAR USUARIO ══════════════════════════════════════════════ -->
+<div id="modal-editar-usuario" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)cerrarModalEditarUsuario();">
+  <div style="background:#fff;width:520px;max-width:95%;max-height:90vh;overflow:auto;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+      <div style="font-size:16px;font-weight:700;">Editar usuario</div>
+      <button type="button" onclick="cerrarModalEditarUsuario()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+    </div>
+    <form id="form-editar-usuario">
+      {% csrf_token %}
+      <input type="hidden" id="eu-id" name="user_id" value="">
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Nombre *</label>
+            <input id="eu-nombre" name="first_name" type="text" class="campo" required>
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Apellidos</label>
+            <input id="eu-apellidos" name="last_name" type="text" class="campo">
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Nombre de usuario *</label>
+          <input id="eu-username" name="username" type="text" class="campo" required>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Correo electrónico *</label>
+          <input id="eu-email" name="email" type="email" class="campo" required>
+        </div>
+        <div id="eu-rol-wrap">
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Rol *</label>
+          <select id="eu-rol" name="rol" class="campo">
+            <option value="admin">Administrador</option>
+            <option value="asesor">Asesor</option>
+          </select>
+        </div>
+        <p id="eu-nota-superadmin" style="display:none;font-size:12px;color:var(--txt3);background:var(--gray2);border-radius:7px;padding:8px 12px;">
+          Este usuario es Superadministrador. El rol y el estado (activo/inactivo) de un Superadmin solo se gestionan desde <code>/admin/</code>.
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Nueva contraseña <span style="font-weight:400;">(opcional)</span></label>
+            <input id="eu-password" name="password" type="password" class="campo" placeholder="Dejar en blanco para conservar">
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Confirmar nueva contraseña</label>
+            <input id="eu-password2" name="password_confirmacion" type="password" class="campo" placeholder="Repite la contraseña">
+          </div>
+        </div>
+      </div>
+      <div id="eu-error" style="display:none;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 12px;border-radius:7px;font-size:12px;margin-top:1rem;"></div>
+    </form>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;">
+      <button type="button" onclick="cerrarModalEditarUsuario()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
+      <button type="button" id="eu-btn-guardar" onclick="guardarEdicionUsuario()" style="background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: CONFIRMAR ACTIVAR/DESACTIVAR USUARIO ═══════════════════════ -->
+<div id="modal-estado-usuario" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)cerrarModalEstadoUsuario();">
+  <div style="background:#fff;width:380px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+      <div id="estado-usuario-titulo" style="font-size:16px;font-weight:700;">🔒 Desactivar usuario</div>
+      <button type="button" onclick="cerrarModalEstadoUsuario()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+    </div>
+    <p id="estado-usuario-mensaje" style="font-size:13px;color:var(--txt2);margin-bottom:1.25rem;"></p>
+    <div style="display:flex;justify-content:flex-end;gap:8px;">
+      <button type="button" onclick="cerrarModalEstadoUsuario()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
+      <button type="button" id="estado-usuario-btn" onclick="ejecutarCambioEstadoUsuario()" style="background:#dc2626;color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Sí, desactivar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   FASE C — GESTIÓN DE USUARIOS (JS)
+   Un solo componente visual (construirTarjetaUsuarioHTML) usado tanto para
+   pintar tarjetas nuevas como para refrescar tarjetas existentes tras
+   crear/editar/activar/desactivar. Todas las acciones están conectadas a
+   endpoints reales protegidos en backend (usuarios/views.py + solo_admin).
+═══════════════════════════════════════════════════════════════════════ */
+var USUARIO_ACTUAL_ID = {{ request.user.id }};
+
+function _uIconEye(){
+  return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+}
+function _uIconEdit(){
+  return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>';
+}
+function _uIconLock(){
+  return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>';
+}
+function _uIconUnlock(){
+  return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 019.9-2"/></svg>';
+}
+function _uIniciales(u){
+  if(u.first_name){
+    return (u.first_name.slice(0,1) + (u.last_name ? u.last_name.slice(0,1) : '')).toUpperCase();
+  }
+  return u.username.slice(0,2).toUpperCase();
+}
+
+/* ── Construye el HTML de UNA tarjeta de usuario. Misma estructura/clases
+   que el bloque renderizado por Django, para que exista un único
+   componente visual sin importar si se pintó en el servidor o por AJAX. ── */
+function construirTarjetaUsuarioHTML(u){
+  var avatarClase = (u.rol === 'admin' || u.rol === 'superadmin') ? 'rol-admin' : 'rol-asesor';
+  var rolBadge = u.rol === 'superadmin'
+    ? '<span class="badge b-blue">Superadmin</span>'
+    : (u.rol === 'admin' ? '<span class="badge b-blue">Admin</span>' : '<span class="badge b-gray">Asesor</span>');
+  var estadoBadge = u.is_active
+    ? '<span class="badge b-green" style="margin-left:4px;">Activo</span>'
+    : '<span class="badge b-red" style="margin-left:4px;">Inactivo</span>';
+
+  var acciones = '';
+  acciones += '<button type="button" class="act-btn" title="Ver usuario" onclick="abrirVerUsuario('+u.id+')">'+_uIconEye()+'</button>';
+  acciones += '<button type="button" class="act-btn" title="Editar usuario" onclick="abrirEditarUsuario('+u.id+')">'+_uIconEdit()+'</button>';
+
+  if(u.is_superuser){
+    acciones += '<button type="button" class="act-btn" title="Los Superadministradores se gestionan desde /admin/" disabled style="opacity:.35;cursor:not-allowed;">'+_uIconLock()+'</button>';
+  } else if(u.id === USUARIO_ACTUAL_ID){
+    acciones += '<button type="button" class="act-btn" title="No puedes desactivar tu propia cuenta" disabled style="opacity:.35;cursor:not-allowed;">'+_uIconLock()+'</button>';
+  } else {
+    var nombreEsc = (u.nombre_completo || u.username).replace(/'/g, "\\'");
+    if(u.is_active){
+      acciones += '<button type="button" class="act-btn act-btn-del" title="Desactivar usuario" onclick="confirmarCambioEstadoUsuario('+u.id+', true, \''+nombreEsc+'\')">'+_uIconLock()+'</button>';
+    } else {
+      acciones += '<button type="button" class="act-btn" title="Activar usuario" onclick="confirmarCambioEstadoUsuario('+u.id+', false, \''+nombreEsc+'\')">'+_uIconUnlock()+'</button>';
+    }
+  }
+
+  return (
+    '<div class="ucard" id="ucard-'+u.id+'" data-nombre="'+(u.nombre_completo || u.username).toLowerCase()+'">'+
+      '<div class="ucard-header">'+
+        '<div class="ucard-avatar '+avatarClase+'">'+_uIniciales(u)+'</div>'+
+        '<div>'+
+          '<div class="ucard-name">'+(u.nombre_completo || u.username)+'</div>'+
+          '<div class="ucard-user">@'+u.username+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="ucard-info">'+
+        '<div class="ucard-info-row"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>'+(u.email || '— Sin correo')+'</div>'+
+        '<div class="ucard-info-row"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Registrado: '+u.fecha_registro+'</div>'+
+        '<div class="ucard-info-row"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Último acceso: '+u.ultimo_acceso+'</div>'+
+      '</div>'+
+      '<div class="ucard-footer">'+
+        '<div>'+rolBadge+estadoBadge+'</div>'+
+        '<div style="display:flex;gap:4px;">'+acciones+'</div>'+
+      '</div>'+
+    '</div>'
+  );
+}
+
+/* ── Inserta (si es nuevo) o reemplaza (si ya existe) la tarjeta de un
+   usuario en el grid, a partir de los datos que regresa el backend. ── */
+function refrescarTarjetaUsuario(u){
+  var html = construirTarjetaUsuarioHTML(u);
+  var tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  var nueva = tmp.firstElementChild;
+
+  var actual = document.getElementById('ucard-'+u.id);
+  if(actual){
+    actual.replaceWith(nueva);
+  } else {
+    var grid = document.getElementById('users-grid');
+    if(!grid) return;
+    var vacio = grid.querySelector('div[style*="grid-column"]');
+    if(vacio) vacio.remove();
+    grid.insertBefore(nueva, grid.firstChild);
+    var totalEl = document.getElementById('usuarios-page-sub');
+    if(totalEl){
+      var n = (parseInt(totalEl.getAttribute('data-total')) || 0) + 1;
+      totalEl.setAttribute('data-total', n);
+      totalEl.textContent = n + ' usuario' + (n === 1 ? '' : 's') + ' registrado' + (n === 1 ? '' : 's');
+    }
+  }
+  nueva.style.boxShadow = '0 0 0 2px var(--blue)';
+  setTimeout(function(){ nueva.style.transition = 'box-shadow .8s'; nueva.style.boxShadow = ''; }, 900);
+}
+
+/* ── Crear usuario ── */
+function abrirModalNuevoUsuario(){
+  document.getElementById('form-nuevo-usuario').reset();
+  document.getElementById('nu-error').style.display = 'none';
+  document.getElementById('modal-nuevo-usuario').style.display = 'flex';
+}
+function cerrarModalNuevoUsuario(){
+  document.getElementById('modal-nuevo-usuario').style.display = 'none';
+}
+function guardarNuevoUsuario(){
+  var form   = document.getElementById('form-nuevo-usuario');
+  var btn    = document.getElementById('nu-btn-guardar');
+  var errDiv = document.getElementById('nu-error');
+
+  if(form.password.value !== form.password_confirmacion.value){
+    errDiv.textContent = 'Las contraseñas no coinciden.';
+    errDiv.style.display = 'block';
+    return;
+  }
+  errDiv.style.display = 'none';
+
+  var fd = new FormData(form);
+  btn.disabled = true;
+  btn.textContent = 'Guardando…';
+
+  fetch('/usuarios/crear/ajax/', {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': getCsrf() },
+    body: fd,
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    btn.disabled = false;
+    btn.textContent = 'Crear usuario';
+    if(!data.ok){
+      errDiv.textContent = data.error || 'Error al crear el usuario. Intenta de nuevo.';
+      errDiv.style.display = 'block';
+      return;
+    }
+    cerrarModalNuevoUsuario();
+    toast('Usuario "'+data.usuario.nombre_completo+'" creado correctamente.', 'success');
+    refrescarTarjetaUsuario(data.usuario);
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Crear usuario';
+    errDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+    errDiv.style.display = 'block';
+  });
+}
+
+/* ── Ver usuario ── */
+function abrirVerUsuario(id){
+  document.getElementById('modal-ver-usuario').style.display = 'flex';
+  document.getElementById('ver-usuario-body').innerHTML = '<p style="text-align:center;color:var(--txt3);">Cargando…</p>';
+  document.getElementById('ver-usuario-btn-editar').setAttribute('data-id', id);
+
+  fetch('/usuarios/'+id+'/detalle/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(!data.ok){
+        document.getElementById('ver-usuario-body').innerHTML = '<p style="color:#dc2626;">No se pudo cargar el usuario.</p>';
+        return;
+      }
+      var u = data.usuario;
+      document.getElementById('ver-usuario-body').innerHTML =
+        '<p><strong>Nombre:</strong> '+(u.first_name || '—')+'</p>'+
+        '<p><strong>Apellidos:</strong> '+(u.last_name || '—')+'</p>'+
+        '<p><strong>Usuario:</strong> @'+u.username+'</p>'+
+        '<p><strong>Correo:</strong> '+(u.email || '—')+'</p>'+
+        '<p><strong>Rol:</strong> '+u.rol_display+'</p>'+
+        '<p><strong>Estado:</strong> '+(u.is_active ? 'Activo' : 'Inactivo')+'</p>'+
+        '<p><strong>Registrado:</strong> '+u.fecha_registro+'</p>'+
+        '<p><strong>Último acceso:</strong> '+u.ultimo_acceso+'</p>';
+    })
+    .catch(function(){
+      document.getElementById('ver-usuario-body').innerHTML = '<p style="color:#dc2626;">Error de conexión.</p>';
+    });
+}
+function cerrarModalVerUsuario(){
+  document.getElementById('modal-ver-usuario').style.display = 'none';
+}
+function verEditarDesdeVer(){
+  var id = document.getElementById('ver-usuario-btn-editar').getAttribute('data-id');
+  cerrarModalVerUsuario();
+  abrirEditarUsuario(id);
+}
+
+/* ── Editar usuario ── */
+function abrirEditarUsuario(id){
+  document.getElementById('form-editar-usuario').reset();
+  document.getElementById('eu-error').style.display = 'none';
+  document.getElementById('eu-id').value = id;
+  document.getElementById('modal-editar-usuario').style.display = 'flex';
+
+  fetch('/usuarios/'+id+'/detalle/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(!data.ok) return;
+      var u = data.usuario;
+      document.getElementById('eu-nombre').value    = u.first_name;
+      document.getElementById('eu-apellidos').value = u.last_name;
+      document.getElementById('eu-username').value  = u.username;
+      document.getElementById('eu-email').value     = u.email;
+
+      if(u.is_superuser){
+        document.getElementById('eu-rol-wrap').style.display = 'none';
+        document.getElementById('eu-nota-superadmin').style.display = 'block';
+      } else {
+        document.getElementById('eu-rol-wrap').style.display = 'block';
+        document.getElementById('eu-nota-superadmin').style.display = 'none';
+        document.getElementById('eu-rol').value = u.rol;
+      }
+    });
+}
+function cerrarModalEditarUsuario(){
+  document.getElementById('modal-editar-usuario').style.display = 'none';
+}
+function guardarEdicionUsuario(){
+  var id     = document.getElementById('eu-id').value;
+  var form   = document.getElementById('form-editar-usuario');
+  var btn    = document.getElementById('eu-btn-guardar');
+  var errDiv = document.getElementById('eu-error');
+
+  var pass1 = document.getElementById('eu-password').value;
+  var pass2 = document.getElementById('eu-password2').value;
+  if((pass1 || pass2) && pass1 !== pass2){
+    errDiv.textContent = 'Las contraseñas no coinciden.';
+    errDiv.style.display = 'block';
+    return;
+  }
+  errDiv.style.display = 'none';
+
+  var fd = new FormData(form);
+  btn.disabled = true;
+  btn.textContent = 'Guardando…';
+
+  fetch('/usuarios/'+id+'/editar/ajax/', {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': getCsrf() },
+    body: fd,
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    btn.disabled = false;
+    btn.textContent = 'Guardar cambios';
+    if(!data.ok){
+      errDiv.textContent = data.error || 'Error al guardar los cambios.';
+      errDiv.style.display = 'block';
+      return;
+    }
+    cerrarModalEditarUsuario();
+    toast('Usuario "'+data.usuario.nombre_completo+'" actualizado.', 'success');
+    refrescarTarjetaUsuario(data.usuario);
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Guardar cambios';
+    errDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+    errDiv.style.display = 'block';
+  });
+}
+
+/* ── Activar / Desactivar ── */
+var _usuarioEstadoPendienteId = null;
+function confirmarCambioEstadoUsuario(id, estaActivo, nombre){
+  _usuarioEstadoPendienteId = id;
+  document.getElementById('estado-usuario-titulo').textContent = estaActivo ? '🔒 Desactivar usuario' : '🔓 Activar usuario';
+  document.getElementById('estado-usuario-mensaje').innerHTML = estaActivo
+    ? '¿Deseas desactivar a <strong>'+nombre+'</strong>? No podrá iniciar sesión hasta que lo reactives. No se elimina ningún dato ni historial.'
+    : '¿Deseas activar a <strong>'+nombre+'</strong>? Podrá volver a iniciar sesión.';
+  var btn = document.getElementById('estado-usuario-btn');
+  btn.textContent = estaActivo ? 'Sí, desactivar' : 'Sí, activar';
+  btn.style.background = estaActivo ? '#dc2626' : 'var(--blue)';
+  document.getElementById('modal-estado-usuario').style.display = 'flex';
+}
+function cerrarModalEstadoUsuario(){
+  document.getElementById('modal-estado-usuario').style.display = 'none';
+  _usuarioEstadoPendienteId = null;
+}
+function ejecutarCambioEstadoUsuario(){
+  if(!_usuarioEstadoPendienteId) return;
+  var id = _usuarioEstadoPendienteId;
+
+  fetch('/usuarios/'+id+'/estado/ajax/', {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': getCsrf() },
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    cerrarModalEstadoUsuario();
+    if(!data.ok){
+      toast(data.error || 'No se pudo actualizar el estado del usuario.', 'error');
+      return;
+    }
+    refrescarTarjetaUsuario(data.usuario);
+    toast('Usuario "'+data.usuario.nombre_completo+'" '+(data.usuario.is_active ? 'activado' : 'desactivado')+'.', 'success');
+  })
+  .catch(function(){
+    cerrarModalEstadoUsuario();
+    toast('Error de conexión. Intenta de nuevo.', 'error');
+  });
+}
+
+// ── REPORTES: Reporte de Citas (FASE 1 — CAMBIO 1) ─────────────────────────────
+var _rcAsesoresCargados = false;
+
+function abrirReporteCitas(){
+  _mostrarPanelReporte('reporte-citas-panel');
+  if (!_rcAsesoresCargados) _cargarAsesoresReporteCitas();
+  aplicarFiltrosReporteCitas();
+}
+
+var _REPORTES_PANELES = [
+  'reporte-citas-panel', 'reporte-postulantes-panel', 'reporte-prospectos-panel',
+  'reporte-vacantes-panel', 'reporte-servicios-panel', 'resumen-general-panel'
+];
+
+function volverReportes(){
+  _REPORTES_PANELES.forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  document.getElementById('reportes-grid').style.display = 'grid';
+}
+
+function _mostrarPanelReporte(id){
+  document.getElementById('reportes-grid').style.display = 'none';
+  _REPORTES_PANELES.forEach(function(pid){
+    var el = document.getElementById(pid);
+    if (el) el.style.display = (pid === id) ? 'block' : 'none';
+  });
+}
+
+function _cargarAsesoresReporteCitas(){
+  fetch('/reportes/asesores/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!data.ok) return;
+      var sel = document.getElementById('rc-asesor');
+      data.asesores.forEach(function(a){
+        var opt = document.createElement('option');
+        opt.value = a.id;
+        opt.textContent = a.nombre + ' (' + a.rol + ')';
+        sel.appendChild(opt);
+      });
+      _rcAsesoresCargados = true;
+    })
+    .catch(function(){ /* silencioso: el filtro de asesor solo queda con "Todos" */ });
+}
+
+function aplicarFiltrosReporteCitas(){
+  var params = new URLSearchParams();
+  var fd = document.getElementById('rc-fecha-desde').value;
+  var fh = document.getElementById('rc-fecha-hasta').value;
+  var as = document.getElementById('rc-asesor').value;
+  var es = document.getElementById('rc-estado').value;
+  if (fd) params.set('fecha_desde', fd);
+  if (fh) params.set('fecha_hasta', fh);
+  if (as) params.set('asesor', as);
+  if (es) params.set('estado', es);
+
+  var errBox = document.getElementById('rc-error');
+  errBox.style.display = 'none';
+
+  fetch('/reportes/citas/ajax/?' + params.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!data.ok){
+        errBox.textContent = data.error || 'No se pudo generar el reporte.';
+        errBox.style.display = 'block';
+        return;
+      }
+      _renderReporteCitas(data);
+    })
+    .catch(function(){
+      errBox.textContent = 'Error de conexión. Intenta de nuevo.';
+      errBox.style.display = 'block';
+    });
+}
+
+function _renderReporteCitas(data){
+  var r = data.resumen;
+  document.getElementById('rc-kpi-total').textContent       = r.total;
+  document.getElementById('rc-kpi-pendientes').textContent  = r.pendientes;
+  document.getElementById('rc-kpi-confirmadas').textContent = r.confirmadas;
+  document.getElementById('rc-kpi-atendidas').textContent   = r.atendidas;
+  document.getElementById('rc-kpi-canceladas').textContent  = r.canceladas;
+
+  var porAsesorEl = document.getElementById('rc-por-asesor');
+  if (!data.citas_por_asesor.length){
+    porAsesorEl.innerHTML = 'Sin citas para los filtros seleccionados.';
+  } else {
+    porAsesorEl.innerHTML = data.citas_por_asesor.map(function(a){
+      return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">' +
+        '<span>' + a.asesor + '</span><strong>' + a.total + '</strong></div>';
+    }).join('');
+  }
+
+  var tbody = document.getElementById('rc-listado');
+  if (!data.listado.length){
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:14px;color:var(--txt3);">Sin citas para los filtros seleccionados.</td></tr>';
+  } else {
+    tbody.innerHTML = data.listado.map(function(c){
+      return '<tr style="border-bottom:1px solid var(--border);">' +
+        '<td style="padding:10px;">' + c.cliente + '</td>' +
+        '<td style="padding:10px;">' + c.fecha + '</td>' +
+        '<td style="padding:10px;">' + c.hora + '</td>' +
+        '<td style="padding:10px;">' + c.motivo + '</td>' +
+        '<td style="padding:10px;">' + c.estado + '</td>' +
+        '<td style="padding:10px;">' + c.asesor + '</td></tr>';
+    }).join('');
+  }
+}
+
+function _paramsReporteCitas(){
+  var params = new URLSearchParams();
+  var fd = document.getElementById('rc-fecha-desde').value;
+  var fh = document.getElementById('rc-fecha-hasta').value;
+  var as = document.getElementById('rc-asesor').value;
+  var es = document.getElementById('rc-estado').value;
+  if (fd) params.set('fecha_desde', fd);
+  if (fh) params.set('fecha_hasta', fh);
+  if (as) params.set('asesor', as);
+  if (es) params.set('estado', es);
+  return params;
+}
+
+function exportarReporteCitasPDF(){
+  window.location.href = '/reportes/citas/pdf/?' + _paramsReporteCitas().toString();
+}
+
+function exportarReporteCitasExcel(){
+  window.location.href = '/reportes/citas/excel/?' + _paramsReporteCitas().toString();
+}
+
+// ── REPORTES: Reporte de Postulantes ────────────────────────────────────────
+var _rpVacantesCargadas = false;
+
+function abrirReportePostulantes(){
+  _mostrarPanelReporte('reporte-postulantes-panel');
+  if (!_rpVacantesCargadas) _cargarVacantesReportePostulantes();
+  aplicarFiltrosReportePostulantes();
+}
+
+function _cargarVacantesReportePostulantes(){
+  fetch('/reportes/vacantes-lista/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!data.ok) return;
+      var sel = document.getElementById('rp-vacante');
+      data.vacantes.forEach(function(v){
+        var opt = document.createElement('option');
+        opt.value = v.id;
+        opt.textContent = v.titulo;
+        sel.appendChild(opt);
+      });
+      _rpVacantesCargadas = true;
+    })
+    .catch(function(){ /* silencioso: el filtro queda con "Todas" */ });
+}
+
+function _paramsReportePostulantes(){
+  var params = new URLSearchParams();
+  var pe = document.getElementById('rp-periodo').value;
+  var va = document.getElementById('rp-vacante').value;
+  var es = document.getElementById('rp-estado').value;
+  if (pe) params.set('periodo', pe);
+  if (va) params.set('vacante', va);
+  if (es) params.set('estado', es);
+  return params;
+}
+
+function aplicarFiltrosReportePostulantes(){
+  var errBox = document.getElementById('rp-error');
+  errBox.style.display = 'none';
+  fetch('/reportes/postulantes/ajax/?' + _paramsReportePostulantes().toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!data.ok){
+        errBox.textContent = data.error || 'No se pudo generar el reporte.';
+        errBox.style.display = 'block';
+        return;
+      }
+      var r = data.resumen;
+      document.getElementById('rp-kpi-total').textContent      = r.total;
+      document.getElementById('rp-kpi-nuevo').textContent      = r.nuevo;
+      document.getElementById('rp-kpi-revisado').textContent   = r.revisado;
+      document.getElementById('rp-kpi-entrevista').textContent = r.entrevista;
+      document.getElementById('rp-kpi-contratado').textContent = r.contratado;
+      document.getElementById('rp-kpi-rechazado').textContent  = r.rechazado;
+
+      var porVac = document.getElementById('rp-por-vacante');
+      porVac.innerHTML = data.por_vacante.length
+        ? data.por_vacante.map(function(v){
+            return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>' + v.vacante + '</span><strong>' + v.total + '</strong></div>';
+          }).join('')
+        : 'Sin postulantes para los filtros seleccionados.';
+
+      var tbody = document.getElementById('rp-listado');
+      tbody.innerHTML = data.listado.length
+        ? data.listado.map(function(p){
+            return '<tr style="border-bottom:1px solid var(--border);">' +
+              '<td style="padding:10px;">' + p.nombre + '</td>' +
+              '<td style="padding:10px;">' + p.correo + '</td>' +
+              '<td style="padding:10px;">' + p.vacante + '</td>' +
+              '<td style="padding:10px;">' + p.estado + '</td>' +
+              '<td style="padding:10px;">' + p.fecha + '</td></tr>';
+          }).join('')
+        : '<tr><td colspan="5" style="padding:14px;color:var(--txt3);">Sin postulantes para los filtros seleccionados.</td></tr>';
+    })
+    .catch(function(){
+      errBox.textContent = 'Error de conexión. Intenta de nuevo.';
+      errBox.style.display = 'block';
+    });
+}
+
+function exportarReportePostulantesPDF(){
+  window.location.href = '/reportes/postulantes/pdf/?' + _paramsReportePostulantes().toString();
+}
+function exportarReportePostulantesExcel(){
+  window.location.href = '/reportes/postulantes/excel/?' + _paramsReportePostulantes().toString();
+}
+
+// ── REPORTES: Reporte de Prospectos ─────────────────────────────────────────
+var _rprAsesoresCargados = false;
+
+function abrirReporteProspectos(){
+  _mostrarPanelReporte('reporte-prospectos-panel');
+  if (!_rprAsesoresCargados) _cargarAsesoresReporteProspectos();
+  aplicarFiltrosReporteProspectos();
+}
+
+function _cargarAsesoresReporteProspectos(){
+  fetch('/reportes/asesores/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!data.ok) return;
+      var sel = document.getElementById('rpr-asesor');
+      data.asesores.forEach(function(a){
+        var opt = document.createElement('option');
+        opt.value = a.id;
+        opt.textContent = a.nombre + ' (' + a.rol + ')';
+        sel.appendChild(opt);
+      });
+      _rprAsesoresCargados = true;
+    })
+    .catch(function(){});
+}
+
+function _paramsReporteProspectos(){
+  var params = new URLSearchParams();
+  var pe = document.getElementById('rpr-periodo').value;
+  var as = document.getElementById('rpr-asesor').value;
+  var es = document.getElementById('rpr-estado').value;
+  if (pe) params.set('periodo', pe);
+  if (as) params.set('asesor', as);
+  if (es) params.set('estado', es);
+  return params;
+}
+
+function aplicarFiltrosReporteProspectos(){
+  var errBox = document.getElementById('rpr-error');
+  errBox.style.display = 'none';
+  fetch('/reportes/prospectos/ajax/?' + _paramsReporteProspectos().toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!data.ok){
+        errBox.textContent = data.error || 'No se pudo generar el reporte.';
+        errBox.style.display = 'block';
+        return;
+      }
+      var r = data.resumen;
+      document.getElementById('rpr-kpi-total').textContent      = r.total;
+      document.getElementById('rpr-kpi-nuevo').textContent      = r.nuevo;
+      document.getElementById('rpr-kpi-contactado').textContent = r.contactado;
+      document.getElementById('rpr-kpi-convertido').textContent = r.convertido;
+      document.getElementById('rpr-kpi-descartado').textContent = r.descartado;
+
+      var porAs = document.getElementById('rpr-por-asesor');
+      porAs.innerHTML = data.por_asesor.length
+        ? data.por_asesor.map(function(a){
+            return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>' + a.asesor + '</span><strong>' + a.total + '</strong></div>';
+          }).join('')
+        : 'Sin prospectos para los filtros seleccionados.';
+
+      var tbody = document.getElementById('rpr-listado');
+      tbody.innerHTML = data.listado.length
+        ? data.listado.map(function(p){
+            return '<tr style="border-bottom:1px solid var(--border);">' +
+              '<td style="padding:10px;">' + p.nombre + '</td>' +
+              '<td style="padding:10px;">' + p.correo + '</td>' +
+              '<td style="padding:10px;">' + p.telefono + '</td>' +
+              '<td style="padding:10px;">' + p.interes + '</td>' +
+              '<td style="padding:10px;">' + p.estado + '</td>' +
+              '<td style="padding:10px;">' + p.asesor + '</td>' +
+              '<td style="padding:10px;">' + p.fecha + '</td></tr>';
+          }).join('')
+        : '<tr><td colspan="7" style="padding:14px;color:var(--txt3);">Sin prospectos para los filtros seleccionados.</td></tr>';
+    })
+    .catch(function(){
+      errBox.textContent = 'Error de conexión. Intenta de nuevo.';
+      errBox.style.display = 'block';
+    });
+}
+
+function exportarReporteProspectosPDF(){
+  window.location.href = '/reportes/prospectos/pdf/?' + _paramsReporteProspectos().toString();
+}
+function exportarReporteProspectosExcel(){
+  window.location.href = '/reportes/prospectos/excel/?' + _paramsReporteProspectos().toString();
+}
+
+// ── REPORTES: Reporte de Vacantes (sin filtros, catálogo completo) ─────────
+function abrirReporteVacantes(){
+  _mostrarPanelReporte('reporte-vacantes-panel');
+  fetch('/reportes/vacantes/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!data.ok) return;
+      var r = data.resumen;
+      document.getElementById('rv-kpi-total').textContent     = r.total;
+      document.getElementById('rv-kpi-activas').textContent   = r.activas;
+      document.getElementById('rv-kpi-inactivas').textContent = r.inactivas;
+
+      var porArea = document.getElementById('rv-por-area');
+      porArea.innerHTML = data.por_area.length
+        ? data.por_area.map(function(a){
+            return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>' + a.area + '</span><strong>' + a.total + '</strong></div>';
+          }).join('')
+        : 'Sin vacantes registradas.';
+
+      var tbody = document.getElementById('rv-listado');
+      tbody.innerHTML = data.listado.length
+        ? data.listado.map(function(v){
+            return '<tr style="border-bottom:1px solid var(--border);">' +
+              '<td style="padding:10px;">' + v.titulo + '</td>' +
+              '<td style="padding:10px;">' + v.area + '</td>' +
+              '<td style="padding:10px;">' + v.modalidad + '</td>' +
+              '<td style="padding:10px;">' + v.estado + '</td>' +
+              '<td style="padding:10px;">' + v.postulantes + '</td>' +
+              '<td style="padding:10px;">' + v.creada + '</td></tr>';
+          }).join('')
+        : '<tr><td colspan="6" style="padding:14px;color:var(--txt3);">Sin vacantes registradas.</td></tr>';
+    })
+    .catch(function(){});
+}
+
+// ── REPORTES: Reporte de Servicios (sin filtros, catálogo completo) ────────
+function abrirReporteServicios(){
+  _mostrarPanelReporte('reporte-servicios-panel');
+  fetch('/reportes/servicios/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!data.ok) return;
+      var r = data.resumen;
+      document.getElementById('rs-kpi-total').textContent     = r.total;
+      document.getElementById('rs-kpi-activos').textContent   = r.activos;
+      document.getElementById('rs-kpi-inactivos').textContent = r.inactivos;
+
+      var porCat = document.getElementById('rs-por-categoria');
+      porCat.innerHTML = data.por_categoria.length
+        ? data.por_categoria.map(function(c){
+            return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>' + c.categoria + '</span><strong>' + c.total + '</strong></div>';
+          }).join('')
+        : 'Sin servicios registrados.';
+
+      var tbody = document.getElementById('rs-listado');
+      tbody.innerHTML = data.listado.length
+        ? data.listado.map(function(s){
+            return '<tr style="border-bottom:1px solid var(--border);">' +
+              '<td style="padding:10px;">' + s.nombre + '</td>' +
+              '<td style="padding:10px;">' + s.categoria + '</td>' +
+              '<td style="padding:10px;">' + s.estado + '</td></tr>';
+          }).join('')
+        : '<tr><td colspan="3" style="padding:14px;color:var(--txt3);">Sin servicios registrados.</td></tr>';
+    })
+    .catch(function(){});
+}
+
+// ── REPORTES: Resumen General ───────────────────────────────────────────────
+function abrirResumenGeneral(){
+  _mostrarPanelReporte('resumen-general-panel');
+  fetch('/reportes/resumen/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!data.ok) return;
+      var r = data.resumen;
+      document.getElementById('rg-prospectos').textContent  = r.prospectos;
+      document.getElementById('rg-citas').textContent       = r.citas;
+      document.getElementById('rg-postulantes').textContent = r.postulantes;
+      document.getElementById('rg-vacantes').textContent    = r.vacantes;
+      document.getElementById('rg-servicios').textContent   = r.servicios;
+      document.getElementById('rg-usuarios').textContent    = r.usuarios_activos;
+    })
+    .catch(function(){});
+}
+
+    .catch(function(){});
+}
+</script>
 
 </body>
 </html>

@@ -1,0 +1,235 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis Prospectos — Grupo V&amp;R Consultores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dark:#0d1b2a;--dark2:#112240;--blue:#1560BD;--blue2:#3a82e8;
+  --border:rgba(255,255,255,0.08);
+  --green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--purple:#8b5cf6;
+  --ff:'Sora',sans-serif;
+  --bg:#f1f5f9;--white:#fff;--gray:#f8fafc;--gray2:#f1f5f9;
+  --txt:#1e293b;--txt2:#334155;--txt3:#64748b;--bdr:#e2e8f0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--ff);background:var(--bg);color:var(--txt);}
+
+#admin-wrap{display:flex;min-height:100vh;flex-direction:column;}
+
+.atop{
+  background:var(--white);border-bottom:1px solid var(--bdr);
+  padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;
+  height:54px;position:sticky;top:0;z-index:100;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06);
+}
+.atop-brand{display:flex;align-items:center;gap:10px;}
+.ab-mark{width:30px;height:30px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.ab-name{font-size:14px;font-weight:700;color:var(--blue);}
+.ab-name small{font-size:11px;font-weight:400;color:var(--txt3);margin-left:5px;}
+.atop-right{display:flex;align-items:center;gap:10px;}
+.btn-back{display:inline-flex;align-items:center;gap:6px;background:var(--gray);border:1px solid var(--bdr);border-radius:7px;padding:7px 14px;font-size:12px;font-family:var(--ff);color:var(--txt2);cursor:pointer;text-decoration:none;font-weight:500;}
+.btn-back:hover{background:#e2e8f0;}
+.user-chip{display:flex;align-items:center;gap:8px;background:var(--gray);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;}
+.uav{width:26px;height:26px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;}
+.user-chip span{font-size:12px;color:var(--txt2);font-weight:500;}
+
+.abody{display:flex;flex:1;}
+
+.sidebar{width:220px;background:var(--dark2);flex-shrink:0;display:flex;flex-direction:column;border-right:0.5px solid var(--border);}
+.sb-sec{padding:.6rem 0;}
+.sb-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.28);padding:0 1.25rem;margin-bottom:.4rem;font-weight:600;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 1.25rem;font-size:13px;color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;border-left:2px solid transparent;user-select:none;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.8);}
+.sb-item.on{background:rgba(21,96,189,.15);color:#fff;border-left-color:var(--blue);}
+.sb-item svg{width:15px;height:15px;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600;}
+.sb-badge.red{background:var(--red);}
+.sb-logout{margin-top:auto;border-top:0.5px solid var(--border);padding:.6rem 0;}
+
+.acontent{flex:1;padding:1.75rem;overflow:auto;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px;}
+.page-title{font-size:20px;font-weight:700;color:var(--txt);}
+.page-sub{font-size:12px;color:var(--txt3);margin-top:2px;}
+
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem;}
+.kpi-mini{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;}
+.km-label{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;font-weight:600;}
+.km-num{font-size:24px;font-weight:700;color:var(--txt);}
+
+.tc-head{padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr);flex-wrap:wrap;gap:8px;background:var(--white);border:1px solid var(--bdr);border-radius:12px 12px 0 0;margin-bottom:0;}
+.tc-head h3{font-size:14px;font-weight:600;color:var(--txt);}
+.tc-actions{display:flex;gap:8px;align-items:center;}
+.filter-select{background:var(--white);border:1px solid var(--bdr);border-radius:7px;padding:7px 12px;font-size:12px;font-family:var(--ff);color:var(--txt2);outline:none;cursor:pointer;}
+.search-form{display:flex;align-items:center;gap:6px;background:var(--gray);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;}
+.search-form input{background:none;border:none;outline:none;font-size:12px;color:var(--txt2);width:160px;font-family:var(--ff);}
+
+.pros-wrap{background:var(--white);border:1px solid var(--bdr);border-top:none;border-radius:0 0 12px 12px;padding:1.1rem;margin-bottom:1.5rem;}
+.pros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+.pros-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;transition:box-shadow .2s,transform .2s;}
+.pros-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.07);transform:translateY(-2px);}
+.pcard-accent{height:4px;}
+.estado-nuevo .pcard-accent{background:linear-gradient(90deg,#1d4ed8,#60a5fa);}
+.estado-contactado .pcard-accent{background:linear-gradient(90deg,#d97706,#fbbf24);}
+.estado-convertido .pcard-accent{background:linear-gradient(90deg,#15803d,#4ade80);}
+.estado-descartado .pcard-accent{background:linear-gradient(90deg,#475569,#94a3b8);}
+.pcard-body{padding:1rem 1.1rem .75rem;}
+.pcard-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:.7rem;}
+.pcard-nombre{font-size:13px;font-weight:700;color:var(--txt);line-height:1.3;}
+.pcard-fecha{font-size:10px;color:var(--txt3);margin-top:2px;}
+.pcard-info{display:flex;flex-direction:column;gap:4px;margin-bottom:.8rem;}
+.pcard-row{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt2);}
+.pcard-nota{font-size:12px;color:var(--txt2);line-height:1.5;background:var(--gray);border-radius:7px;padding:8px 10px;margin-bottom:.8rem;}
+.pcard-footer{border-top:1px solid var(--bdr);padding:.6rem 1.1rem;display:flex;gap:5px;align-items:center;}
+.act-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:6px;font-size:11px;font-family:var(--ff);font-weight:600;cursor:pointer;border:1px solid var(--bdr);background:var(--gray2);color:var(--txt2);transition:all .15s;text-decoration:none;}
+.act-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600;}
+.b-blue{background:#dbeafe;color:#1d4ed8;}
+.b-green{background:#dcfce7;color:#15803d;}
+.b-yellow{background:#fef9c3;color:#a16207;}
+.b-gray{background:#f1f5f9;color:var(--txt3);}
+
+.empty-row{padding:2rem 1.25rem;text-align:center;color:var(--txt3);font-size:13px;grid-column:1/-1;}
+
+@media(max-width:640px){.sidebar{display:none;}.kpi-strip{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<div id="admin-wrap">
+
+  <!-- TOP BAR -->
+  <div class="atop">
+    <div class="atop-brand">
+      <div class="ab-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <span class="ab-name">ASESOR V&amp;R<small>· Sistema de Gestión</small></span>
+    </div>
+    <div class="atop-right">
+      <a href="{% url 'dashboard:asesor' %}" class="btn-back">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Dashboard
+      </a>
+      <div class="user-chip">
+        <div class="uav">{{ request.user.username|slice:":2"|upper }}</div>
+        <span>{{ nombre_asesor }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="abody">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-sec">
+        <div class="sb-label">Principal</div>
+        <a class="sb-item" href="{% url 'dashboard:asesor' %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+      </div>
+      <div class="sb-sec">
+        <div class="sb-label">Gestión</div>
+        <a class="sb-item" href="{% url 'dashboard:agenda_asesor' %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Agenda de Citas
+        </a>
+        <div class="sb-item on">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Prospectos {% if nuevos %}<span class="sb-badge">{{ nuevos }}</span>{% endif %}
+        </div>
+      </div>
+      <div class="sb-logout">
+        <a class="sb-item" style="color:rgba(255,100,100,.7);" href="{% url 'usuarios:logout' %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Cerrar sesión
+        </a>
+      </div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="acontent">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Mis Prospectos</div>
+          <div class="page-sub">{{ total }} prospecto{{ total|pluralize }} asignado{{ total|pluralize }} a ti</div>
+        </div>
+      </div>
+
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert {% if msg.tags == 'error' %}alert-error{% else %}alert-success{% endif %}" style="padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:1rem;{% if msg.tags == 'error' %}background:#fee2e2;color:#dc2626;{% else %}background:#dcfce7;color:#15803d;{% endif %}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="kpi-strip">
+        <div class="kpi-mini"><div><div class="km-label">Total</div><div class="km-num">{{ total }}</div></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="kpi-mini"><div><div class="km-label">Nuevos</div><div class="km-num" style="color:#a16207;">{{ nuevos }}</div></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div>
+        <div class="kpi-mini"><div><div class="km-label">Contactados</div><div class="km-num" style="color:#0f766e;">{{ contactados }}</div></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.35 1.9.66 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.31 1.85.53 2.81.66A2 2 0 0122 16.92z"/></svg></div>
+        <div class="kpi-mini"><div><div class="km-label">Convertidos</div><div class="km-num" style="color:#15803d;">{{ convertidos }}</div></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div>
+      </div>
+
+      <div class="tc-head">
+        <h3>Todos mis prospectos</h3>
+        <div class="tc-actions">
+          <form method="GET" id="filtroForm">
+            <input type="hidden" name="q" value="{{ busqueda }}">
+            <select class="filter-select" name="estado" onchange="document.getElementById('filtroForm').submit()">
+              <option value="">Todos los estados</option>
+              <option value="nuevo"      {% if estado_filtro == 'nuevo' %}selected{% endif %}>Nuevo</option>
+              <option value="contactado" {% if estado_filtro == 'contactado' %}selected{% endif %}>Contactado</option>
+              <option value="convertido" {% if estado_filtro == 'convertido' %}selected{% endif %}>Convertido</option>
+              <option value="descartado" {% if estado_filtro == 'descartado' %}selected{% endif %}>Descartado</option>
+            </select>
+          </form>
+          <form method="GET" class="search-form">
+            <input type="hidden" name="estado" value="{{ estado_filtro }}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" name="q" placeholder="Buscar prospecto..." value="{{ busqueda }}">
+          </form>
+        </div>
+      </div>
+      <div class="pros-wrap">
+        <div class="pros-grid">
+          {% for p in prospectos %}
+          <div class="pros-card estado-{{ p.estado }}">
+            <div class="pcard-accent"></div>
+            <div class="pcard-body">
+              <div class="pcard-top">
+                <div>
+                  <div class="pcard-nombre">{{ p.nombre }}</div>
+                  <div class="pcard-fecha">{{ p.fecha|date:"d/m/Y" }}</div>
+                </div>
+                {% if p.estado == 'nuevo' %}<span class="badge b-blue">Nuevo</span>
+                {% elif p.estado == 'contactado' %}<span class="badge b-yellow">Contactado</span>
+                {% elif p.estado == 'convertido' %}<span class="badge b-green">Convertido</span>
+                {% else %}<span class="badge b-gray">Descartado</span>{% endif %}
+              </div>
+              <div class="pcard-info">
+                <div class="pcard-row">📞 {{ p.telefono }}</div>
+                <div class="pcard-row">✉️ {{ p.correo }}</div>
+                <div class="pcard-row">💼 {{ p.get_interes_display }}</div>
+              </div>
+              {% if p.mensaje %}
+              <div class="pcard-nota">{{ p.mensaje|truncatechars:110 }}</div>
+              {% elif p.notas %}
+              <div class="pcard-nota">{{ p.notas|truncatechars:110 }}</div>
+              {% endif %}
+            </div>
+            <div class="pcard-footer">
+              <a class="act-btn" href="{% url 'prospectos:expediente' p.id %}">Ver expediente</a>
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty-row">No tienes prospectos asignados{% if estado_filtro or busqueda %} con ese filtro{% endif %}.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

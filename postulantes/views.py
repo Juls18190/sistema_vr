@@ -7,14 +7,23 @@ from django.db.models import Q
 from .models import Postulante
 from vacantes.models import Vacante
 from historial.models import registrar
+from usuarios.permisos import solo_admin
+from . import mensajes
 import json
 
+# ── Vista admin: cambiar estado (legacy, ver también cambiar_estado_ajax) ──
+# HALLAZGO FASE D (punto 10): esta vista estaba expuesta sin @login_required
+# ni @solo_admin, permitiendo a cualquier visitante no autenticado cambiar
+# el estado de un Postulante vía POST. Se protege con el mismo criterio ya
+# usado en el resto del módulo (ver cambiar_estado_ajax más abajo).
+@login_required
+@solo_admin
 def cambiar_estado(request, id):
     if request.method == 'POST':
 
         data = json.loads(request.body)
 
-        postulante = Postulante.objects.get(id=id)
+        postulante = get_object_or_404(Postulante, id=id)
 
         postulante.estado = data['estado']
 
@@ -98,6 +107,7 @@ def exito(request):
 
 # ── Vista admin: lista todos los postulantes ─────────────────────────────────
 @login_required
+@solo_admin
 def lista(request):
     from django.core.paginator import Paginator
 
@@ -151,6 +161,7 @@ def lista(request):
 
 # ── AJAX: cambiar estado ─────────────────────────────────────────────────────
 @login_required
+@solo_admin
 def cambiar_estado_ajax(request, post_id):
     if request.method == 'POST':
         postulante = get_object_or_404(Postulante, id=post_id)
@@ -179,6 +190,7 @@ def cambiar_estado_ajax(request, post_id):
 
 # ── Vista admin: eliminar ─────────────────────────────────────────────────────
 @login_required
+@solo_admin
 def eliminar(request, post_id):
     postulante = get_object_or_404(Postulante, id=post_id)
     if request.method == 'POST':
@@ -196,6 +208,7 @@ def eliminar(request, post_id):
 
 # ── AJAX: eliminar (sin redirect, retorna JSON) ───────────────────────────────
 @login_required
+@solo_admin
 def eliminar_ajax(request, post_id):
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'Método no permitido'}, status=405)
@@ -229,6 +242,7 @@ def eliminar_ajax(request, post_id):
 
 # ── AJAX: detalle postulante ──────────────────────────────────────────────────
 @login_required
+@solo_admin
 def detalle_ajax(request, post_id):
     if request.method != 'GET':
         return JsonResponse({'ok': False}, status=405)
@@ -252,6 +266,7 @@ def detalle_ajax(request, post_id):
     })
 # ── AJAX: crear postulante desde el dashboard ─────────────────────────────────
 @login_required
+@solo_admin
 def crear_ajax(request):
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'Método no permitido.'}, status=405)
@@ -328,6 +343,7 @@ def crear_ajax(request):
 
 # ── AJAX: guardar nota interna ────────────────────────────────────────────────
 @login_required
+@solo_admin
 def guardar_nota_ajax(request, post_id):
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'Método no permitido'}, status=405)
@@ -359,3 +375,23 @@ def guardar_nota_ajax(request, post_id):
         'ok':    True,
         'notas': postulante.notas or '',
     })
+
+
+# ── API JSON: mensaje generado para un postulante (WhatsApp) ─────────────────
+@login_required
+@solo_admin
+def mensaje_generado_ajax(request, post_id, clave):
+    """
+    Devuelve el texto ya personalizado de una plantilla de mensaje para este
+    postulante. Solo genera el texto — el envío por WhatsApp lo hace el
+    frontend con la URL wa.me.
+    """
+    if request.method != 'GET':
+        return JsonResponse({'ok': False}, status=405)
+    postulante = get_object_or_404(Postulante, id=post_id)
+
+    texto = mensajes.generar_mensaje(clave, postulante)
+    if not texto:
+        return JsonResponse({'ok': False, 'error': 'Plantilla no encontrada'}, status=404)
+
+    return JsonResponse({'ok': True, 'clave': clave, 'texto': texto})
