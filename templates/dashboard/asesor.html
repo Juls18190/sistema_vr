@@ -72,6 +72,8 @@ body{font-family:var(--ff);background:var(--bg);color:var(--txt);}
 .sb-logout{margin-top:auto;border-top:0.5px solid var(--border);padding:.6rem 0;}
 
 .acontent{flex:1;padding:1.75rem;overflow:auto;}
+.page{display:none;}
+.page.on{display:block;animation:fadeInUp .3s ease both;}
 .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px;}
 .page-title{font-size:20px;font-weight:700;color:var(--txt);}
 .page-sub{font-size:12px;color:var(--txt3);margin-top:2px;}
@@ -183,21 +185,21 @@ tr:last-child td{border-bottom:none;}
     <div class="sidebar">
       <div class="sb-sec">
         <div class="sb-label">Principal</div>
-        <div class="sb-item on">
+        <div class="sb-item on" onclick="nav('inicio',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-          Dashboard
+          Inicio
         </div>
       </div>
       <div class="sb-sec">
         <div class="sb-label">Gestión</div>
-        <a class="sb-item" href="{% url 'dashboard:agenda_asesor' %}">
+        <div class="sb-item" onclick="nav('citas',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          Agenda de Citas {% if citas_pendientes %}<span class="sb-badge red">{{ citas_pendientes }}</span>{% endif %}
-        </a>
-        <a class="sb-item" href="{% url 'dashboard:prospectos_asesor' %}">
+          Citas {% if citas_pendientes %}<span class="sb-badge red">{{ citas_pendientes }}</span>{% endif %}
+        </div>
+        <div class="sb-item" onclick="nav('prospectos',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           Prospectos {% if prospectos_nuevos %}<span class="sb-badge">{{ prospectos_nuevos }}</span>{% endif %}
-        </a>
+        </div>
       </div>
       <div class="sb-sec">
         <div class="sb-label">Sistema</div>
@@ -217,11 +219,21 @@ tr:last-child td{border-bottom:none;}
     <!-- CONTENIDO -->
     <div class="acontent">
 
-      <div class="saludo-card">
-        <div class="saludo-titulo">{{ saludo }}, {{ nombre_asesor }} 👋</div>
-        <div class="saludo-sub">{{ hoy|date:"l j \d\e F \d\e Y"|capfirst }} — esto es lo que tienes pendiente hoy.</div>
+      <div id="p-inicio" class="page on">
+        <div class="saludo-card">
+          <div class="saludo-titulo">{{ saludo }}, {{ nombre_asesor }} 👋</div>
+          <div class="saludo-sub">{{ hoy|date:"l j \d\e F \d\e Y"|capfirst }} — esto es lo que tienes pendiente hoy.</div>
+        </div>
+
+        <div class="kpi-grid g4">
+          <div class="kpi" style="cursor:pointer;" onclick="nav('citas')"><div><div class="kpi-label">Citas hoy</div><div class="kpi-num">{{ citas_hoy_total }}</div></div><div class="kpi-icon ki-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div>
+          <div class="kpi" style="cursor:pointer;" onclick="nav('citas')"><div><div class="kpi-label">Citas pendientes</div><div class="kpi-num">{{ citas_pendientes }}</div></div><div class="kpi-icon ki-yellow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div>
+          <div class="kpi" style="cursor:pointer;" onclick="nav('prospectos')"><div><div class="kpi-label">Prospectos</div><div class="kpi-num">{{ prospectos_total }}</div></div><div class="kpi-icon ki-purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div></div>
+          <div class="kpi" style="cursor:pointer;" onclick="nav('prospectos')"><div><div class="kpi-label">Prospectos nuevos</div><div class="kpi-num">{{ prospectos_nuevos }}</div></div><div class="kpi-icon ki-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div></div>
+        </div>
       </div>
 
+      <div id="p-citas" class="page">
       <div class="page-header">
         <div>
           <div class="page-title">Citas</div>
@@ -239,7 +251,7 @@ tr:last-child td{border-bottom:none;}
       <div class="table-card">
         <div class="tc-head">
           <h3>Citas de hoy</h3>
-          <a class="tc-link" href="{% url 'dashboard:agenda_asesor' %}">Ver agenda completa →</a>
+          <a class="tc-link" href="#citas-tabla-completa">Ver todas mis citas ↓</a>
         </div>
         <table>
           <thead><tr><th>Hora</th><th>Cliente</th><th>Motivo</th><th>Estado</th><th>Acciones</th></tr></thead>
@@ -255,7 +267,7 @@ tr:last-child td{border-bottom:none;}
                 {% elif c.estado == 'completada' %}<span class="badge b-green">Completada</span>
                 {% else %}<span class="badge b-red">Cancelada</span>{% endif %}
               </td>
-              <td><a class="act-btn" href="{% url 'dashboard:agenda_asesor' %}">Gestionar</a></td>
+              <td><span class="act-btn" onclick="abrirVerCitaAsesor({{ c.id }})">Gestionar</span></td>
             </tr>
             {% empty %}
             <tr><td colspan="5" class="empty-row">No tienes citas programadas para hoy.</td></tr>
@@ -267,7 +279,7 @@ tr:last-child td{border-bottom:none;}
       <div class="table-card">
         <div class="tc-head">
           <h3>Próximas citas</h3>
-          <a class="tc-link" href="{% url 'dashboard:agenda_asesor' %}">Ver todas →</a>
+          <a class="tc-link" href="#citas-tabla-completa">Ver todas ↓</a>
         </div>
         <table>
           <thead><tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Motivo</th><th>Estado</th></tr></thead>
@@ -290,27 +302,76 @@ tr:last-child td{border-bottom:none;}
         </table>
       </div>
 
+      <div class="table-card" id="citas-tabla-completa">
+        <div class="tc-head">
+          <h3>Todas mis citas</h3>
+          <div style="display:flex;gap:8px;">
+            <select id="filtro-estado-citas-asesor" onchange="filtrarCitasTabla()" style="padding:7px 10px;border:1px solid var(--bdr);border-radius:7px;font-family:var(--ff);font-size:12px;color:var(--txt2);">
+              <option value="">Todos los estados</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="confirmada">Confirmada</option>
+              <option value="completada">Completada</option>
+              <option value="cancelada">Cancelada</option>
+            </select>
+            <input id="busq-citas-asesor" oninput="filtrarCitasTabla()" placeholder="Buscar cliente…" style="padding:7px 10px;border:1px solid var(--bdr);border-radius:7px;font-family:var(--ff);font-size:12px;">
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Cliente</th><th>Servicio</th><th>Fecha</th><th>Hora</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tbody-citas-asesor">
+            {% for c in citas %}
+            <tr data-cita-id="{{ c.id }}" data-estado="{{ c.estado }}" data-telefono="{{ c.telefono }}" data-nombre="{{ c.nombre_cliente|lower }} {{ c.apellidos_cliente|lower }}">
+              <td>
+                <div style="font-weight:600;">{{ c.nombre_cliente }} {{ c.apellidos_cliente }}</div>
+                <div style="font-size:11px;color:var(--txt3);">{{ c.correo }}</div>
+              </td>
+              <td>{{ c.get_motivo_display }}</td>
+              <td>{{ c.fecha|date:"d/m/Y" }}</td>
+              <td>{{ c.hora|time:"H:i" }}</td>
+              <td id="estado-ca-{{ c.id }}">
+                {% if c.estado == 'pendiente' %}<span class="badge b-yellow">Pendiente</span>
+                {% elif c.estado == 'confirmada' %}<span class="badge b-blue">Confirmada</span>
+                {% elif c.estado == 'completada' %}<span class="badge b-green">Completada</span>
+                {% else %}<span class="badge b-red">Cancelada</span>{% endif %}
+              </td>
+              <td style="white-space:nowrap;">
+                <span class="act-btn" title="Ver" onclick="abrirVerCitaAsesor({{ c.id }})">Ver</span>
+                <span class="act-btn" title="Editar" onclick="abrirEditarCitaAsesor({{ c.id }})">Editar</span>
+                <span class="act-btn" title="Mensaje" onclick="abrirMensajeCitaAsesor({{ c.id }})">Mensaje</span>
+                <span class="act-btn" title="Eliminar" style="color:#dc2626;border-color:#fecaca;" onclick="abrirEliminarCitaAsesor({{ c.id }}, '{{ c.nombre_cliente|escapejs }} {{ c.apellidos_cliente|escapejs }}')">Eliminar</span>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="empty-row">No tienes citas registradas.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      </div><!-- /p-citas -->
+
+      <div id="p-prospectos" class="page">
       <div class="page-header" style="margin-top:.5rem;">
         <div>
           <div class="page-title">Prospectos</div>
           <div class="page-sub">Tu cartera asignada</div>
         </div>
+        <button class="act-btn" style="background:var(--blue);color:#fff;border-color:var(--blue);padding:8px 16px;" onclick="abrirNuevoProspectoAsesor()">+ Nuevo prospecto</button>
       </div>
       <div class="kpi-grid g4">
-        <div class="kpi"><div><div class="kpi-label">Total</div><div class="kpi-num">{{ prospectos_total }}</div></div><div class="kpi-icon ki-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div></div>
-        <div class="kpi"><div><div class="kpi-label">Nuevos</div><div class="kpi-num">{{ prospectos_nuevos }}</div></div><div class="kpi-icon ki-yellow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div></div>
-        <div class="kpi"><div><div class="kpi-label">Contactados</div><div class="kpi-num">{{ prospectos_contactados }}</div></div><div class="kpi-icon ki-teal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.35 1.9.66 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.31 1.85.53 2.81.66A2 2 0 0122 16.92z"/></svg></div></div>
-        <div class="kpi"><div><div class="kpi-label">Convertidos</div><div class="kpi-num">{{ prospectos_convertidos }}</div></div><div class="kpi-icon ki-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div></div>
+        <div class="kpi" style="cursor:pointer;" onclick="filtrarProspectosAsesor('')"><div><div class="kpi-label">Total</div><div class="kpi-num">{{ prospectos_total }}</div></div><div class="kpi-icon ki-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div></div>
+        <div class="kpi" style="cursor:pointer;" onclick="filtrarProspectosAsesor('nuevo')"><div><div class="kpi-label">Nuevos</div><div class="kpi-num">{{ prospectos_nuevos }}</div></div><div class="kpi-icon ki-yellow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div></div>
+        <div class="kpi" style="cursor:pointer;" onclick="filtrarProspectosAsesor('contactado')"><div><div class="kpi-label">Contactados</div><div class="kpi-num">{{ prospectos_contactados }}</div></div><div class="kpi-icon ki-teal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.35 1.9.66 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.31 1.85.53 2.81.66A2 2 0 0122 16.92z"/></svg></div></div>
+        <div class="kpi" style="cursor:pointer;" onclick="filtrarProspectosAsesor('convertido')"><div><div class="kpi-label">Convertidos</div><div class="kpi-num">{{ prospectos_convertidos }}</div></div><div class="kpi-icon ki-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div></div>
       </div>
 
       <div class="tc-head" style="background:var(--white);border:1px solid var(--bdr);border-radius:12px 12px 0 0;margin-bottom:0;">
         <h3>Mis prospectos</h3>
-        <a class="tc-link" href="{% url 'dashboard:prospectos_asesor' %}">Ver todos →</a>
+        <input id="busq-prospectos-asesor" oninput="filtrarProspectosAsesor(null)" placeholder="Buscar por nombre…" style="padding:7px 10px;border:1px solid var(--bdr);border-radius:7px;font-family:var(--ff);font-size:12px;">
       </div>
       <div style="background:var(--white);border:1px solid var(--bdr);border-top:none;border-radius:0 0 12px 12px;padding:1.1rem;margin-bottom:1.5rem;">
-        <div class="pros-grid">
-          {% for p in mis_prospectos %}
-          <div class="pros-card estado-{{ p.estado }}">
+        <div class="pros-grid" id="pros-grid-asesor">
+          {% for p in prospectos %}
+          <div class="pros-card estado-{{ p.estado }}" id="pcard-a-{{ p.id }}" data-estado="{{ p.estado }}" data-nombre="{{ p.nombre|lower }}">
             <div class="pcard-accent"></div>
             <div class="pcard-body">
               <div class="pcard-top">
@@ -335,14 +396,94 @@ tr:last-child td{border-bottom:none;}
               {% endif %}
             </div>
             <div class="pcard-footer">
-              <a class="act-btn" href="{% url 'prospectos:expediente' p.id %}">Ver expediente</a>
+              <span class="act-btn" onclick="abrirExpedienteAsesor({{ p.id }})">Ver expediente</span>
+              <span class="act-btn" title="Eliminar" style="color:#dc2626;border-color:#fecaca;margin-left:auto;" onclick="abrirEliminarProspectoAsesor({{ p.id }}, '{{ p.nombre|escapejs }}')">Eliminar</span>
             </div>
           </div>
           {% empty %}
-          <div class="empty-row">Aún no tienes prospectos asignados.</div>
+          <div class="empty-row" id="pros-grid-asesor-empty">Aún no tienes prospectos asignados.</div>
           {% endfor %}
         </div>
       </div>
+      </div><!-- /p-prospectos -->
+
+      <div id="p-expediente" class="page">
+        <div class="page-header">
+          <div>
+            <span class="tc-link" style="cursor:pointer;" onclick="nav('prospectos')">← Volver a Prospectos</span>
+            <div class="page-title" id="expa-nombre" style="margin-top:6px;">—</div>
+            <div class="page-sub" id="expa-estado-txt">—</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="act-btn" onclick="llamarProspectoAsesor()">📞 Llamar</span>
+            <span class="act-btn" onclick="whatsappProspectoAsesor()">💬 WhatsApp</span>
+            <span class="act-btn" onclick="toggleEditarProspectoAsesor()">✏️ Editar</span>
+          </div>
+        </div>
+
+        <div id="expa-loading" style="padding:2rem;text-align:center;color:var(--txt3);font-size:13px;">Cargando expediente…</div>
+
+        <div id="expa-contenido" style="display:none;">
+          <div class="table-card" style="padding:1.25rem;">
+            <div id="expa-vista" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:var(--txt2);">
+              <div><strong>Correo:</strong> <span id="expa-correo">—</span></div>
+              <div><strong>Teléfono:</strong> <span id="expa-telefono">—</span></div>
+              <div><strong>Interés:</strong> <span id="expa-interes">—</span></div>
+              <div><strong>Tipo:</strong> <span id="expa-tipo">—</span></div>
+              <div><strong>Referido:</strong> <span id="expa-referido">—</span></div>
+              <div><strong>Alta:</strong> <span id="expa-fecha">—</span></div>
+              <div style="grid-column:1/-1;"><strong>Notas:</strong> <span id="expa-notas">—</span></div>
+            </div>
+
+            <div style="margin-top:16px;max-width:260px;">
+              <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Cambiar estado</label>
+              <select id="expa-select-estado" onchange="cambiarEstadoProspectoAsesor()" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
+                <option value="nuevo">Nuevo</option>
+                <option value="contactado">Contactado</option>
+                <option value="convertido">Convertido en cliente</option>
+                <option value="descartado">Descartado</option>
+              </select>
+            </div>
+
+            <div id="expa-editar" style="display:none;margin-top:16px;border-top:1px solid var(--bdr);padding-top:16px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Nombre</label><input id="exed-nombre" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+                <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Teléfono</label><input id="exed-telefono" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+              </div>
+              <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Correo</label><input id="exed-correo" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+              <div style="margin-bottom:10px;">
+                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Interés</label>
+                <select id="exed-interes" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
+                  <option value="seguro_vida">Seguro de vida</option>
+                  <option value="medico">Gastos médicos</option>
+                  <option value="auto">Seguro de auto</option>
+                  <option value="hogar">Seguro de hogar</option>
+                  <option value="inversion">Inversión y ahorro</option>
+                  <option value="empresa">Empresarial</option>
+                  <option value="general">Información general</option>
+                </select>
+              </div>
+              <div style="margin-bottom:12px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Notas</label><textarea id="exed-notas" rows="3" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;"></textarea></div>
+              <!-- Campos que este formulario no expone en la UI del asesor, pero que se
+                   reenvían con su valor actual para que prospectos:editar no los borre. -->
+              <input type="hidden" id="exed-tipo-registro">
+              <input type="hidden" id="exed-mensaje">
+              <input type="hidden" id="exed-servicios-interes">
+              <input type="hidden" id="exed-promociones-actuales">
+              <input type="hidden" id="exed-fecha-contacto">
+              <div id="exed-error" style="display:none;background:#fee2e2;color:#dc2626;font-size:12px;padding:8px 10px;border-radius:7px;margin-bottom:10px;"></div>
+              <button onclick="guardarEdicionProspectoAsesor()" style="background:var(--blue);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Guardar cambios</button>
+            </div>
+          </div>
+
+          <div class="table-card" style="padding:1.25rem;margin-top:14px;">
+            <h3 style="font-size:14px;margin-bottom:12px;">Seguimientos</h3>
+            <div id="expa-seguimientos" style="margin-bottom:14px;"></div>
+            <textarea id="expa-nuevo-seguimiento" rows="2" placeholder="Agregar comentario de seguimiento…" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;margin-bottom:8px;"></textarea>
+            <button onclick="agregarSeguimientoAsesor()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 16px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Agregar seguimiento</button>
+          </div>
+        </div>
+      </div><!-- /p-expediente -->
 
     </div>
   </div>
@@ -372,7 +513,185 @@ tr:last-child td{border-bottom:none;}
   </div>
 </div>
 
+<!-- Modal: ver cita (reutiliza citas:detalle_ajax, ya valida que la cita sea de este asesor) -->
+<div class="modal-overlay" id="modal-ver-cita-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:400px;max-width:92vw;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:15px;font-weight:700;">Detalle de la cita</div>
+      <button onclick="cerrarVerCitaAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:9px;font-size:13px;color:var(--txt2);">
+      <div><strong id="vca-nombre">—</strong></div>
+      <div>✉️ <span id="vca-correo">—</span></div>
+      <div>📞 <span id="vca-telefono">—</span></div>
+      <div>📅 <span id="vca-fecha-hora">—</span></div>
+      <div>💼 <span id="vca-motivo">—</span></div>
+      <div>🏷️ <span id="vca-estado">—</span></div>
+      <div>📝 <span id="vca-comentarios">—</span></div>
+      <div style="font-size:11px;color:var(--txt3);">Registrada: <span id="vca-creada">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: editar cita (reutiliza citas:editar_ajax; sin selector de asesor — solo Admin puede reasignar) -->
+<div class="modal-overlay" id="modal-editar-cita-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:440px;max-width:92vw;max-height:88vh;overflow:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:15px;font-weight:700;">Editar cita</div>
+      <button onclick="cerrarEditarCitaAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+    </div>
+    <div id="eca-error" style="display:none;background:#fee2e2;color:#dc2626;font-size:12px;padding:8px 10px;border-radius:7px;margin-bottom:10px;"></div>
+    <input type="hidden" id="eca-id">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Nombre</label><input id="eca-nombre" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+      <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Apellidos</label><input id="eca-apellidos" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+    </div>
+    <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Correo</label><input id="eca-correo" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+    <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Teléfono</label><input id="eca-telefono" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Fecha</label><input type="date" id="eca-fecha" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+      <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Hora</label><input type="time" id="eca-hora" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Motivo</label>
+      <select id="eca-motivo" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
+        <option value="seguro_vida">Seguro de vida</option>
+        <option value="medico">Gastos médicos mayores</option>
+        <option value="auto">Seguro de auto</option>
+        <option value="hogar">Seguro de hogar</option>
+        <option value="inversion">Inversión y ahorro</option>
+        <option value="empresa">Empresarial</option>
+        <option value="otro">Otro</option>
+      </select>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Estado</label>
+      <select id="eca-estado" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
+        <option value="pendiente">Pendiente</option>
+        <option value="confirmada">Confirmada</option>
+        <option value="completada">Completada</option>
+        <option value="cancelada">Cancelada</option>
+      </select>
+    </div>
+    <div style="margin-bottom:14px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Comentarios</label><textarea id="eca-comentarios" rows="3" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;"></textarea></div>
+    <button id="eca-btn-guardar" onclick="guardarEdicionCitaAsesor()" style="width:100%;background:var(--blue);color:#fff;border:none;padding:10px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Guardar cambios</button>
+  </div>
+</div>
+
+<!-- Modal: mensaje de cita (reutiliza citas:mensaje_generado_ajax + WhatsApp) -->
+<div class="modal-overlay" id="modal-mensaje-cita-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:420px;max-width:92vw;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:15px;font-weight:700;">Enviar mensaje</div>
+      <button onclick="cerrarMensajeCitaAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+      <span class="act-btn" onclick="generarMensajeCitaAsesor('confirmacion')">Confirmación</span>
+      <span class="act-btn" onclick="generarMensajeCitaAsesor('recordatorio')">Recordatorio</span>
+      <span class="act-btn" onclick="generarMensajeCitaAsesor('reagendar')">Reagendar</span>
+      <span class="act-btn" onclick="generarMensajeCitaAsesor('seguimiento')">Seguimiento</span>
+      <span class="act-btn" onclick="generarMensajeCitaAsesor('cancelacion')">Cancelación</span>
+    </div>
+    <textarea id="msg-cita-texto" rows="6" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;margin-bottom:12px;" placeholder="Elige una plantilla arriba…"></textarea>
+    <button onclick="enviarMensajeCitaWhatsapp()" style="width:100%;background:#22c55e;color:#fff;border:none;padding:10px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Enviar por WhatsApp</button>
+  </div>
+</div>
+
+<!-- Modal: confirmar eliminar cita (reutiliza citas:eliminar_ajax) -->
+<div class="modal-overlay" id="modal-eliminar-cita-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:360px;max-width:92vw;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:15px;font-weight:700;color:#dc2626;">⚠️ Eliminar cita</div>
+      <button onclick="cerrarEliminarCitaAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:1.25rem;">¿Eliminar la cita de <strong id="dca-nombre"></strong>? Esta acción no se puede deshacer.</p>
+    <div style="display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="cerrarEliminarCitaAsesor()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
+      <button onclick="ejecutarEliminarCitaAsesor()" style="background:#dc2626;color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: nuevo prospecto (reutiliza prospectos:crear; SIN selector de asesor —
+     prospectos/views.py::crear() ya fuerza asesor_asignado=request.user si no es admin) -->
+<div class="modal-overlay" id="modal-nuevo-prospecto-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:420px;max-width:92vw;max-height:88vh;overflow:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:15px;font-weight:700;">Nuevo prospecto</div>
+      <button onclick="cerrarNuevoProspectoAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+    </div>
+    <div id="npa-error" style="display:none;background:#fee2e2;color:#dc2626;font-size:12px;padding:8px 10px;border-radius:7px;margin-bottom:10px;"></div>
+    <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Nombre completo</label><input id="np-nombre" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+    <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Correo</label><input id="np-correo" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+    <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Teléfono</label><input id="np-telefono" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+    <div style="margin-bottom:10px;">
+      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Interés</label>
+      <select id="np-interes" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
+        <option value="seguro_vida">Seguro de vida</option>
+        <option value="medico">Gastos médicos</option>
+        <option value="auto">Seguro de auto</option>
+        <option value="hogar">Seguro de hogar</option>
+        <option value="inversion">Inversión y ahorro</option>
+        <option value="empresa">Empresarial</option>
+        <option value="general" selected>Información general</option>
+      </select>
+    </div>
+    <div style="margin-bottom:14px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Notas</label><textarea id="np-notas" rows="3" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;"></textarea></div>
+    <button onclick="guardarNuevoProspectoAsesor()" style="width:100%;background:var(--blue);color:#fff;border:none;padding:10px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Crear prospecto</button>
+  </div>
+</div>
+
+<!-- Modal: mensaje de prospecto (reutiliza prospectos:mensaje_generado_ajax + WhatsApp) -->
+<div class="modal-overlay" id="modal-mensaje-prospecto-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:420px;max-width:92vw;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:15px;font-weight:700;">Enviar mensaje</div>
+      <button onclick="cerrarMensajeProspectoAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+      <span class="act-btn" onclick="generarMensajeProspectoAsesor('primer_contacto')">Primer contacto</span>
+      <span class="act-btn" onclick="generarMensajeProspectoAsesor('seguimiento')">Seguimiento</span>
+      <span class="act-btn" onclick="generarMensajeProspectoAsesor('seguimiento_cotizacion')">Cotización</span>
+      <span class="act-btn" onclick="generarMensajeProspectoAsesor('recordatorio')">Recordatorio</span>
+      <span class="act-btn" onclick="generarMensajeProspectoAsesor('no_responde')">No responde</span>
+      <span class="act-btn" onclick="generarMensajeProspectoAsesor('agradecimiento')">Agradecimiento</span>
+      <span class="act-btn" onclick="generarMensajeProspectoAsesor('conversion')">Conversión</span>
+    </div>
+    <textarea id="msg-prospecto-texto" rows="6" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;margin-bottom:12px;" placeholder="Elige una plantilla arriba…"></textarea>
+    <button onclick="enviarMensajeProspectoWhatsapp()" style="width:100%;background:#22c55e;color:#fff;border:none;padding:10px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Enviar por WhatsApp</button>
+  </div>
+</div>
+
+<!-- Modal: confirmar eliminar prospecto (reutiliza prospectos:eliminar) -->
+<div class="modal-overlay" id="modal-eliminar-prospecto-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:360px;max-width:92vw;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div style="font-size:15px;font-weight:700;color:#dc2626;">⚠️ Eliminar prospecto</div>
+      <button onclick="cerrarEliminarProspectoAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:1.25rem;">¿Eliminar a <strong id="dpa-nombre"></strong>? Esta acción no se puede deshacer.</p>
+    <div style="display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="cerrarEliminarProspectoAsesor()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
+      <button onclick="ejecutarEliminarProspectoAsesor()" style="background:#dc2626;color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
 <script>
+/* ─── NAV (mismo patrón que dashboard/index.html) ─── */
+function nav(id, el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+  var page = document.getElementById('p-' + id);
+  if (page) page.classList.add('on');
+  document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('on');});
+  if (el){
+    el.classList.add('on');
+  } else {
+    var item = document.querySelector('.sb-item[onclick*="nav(\'' + id + '\'"]');
+    if (item) item.classList.add('on');
+  }
+}
+
 function toggleUserMenu(){
   var dd = document.getElementById('user-dropdown');
   dd.classList.toggle('open');
@@ -433,6 +752,181 @@ function guardarCambiarPassword(){
     errDiv.textContent = 'Error de conexión. Intenta de nuevo.';
     errDiv.style.display = 'block';
   });
+}
+
+/* ─── Toast simple ─── */
+function toastAsesor(msg){
+  var t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--dark2);color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.2);';
+  document.body.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 3000);
+}
+function _citaCsrf(){
+  return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+/* ─── CITAS: filtro de la tabla completa ─── */
+function filtrarCitasTabla(){
+  var estado = document.getElementById('filtro-estado-citas-asesor').value;
+  var busq = document.getElementById('busq-citas-asesor').value.trim().toLowerCase();
+  document.querySelectorAll('#tbody-citas-asesor tr[data-cita-id]').forEach(function(fila){
+    var okEstado = !estado || fila.dataset.estado === estado;
+    var okBusq = !busq || fila.dataset.nombre.indexOf(busq) !== -1;
+    fila.style.display = (okEstado && okBusq) ? '' : 'none';
+  });
+}
+
+/* ─── CITAS: ver detalle (citas:detalle_ajax — ya valida acceso) ─── */
+function abrirVerCitaAsesor(id){
+  fetch('/citas/admin/' + id + '/detalle/ajax/', { headers: {'X-Requested-With':'XMLHttpRequest'} })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.ok){ toastAsesor(d.error || 'No se pudo cargar la cita.'); return; }
+      document.getElementById('vca-nombre').textContent = d.nombre_cliente + ' ' + d.apellidos_cliente;
+      document.getElementById('vca-correo').textContent = d.correo;
+      document.getElementById('vca-telefono').textContent = d.telefono;
+      document.getElementById('vca-fecha-hora').textContent = d.fecha + ' — ' + d.hora;
+      document.getElementById('vca-motivo').textContent = d.motivo_display;
+      document.getElementById('vca-estado').textContent = d.estado_display;
+      document.getElementById('vca-comentarios').textContent = d.comentarios || 'Sin comentarios.';
+      document.getElementById('vca-creada').textContent = d.creada;
+      document.getElementById('modal-ver-cita-asesor').style.display = 'flex';
+    })
+    .catch(function(){ toastAsesor('Error de conexión.'); });
+}
+function cerrarVerCitaAsesor(){
+  document.getElementById('modal-ver-cita-asesor').style.display = 'none';
+}
+
+/* ─── CITAS: editar (citas:detalle_ajax + citas:editar_ajax — ya valida acceso) ─── */
+function abrirEditarCitaAsesor(id){
+  fetch('/citas/admin/' + id + '/detalle/ajax/', { headers: {'X-Requested-With':'XMLHttpRequest'} })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.ok){ toastAsesor(d.error || 'No se pudo cargar la cita.'); return; }
+      document.getElementById('eca-id').value = d.id;
+      document.getElementById('eca-nombre').value = d.nombre_cliente;
+      document.getElementById('eca-apellidos').value = d.apellidos_cliente;
+      document.getElementById('eca-correo').value = d.correo;
+      document.getElementById('eca-telefono').value = d.telefono;
+      document.getElementById('eca-fecha').value = d.fecha;
+      document.getElementById('eca-hora').value = d.hora.slice(0,5);
+      document.getElementById('eca-motivo').value = d.motivo;
+      document.getElementById('eca-estado').value = d.estado;
+      document.getElementById('eca-comentarios').value = d.comentarios;
+      document.getElementById('eca-error').style.display = 'none';
+      document.getElementById('modal-editar-cita-asesor').style.display = 'flex';
+    })
+    .catch(function(){ toastAsesor('Error de conexión.'); });
+}
+function cerrarEditarCitaAsesor(){
+  document.getElementById('modal-editar-cita-asesor').style.display = 'none';
+}
+function guardarEdicionCitaAsesor(){
+  var id = document.getElementById('eca-id').value;
+  var btn = document.getElementById('eca-btn-guardar');
+  var errDiv = document.getElementById('eca-error');
+
+  var body = new URLSearchParams();
+  body.append('nombre', document.getElementById('eca-nombre').value);
+  body.append('apellidos', document.getElementById('eca-apellidos').value);
+  body.append('correo', document.getElementById('eca-correo').value);
+  body.append('telefono', document.getElementById('eca-telefono').value);
+  body.append('fecha', document.getElementById('eca-fecha').value);
+  body.append('hora', document.getElementById('eca-hora').value);
+  body.append('motivo', document.getElementById('eca-motivo').value);
+  body.append('estado', document.getElementById('eca-estado').value);
+  body.append('comentarios', document.getElementById('eca-comentarios').value);
+  // Nota: NO se envía asesor_id — el backend solo lo lee si el usuario es
+  // admin (ver citas/views.py::editar_ajax), así que un asesor nunca puede
+  // reasignar la cita a otra persona desde este formulario.
+
+  btn.disabled = true;
+  btn.textContent = 'Guardando…';
+  errDiv.style.display = 'none';
+
+  fetch('/citas/admin/' + id + '/editar/ajax/', {
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': _citaCsrf(),
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: body.toString()
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    btn.disabled = false;
+    btn.textContent = 'Guardar cambios';
+    if (!d.ok) {
+      errDiv.textContent = d.error || 'No se pudo guardar.';
+      errDiv.style.display = 'block';
+      return;
+    }
+    cerrarEditarCitaAsesor();
+    toastAsesor('Cita actualizada correctamente.');
+    setTimeout(function(){ window.location.reload(); }, 600);
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Guardar cambios';
+    errDiv.textContent = 'Error de conexión.';
+    errDiv.style.display = 'block';
+  });
+}
+
+/* ─── CITAS: mensaje (citas:mensaje_generado_ajax — ya valida acceso) ─── */
+var _mensajeCitaId = null;
+function abrirMensajeCitaAsesor(id){
+  _mensajeCitaId = id;
+  document.getElementById('msg-cita-texto').value = '';
+  document.getElementById('modal-mensaje-cita-asesor').style.display = 'flex';
+}
+function cerrarMensajeCitaAsesor(){
+  document.getElementById('modal-mensaje-cita-asesor').style.display = 'none';
+}
+function generarMensajeCitaAsesor(clave){
+  fetch('/citas/admin/' + _mensajeCitaId + '/mensaje/' + clave + '/ajax/', { headers: {'X-Requested-With':'XMLHttpRequest'} })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.ok){ toastAsesor(d.error || 'No se pudo generar el mensaje.'); return; }
+      document.getElementById('msg-cita-texto').value = d.texto;
+    })
+    .catch(function(){ toastAsesor('Error de conexión.'); });
+}
+function enviarMensajeCitaWhatsapp(){
+  var texto = document.getElementById('msg-cita-texto').value;
+  if(!texto){ toastAsesor('Elige una plantilla primero.'); return; }
+  var fila = document.querySelector('tr[data-cita-id="' + _mensajeCitaId + '"]');
+  var tel = fila ? fila.dataset.telefono : '';
+  var url = 'https://wa.me/' + (tel || '').replace(/\D/g,'') + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+/* ─── CITAS: eliminar (citas:eliminar_ajax — ya valida acceso) ─── */
+var _delCitaId = null;
+function abrirEliminarCitaAsesor(id, nombre){
+  _delCitaId = id;
+  document.getElementById('dca-nombre').textContent = nombre;
+  document.getElementById('modal-eliminar-cita-asesor').style.display = 'flex';
+}
+function cerrarEliminarCitaAsesor(){
+  document.getElementById('modal-eliminar-cita-asesor').style.display = 'none';
+}
+function ejecutarEliminarCitaAsesor(){
+  fetch('/citas/admin/' + _delCitaId + '/eliminar/ajax/', {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _citaCsrf() }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(!d.ok){ toastAsesor(d.error || 'No se pudo eliminar.'); return; }
+    cerrarEliminarCitaAsesor();
+    toastAsesor('Cita eliminada.');
+    setTimeout(function(){ window.location.reload(); }, 500);
+  })
+  .catch(function(){ toastAsesor('Error de conexión.'); });
 }
 </script>
 </body>

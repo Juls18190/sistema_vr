@@ -36,6 +36,31 @@ nav{background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);padding:0 2.5rem;d
 .btn-nav{background:var(--blue);color:#fff;border:none;padding:10px 20px;border-radius:7px;font-size:12px;font-family:var(--ff);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(21,96,189,0.4);transition:all .2s;text-decoration:none;}
 .btn-nav:hover{background:var(--blue2);transform:translateY(-1px);}
 
+/* ══ NAV — MENÚ MÓVIL ══ */
+.nav-right{display:flex;align-items:center;gap:1.25rem;}
+.nav-burger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:34px;height:34px;background:none;border:none;cursor:pointer;padding:0;flex-shrink:0;}
+.nav-burger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:transform .25s ease,opacity .25s ease;}
+.nav-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-burger.open span:nth-child(2){opacity:0;}
+.nav-burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+@media(max-width:900px){
+  .nav-burger{display:flex;}
+  .nav-right{
+    position:absolute;top:58px;left:0;right:0;
+    background:rgba(5,12,24,0.99);
+    flex-direction:column;align-items:stretch;gap:0;
+    max-height:0;overflow:hidden;
+    border-bottom:0.5px solid var(--border);
+    transition:max-height .3s ease;
+  }
+  .nav-right.open{max-height:400px;}
+  .nav-links{flex-direction:column;height:auto;}
+  .nav-links li a{height:48px;padding:0 2.5rem;border-bottom:0.5px solid var(--border);border-left:2px solid transparent;}
+  .nav-links li a:hover,.nav-links li a.act{border-bottom-color:var(--border);border-left-color:var(--blue);}
+  .btn-nav{margin:1rem 2.5rem;justify-content:center;}
+}
+
 /* HERO */
 .page-hero{background:linear-gradient(135deg,#060f20 0%,#091828 50%,#0c2040 100%);padding:4rem 2.5rem 3rem;position:relative;overflow:hidden;border-bottom:0.5px solid var(--border);}
 .page-hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(21,96,189,0.15) 0%,transparent 70%);border-radius:50%;}
@@ -202,17 +227,42 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
       <div class="logo-sub">Consultores · Agente de Seguros S.A.</div>
     </div>
   </div>
-  <ul class="nav-links">
-    <li><a href="/">Inicio</a></li>
-    <li><a href="/servicios/">Servicios</a></li>
-    <li><a href="/vacantes/" class="act">Vacantes</a></li>
-    <li><a href="/citas/agendar/">Citas</a></li>
-  </ul>
-  <a href="/citas/agendar/" class="btn-nav">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    Agendar Cita
-  </a>
+  <button class="nav-burger" id="navBurger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="navRight">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="nav-right" id="navRight">
+    <ul class="nav-links">
+      <li><a href="/">Inicio</a></li>
+      <li><a href="/servicios/">Servicios</a></li>
+      <li><a href="/vacantes/" class="act">Vacantes</a></li>
+      <li><a href="/citas/agendar/">Citas</a></li>
+    </ul>
+    <a href="/citas/agendar/" class="btn-nav">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Agendar Cita
+    </a>
+  </div>
 </nav>
+
+<script>
+(function(){
+  var burger = document.getElementById('navBurger');
+  var panel  = document.getElementById('navRight');
+  if(!burger || !panel) return;
+  function cerrar(){
+    panel.classList.remove('open');
+    burger.classList.remove('open');
+    burger.setAttribute('aria-expanded','false');
+  }
+  burger.addEventListener('click', function(){
+    var abierto = panel.classList.toggle('open');
+    burger.classList.toggle('open', abierto);
+    burger.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+  });
+  panel.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', cerrar); });
+})();
+</script>
 
 <!-- HERO con estadísticas reales desde BD -->
 <div class="page-hero">
