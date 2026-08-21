@@ -19,8 +19,9 @@
       {% for v in vacantes_destacadas %}
       <div class="vd-card">
         {% if v.imagen %}
-          <div class="vd-img" style="background-image:url('{{ v.imagen.url }}');">
+          <div class="vd-img" style="background-image:url('{{ v.imagen.url }}');" onclick="abrirLightbox('{{ v.imagen.url }}')" role="button" tabindex="0" aria-label="Ver imagen completa de {{ v.titulo }}">
             <span class="vd-badge">{{ v.get_publico_objetivo_display }}</span>
+            <div class="vd-zoom">🔍 Ver imagen completa</div>
           </div>
         {% else %}
           <div class="vd-img" style="background:linear-gradient(135deg,#0b2540,#1a4a7a);display:flex;align-items:center;justify-content:center;">

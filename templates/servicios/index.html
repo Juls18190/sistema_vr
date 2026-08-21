@@ -411,7 +411,14 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
 .ft-bottom{border-top:0.5px solid var(--border);padding-top:1rem;display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
 
 /* ══ BOTONES FLOTANTES ══ */
-/* Estilos base en estilos.css (se comparten con el resto del sitio) */
+.float-wrap{position:fixed;bottom:1.75rem;right:1.75rem;display:flex;flex-direction:column;gap:10px;z-index:9999;}
+.float-item{position:relative;display:flex;align-items:center;}
+.float-tooltip{position:absolute;right:62px;background:#001133;color:#fff;font-size:11px;font-weight:500;padding:5px 10px;border-radius:6px;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;}
+.float-item:hover .float-tooltip{opacity:1;}
+.fab{width:52px;height:52px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s;position:relative;}
+.fab:hover{transform:scale(1.1);}
+.fab-wa{background:#25d366;box-shadow:0 4px 16px rgba(37,211,102,0.4);}
+.fab-call{background:var(--blue);box-shadow:0 4px 16px rgba(21,96,189,0.4);}
 
 /* ══ LIGHTBOX DE FLYERS (Servicios / Vacantes Destacadas) ══ */
 .flyer-lightbox{display:none;position:fixed;inset:0;background:rgba(5,12,22,.92);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;padding:2rem;}
@@ -466,6 +473,9 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
   .pillars{grid-template-columns:1fr;}
   .team-strip{flex-wrap:wrap;}
   .fgrid{grid-template-columns:1fr;}
+  .ft-grid{grid-template-columns:1fr;gap:1.75rem;}
+  .ft-brand p{max-width:none;}
+  .ft-bottom{flex-direction:column;gap:6px;text-align:center;}
   nav{padding:0 1.25rem;}
   .cta-band h3{font-size:20px;}
 }
@@ -516,8 +526,9 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
       {% for s in servicios %}
         <div class="svc-card">
           {% if s.imagen %}
-            <div class="svc-img-wrap">
+            <div class="svc-img-wrap" onclick="abrirLightbox('{{ s.imagen.url }}')" role="button" tabindex="0" aria-label="Ver imagen completa de {{ s.nombre }}">
               <img src="{{ s.imagen.url }}" class="svc-img" alt="{{ s.nombre }}">
+              <div class="svc-zoom">🔍 Ver imagen completa</div>
             </div>
           {% else %}
             <div class="svc-img-wrap svc-img-wrap-vacio">
@@ -526,7 +537,7 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
           {% endif %}
           <div class="svc-body">
             <h3>{{ s.nombre }}</h3>
-            <p>{{ s.descripcion|default:s.descripcion_corta }}</p>
+            <p>{{ s.descripcion|default:s.descripcion_corta|linebreaksbr }}</p>
           </div>
         </div>
       {% endfor %}
@@ -540,7 +551,16 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
 
 {% include 'inicio/sections/cta.html' %}
 {% include 'inicio/sections/citas.html' %}
-{% include 'inicio/sections/ubicacion.html' %}
+
+<div class="sec">
+  <div class="cta-band" style="background:rgba(255,255,255,0.03);border:0.5px solid var(--border);">
+    <div>
+      <h3 style="color:#fff;">¿No encontraste lo que buscas?</h3>
+      <p style="color:var(--muted);">Nuestros asesores te orientarán sobre el mejor producto para tu situación específica.</p>
+    </div>
+    <a href="/citas/agendar/" class="btn-p">Hablar con un asesor →</a>
+  </div>
+</div>
 
 <!-- Lightbox de imágenes (flyers de Servicios y Vacantes Destacadas).
      Reutiliza las funciones de static/js/main.js (abrirLightbox / cerrarLightbox / lightboxSiguiente),

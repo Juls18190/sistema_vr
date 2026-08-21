@@ -19,10 +19,19 @@ def _rol(user):
     Regla:
       - Admin / superuser → todos los prospectos.
       - Asesor            → solo los asignados a él.
-    Usa getattr con fallback para evitar DoesNotExist si el perfil no existe.
+
+    IMPORTANTE: is_superuser se revisa PRIMERO, sin importar lo que diga
+    el perfil. Antes se hacía al revés (perfil.es_admin ganaba si el
+    perfil existía), lo que causaba que un Superadmin cuyo PerfilUsuario
+    tuviera rol='asesor' fuera tratado como Asesor en todo este módulo
+    (viendo "No tienes permiso" al intentar editar prospectos que no
+    fueran suyos). Mismo criterio que usuarios/permisos.py::es_admin().
     """
-    perfil   = getattr(user, 'perfil', None)
-    es_admin = perfil.es_admin if perfil else user.is_superuser
+    if user.is_superuser:
+        es_admin = True
+    else:
+        perfil   = getattr(user, 'perfil', None)
+        es_admin = bool(perfil and perfil.es_admin)
     qs_base  = (
         Prospecto.objects.all()
         if es_admin

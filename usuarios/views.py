@@ -8,7 +8,7 @@ from django.db import transaction
 from django.http import JsonResponse
 
 from .models import PerfilUsuario
-from .permisos import solo_admin
+from .permisos import solo_admin, es_admin
 from historial.models import registrar
 
 
@@ -52,12 +52,23 @@ def logout_view(request):
 @login_required
 def cambiar_password_ajax(request):
     
-    """Cambia la contraseña del usuario autenticado vía AJAX."""
+    """Cambia la contraseña del usuario autenticado vía AJAX.
+
+    Restringido a Superadmin/Administrador: los Asesores no pueden cambiar
+    su propia contraseña desde el dashboard (política del negocio, no un
+    tema de UI — por eso se valida aquí y no solo ocultando el botón).
+    """
     from django.http import JsonResponse
     from django.contrib.auth import update_session_auth_hash
 
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'Método no permitido.'}, status=405)
+
+    if not es_admin(request.user):
+        return JsonResponse(
+            {'ok': False, 'error': 'No tienes permiso para cambiar tu contraseña. Contacta a un administrador.'},
+            status=403,
+        )
 
     actual     = request.POST.get('password_actual', '')
     nueva      = request.POST.get('password_nueva', '')
@@ -118,6 +129,7 @@ def _serializar_usuario(u):
         'nombre_completo':  u.get_full_name() or u.username,
         'username':         u.username,
         'email':            u.email or '',
+        'telefono':         (perfil.telefono if perfil else '') or '',
         'rol':              rol,
         'rol_display':      rol_display,
         'is_superuser':     u.is_superuser,
@@ -138,6 +150,7 @@ def crear_usuario_ajax(request):
     apellidos = request.POST.get('last_name', '').strip()
     username  = request.POST.get('username', '').strip()
     email     = request.POST.get('email', '').strip()
+    telefono  = request.POST.get('telefono', '').strip()
     rol       = request.POST.get('rol', '').strip()
     password  = request.POST.get('password', '')
     password2 = request.POST.get('password_confirmacion', '')
@@ -182,7 +195,7 @@ def crear_usuario_ajax(request):
         )
         # No se leen is_superuser / is_staff del request bajo ninguna
         # circunstancia: se crean con sus valores por defecto (False).
-        PerfilUsuario.objects.create(user=nuevo_usuario, rol=rol)
+        PerfilUsuario.objects.create(user=nuevo_usuario, rol=rol, telefono=telefono)
 
     registrar(
         usuario=request.user,
@@ -218,6 +231,7 @@ def editar_usuario_ajax(request, user_id):
     apellidos = request.POST.get('last_name', '').strip()
     username  = request.POST.get('username', '').strip()
     email     = request.POST.get('email', '').strip()
+    telefono  = request.POST.get('telefono', '').strip()
     rol       = request.POST.get('rol', '').strip()
     password  = request.POST.get('password', '')
     password2 = request.POST.get('password_confirmacion', '')
@@ -250,17 +264,28 @@ def editar_usuario_ajax(request, user_id):
     # El Superadmin (is_superuser=True) no gestiona su rol desde este panel:
     # ese control sigue siendo exclusivo de is_superuser vía /admin/. Para
     # cualquier otro usuario, el rol enviado debe ser uno de los válidos.
+    perfil = getattr(usuario, 'perfil', None)
+
     if not usuario.is_superuser:
         if rol not in roles_validos:
             return JsonResponse({'ok': False, 'error': 'Rol no válido.'}, status=400)
-        perfil = getattr(usuario, 'perfil', None)
         if perfil is None:
-            PerfilUsuario.objects.create(user=usuario, rol=rol)
+            perfil = PerfilUsuario.objects.create(user=usuario, rol=rol, telefono=telefono)
             cambios.append(f'rol asignado como "{roles_validos[rol]}"')
-        elif perfil.rol != rol:
-            cambios.append(f'rol de "{roles_validos.get(perfil.rol, perfil.rol)}" a "{roles_validos[rol]}"')
-            perfil.rol = rol
-            perfil.save(update_fields=['rol'])
+        else:
+            if perfil.rol != rol:
+                cambios.append(f'rol de "{roles_validos.get(perfil.rol, perfil.rol)}" a "{roles_validos[rol]}"')
+                perfil.rol = rol
+            if perfil.telefono != telefono:
+                cambios.append('teléfono')
+            perfil.telefono = telefono
+            perfil.save(update_fields=['rol', 'telefono'])
+    elif perfil is not None and perfil.telefono != telefono:
+        # El Superadmin sí puede guardar su propio teléfono, aunque su rol
+        # no se edite desde aquí.
+        cambios.append('teléfono')
+        perfil.telefono = telefono
+        perfil.save(update_fields=['telefono'])
 
     if usuario.first_name != nombre:
         cambios.append('nombre')

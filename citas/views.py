@@ -16,13 +16,15 @@ from . import mensajes
 def _es_admin(user):
     """
     Determina si el usuario tiene privilegios administrativos (Superadmin o
-    Administrador). Reutiliza el mismo criterio try/except ya usado en este
-    archivo (ver antes asignar_asesor_ajax y editar_ajax).
+    Administrador). is_superuser se revisa PRIMERO: antes, si el perfil
+    existía, su rol ganaba siempre, así que un Superadmin con perfil
+    rol='asesor' era tratado como Asesor en este módulo. Mismo criterio
+    que usuarios/permisos.py::es_admin().
     """
-    try:
-        return user.perfil.es_admin
-    except Exception:
-        return user.is_superuser
+    if user.is_superuser:
+        return True
+    perfil = getattr(user, 'perfil', None)
+    return bool(perfil and perfil.es_admin)
 
 
 def _qs_citas(user):
@@ -389,10 +391,7 @@ def asignar_y_crear_prospecto_ajax(request, cita_id):
     from prospectos.models import Prospecto, SeguimientoProspecto
 
     # ── Permisos ──────────────────────────────────────────────────────────────
-    try:
-        es_admin = request.user.perfil.es_admin
-    except Exception:
-        es_admin = request.user.is_superuser
+    es_admin = _es_admin(request.user)
     if not es_admin:
         return JsonResponse({'ok': False, 'error': 'Sin permisos de administrador.'}, status=403)
 

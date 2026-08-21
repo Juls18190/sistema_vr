@@ -7097,6 +7097,10 @@ function toggleActivoServicio(id, btnEl) {
           <input name="email" type="email" class="campo" placeholder="correo@vryconsultores.com" required>
         </div>
         <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Teléfono</label>
+          <input name="telefono" type="tel" class="campo" placeholder="10 dígitos">
+        </div>
+        <div>
           <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Rol *</label>
           <select name="rol" class="campo" required>
             <option value="">— Selecciona —</option>
@@ -7169,6 +7173,10 @@ function toggleActivoServicio(id, btnEl) {
         <div>
           <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Correo electrónico *</label>
           <input id="eu-email" name="email" type="email" class="campo" required>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Teléfono</label>
+          <input id="eu-telefono" name="telefono" type="tel" class="campo" placeholder="10 dígitos">
         </div>
         <div id="eu-rol-wrap">
           <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Rol *</label>
@@ -7393,6 +7401,7 @@ function abrirVerUsuario(id){
         '<p><strong>Apellidos:</strong> '+(u.last_name || '—')+'</p>'+
         '<p><strong>Usuario:</strong> @'+u.username+'</p>'+
         '<p><strong>Correo:</strong> '+(u.email || '—')+'</p>'+
+        '<p><strong>Teléfono:</strong> '+(u.telefono || '—')+'</p>'+
         '<p><strong>Rol:</strong> '+u.rol_display+'</p>'+
         '<p><strong>Estado:</strong> '+(u.is_active ? 'Activo' : 'Inactivo')+'</p>'+
         '<p><strong>Registrado:</strong> '+u.fecha_registro+'</p>'+
@@ -7427,6 +7436,7 @@ function abrirEditarUsuario(id){
       document.getElementById('eu-apellidos').value = u.last_name;
       document.getElementById('eu-username').value  = u.username;
       document.getElementById('eu-email').value     = u.email;
+      document.getElementById('eu-telefono').value  = u.telefono || '';
 
       if(u.is_superuser){
         document.getElementById('eu-rol-wrap').style.display = 'none';

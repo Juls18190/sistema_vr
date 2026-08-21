@@ -15,6 +15,11 @@ def home(request):
 
     context = {
         'servicios': servicios,
+        'categorias_servicios': [
+            ('personal', 'Seguros Personales', servicios.filter(categoria='personal')),
+            ('inversion', 'Ahorro e Inversión', servicios.filter(categoria='inversion')),
+            ('empresarial', 'Empresarial', servicios.filter(categoria='empresarial')),
+        ],
         'vacantes_destacadas': vacantes_destacadas,
         # Stats reales para el dashboard público
         'total_postulantes': Postulante.objects.count(),

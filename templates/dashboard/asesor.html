@@ -34,6 +34,40 @@ body{font-family:var(--ff);background:var(--bg);color:var(--txt);}
 .ab-name small{font-size:11px;font-weight:400;color:var(--txt3);margin-left:5px;}
 .atop-right{display:flex;align-items:center;gap:10px;position:relative;}
 
+.notif-btn{
+  position:relative;width:34px;height:34px;
+  background:var(--gray);border:1px solid var(--bdr);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .2s;
+}
+.notif-btn:hover{background:var(--gray2);}
+.notif-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid #fff;}
+.notif-panel{
+  position:absolute;top:calc(100% + 8px);right:0;
+  background:var(--white);border:1px solid var(--bdr);
+  border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.1);
+  width:320px;z-index:149;
+  opacity:0;transform:translateY(-8px);pointer-events:none;
+  transition:opacity .2s,transform .2s;
+}
+.notif-panel.open{opacity:1;transform:translateY(0);pointer-events:all;}
+.np-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;border-bottom:1px solid var(--bdr);}
+.np-title{font-size:13px;font-weight:700;color:var(--txt);}
+.np-count{font-size:11px;font-weight:700;background:var(--red);color:#fff;border-radius:10px;padding:1px 7px;min-width:18px;text-align:center;}
+.np-count.hidden{display:none;}
+.np-body{max-height:360px;overflow-y:auto;}
+.np-item{display:flex;gap:10px;padding:.8rem 1rem;border-bottom:1px solid var(--bdr);cursor:pointer;transition:background .15s;text-decoration:none;}
+.np-item:last-child{border-bottom:none;}
+.np-item:hover{background:var(--gray);}
+.np-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;}
+.np-item-body{flex:1;min-width:0;}
+.np-item-title{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.np-item-msg{font-size:11px;color:var(--txt3);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.np-prio{display:inline-block;font-size:9px;font-weight:700;border-radius:4px;padding:1px 5px;margin-top:3px;text-transform:uppercase;letter-spacing:.3px;}
+.np-empty{text-align:center;padding:2rem 1rem;color:var(--txt3);}
+.np-empty svg{opacity:.25;display:block;margin:0 auto 8px;}
+.np-empty p{font-size:12px;}
+
 .user-dropdown{
   position:absolute;top:calc(100% + 8px);right:0;background:var(--white);
   border:1px solid var(--bdr);border-radius:12px;width:250px;
@@ -112,6 +146,50 @@ tr:last-child td{border-bottom:none;}
 
 .act-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:6px;font-size:11px;font-family:var(--ff);font-weight:600;cursor:pointer;border:1px solid var(--bdr);background:var(--gray2);color:var(--txt2);transition:all .15s;text-decoration:none;}
 .act-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
+.act-btn-del{color:#dc2626!important;}
+.act-btn-del:hover{background:#fee2e2!important;color:#dc2626!important;}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* ── Toast (idéntico al del dashboard admin) ── */
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:10px;}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:10px;font-size:13px;font-family:var(--ff);font-weight:500;min-width:260px;max-width:360px;box-shadow:0 4px 20px rgba(0,0,0,0.13);pointer-events:all;animation:toastIn .3s cubic-bezier(.34,1.56,.64,1) both;opacity:1;transition:opacity .3s,transform .3s;}
+.toast.hide{opacity:0;transform:translateX(20px);}
+.toast-success{background:#fff;border-left:4px solid #22c55e;color:#15803d;}
+.toast-error{background:#fff;border-left:4px solid #ef4444;color:#dc2626;}
+.toast-warning{background:#fff;border-left:4px solid #f59e0b;color:#92400e;}
+.toast-icon{width:20px;height:20px;flex-shrink:0;}
+.toast-msg{flex:1;line-height:1.35;}
+.toast-close{background:none;border:none;cursor:pointer;font-size:16px;color:inherit;opacity:.5;padding:0;line-height:1;margin-left:4px;}
+.toast-close:hover{opacity:1;}
+
+/* ── Modal de detalle (idéntico al del dashboard admin: Ver cita / Ver prospecto / Mensaje) ── */
+.modal-detalle{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:998;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.modal-detalle.show{display:flex;}
+.md-box{background:#fff;border-radius:16px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;animation:fadeInUp .25s ease both;}
+.md-header{padding:1.5rem 1.5rem 0;display:flex;align-items:flex-start;justify-content:space-between;}
+.md-avatar{width:52px;height:52px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;font-weight:700;flex-shrink:0;}
+.md-title{font-size:16px;font-weight:700;margin-bottom:2px;}
+.md-sub{font-size:12px;color:var(--txt3);}
+.md-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;padding:0;}
+.md-close:hover{color:var(--txt);}
+.md-body{padding:1.25rem 1.5rem 1.5rem;}
+.md-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bdr);font-size:13px;}
+.md-row:last-child{border-bottom:none;}
+.md-icon{width:32px;height:32px;background:var(--gray);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--txt3);}
+.md-label{font-size:11px;color:var(--txt3);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-bottom:1px;}
+.md-val{font-size:13px;color:var(--txt2);font-weight:500;}
+.md-actions{padding:0 1.5rem 1.5rem;display:flex;gap:8px;justify-content:flex-end;}
+.md-btn-secondary{background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:500;}
+.md-btn-danger{background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;}
+.md-btn-danger:hover{background:#ef4444;color:#fff;}
+
+/* ── Búsqueda / filtro de tabla (idéntico al del dashboard admin) ── */
+.search-box{display:flex;align-items:center;gap:6px;border:1px solid var(--bdr);border-radius:7px;padding:6px 10px;background:var(--white);}
+.search-box input{border:none;outline:none;font-family:var(--ff);font-size:12px;color:var(--txt2);width:150px;background:transparent;}
+.filter-select{padding:7px 10px;border:1px solid var(--bdr);border-radius:7px;font-family:var(--ff);font-size:12px;color:var(--txt2);background:var(--white);}
+.tc-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 
 .pros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
 .pros-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;transition:box-shadow .2s,transform .2s;}
@@ -142,6 +220,8 @@ tr:last-child td{border-bottom:none;}
 
 <form style="display:none;">{% csrf_token %}</form>
 
+<div id="toast-container" style="position:fixed;bottom:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;"></div>
+
 <div id="admin-wrap">
 
   <!-- TOP BAR -->
@@ -151,6 +231,26 @@ tr:last-child td{border-bottom:none;}
       <span class="ab-name">ASESOR V&amp;R<small>· Sistema de Gestión</small></span>
     </div>
     <div class="atop-right">
+      <!-- Campana de notificaciones (reutiliza /dashboard/notificaciones/, que ya filtra por asesor) -->
+      <div style="position:relative;" id="notif-wrap">
+        <div class="notif-btn" id="notif-btn" onclick="toggleNotif()" title="Notificaciones">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <div class="notif-dot" id="notif-dot" style="display:none;"></div>
+        </div>
+        <div class="notif-panel" id="notif-panel">
+          <div class="np-header">
+            <span class="np-title">Notificaciones</span>
+            <span class="np-count hidden" id="np-count">0</span>
+          </div>
+          <div class="np-body" id="np-body">
+            <div class="np-empty">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+              <p>Cargando notificaciones…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div style="position:relative;" id="user-chip-wrap">
         <div class="user-chip" onclick="toggleUserMenu()" id="user-chip">
           <div class="uav">{{ request.user.username|slice:":2"|upper }}</div>
@@ -165,11 +265,6 @@ tr:last-child td{border-bottom:none;}
             <div class="ud-meta" style="margin-top:4px;">Rol: <strong>Asesor</strong></div>
           </div>
           <div class="ud-items">
-            <button class="ud-item" onclick="abrirCambiarPassword()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-              Cambiar contraseña
-            </button>
-            <div class="ud-sep"></div>
             <a class="ud-item danger" href="{% url 'usuarios:logout' %}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
               Cerrar sesión
@@ -203,7 +298,7 @@ tr:last-child td{border-bottom:none;}
       </div>
       <div class="sb-sec">
         <div class="sb-label">Sistema</div>
-        <div class="sb-item" onclick="abrirCambiarPassword()">
+        <div class="sb-item" onclick="nav('cuenta',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0116 0v1"/></svg>
           Mi cuenta
         </div>
@@ -267,7 +362,7 @@ tr:last-child td{border-bottom:none;}
                 {% elif c.estado == 'completada' %}<span class="badge b-green">Completada</span>
                 {% else %}<span class="badge b-red">Cancelada</span>{% endif %}
               </td>
-              <td><span class="act-btn" onclick="abrirVerCitaAsesor({{ c.id }})">Gestionar</span></td>
+              <td><button class="act-btn" title="Ver cita" onclick="abrirVerCitaAsesor({{ c.id }})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
             </tr>
             {% empty %}
             <tr><td colspan="5" class="empty-row">No tienes citas programadas para hoy.</td></tr>
@@ -335,10 +430,18 @@ tr:last-child td{border-bottom:none;}
                 {% else %}<span class="badge b-red">Cancelada</span>{% endif %}
               </td>
               <td style="white-space:nowrap;">
-                <span class="act-btn" title="Ver" onclick="abrirVerCitaAsesor({{ c.id }})">Ver</span>
-                <span class="act-btn" title="Editar" onclick="abrirEditarCitaAsesor({{ c.id }})">Editar</span>
-                <span class="act-btn" title="Mensaje" onclick="abrirMensajeCitaAsesor({{ c.id }})">Mensaje</span>
-                <span class="act-btn" title="Eliminar" style="color:#dc2626;border-color:#fecaca;" onclick="abrirEliminarCitaAsesor({{ c.id }}, '{{ c.nombre_cliente|escapejs }} {{ c.apellidos_cliente|escapejs }}')">Eliminar</span>
+                <button class="act-btn" title="Ver cita" onclick="abrirVerCitaAsesor({{ c.id }})">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button class="act-btn" title="Editar cita" onclick="abrirEditarCitaAsesor({{ c.id }})">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
+                </button>
+                <button class="act-btn" title="Enviar mensaje" onclick="abrirMensajeCitaAsesor({{ c.id }})">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                </button>
+                <button class="act-btn act-btn-del" title="Eliminar cita" onclick="abrirEliminarCitaAsesor({{ c.id }}, '{{ c.nombre_cliente|escapejs }} {{ c.apellidos_cliente|escapejs }}')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                </button>
               </td>
             </tr>
             {% empty %}
@@ -485,115 +588,197 @@ tr:last-child td{border-bottom:none;}
         </div>
       </div><!-- /p-expediente -->
 
-    </div>
-  </div>
-</div>
+      <div id="p-cuenta" class="page">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Mi cuenta</div>
+            <div class="page-sub">Información de tu perfil</div>
+          </div>
+        </div>
+        <div class="table-card" style="padding:1.5rem;max-width:520px;">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;">
+            <div class="uav" style="width:52px;height:52px;font-size:18px;">{{ request.user.username|slice:":2"|upper }}</div>
+            <div>
+              <div style="font-weight:700;font-size:15px;color:var(--txt);">{{ nombre_asesor }}</div>
+              <div style="font-size:12px;color:var(--txt3);">Asesor</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;font-size:13px;">
+            <div>
+              <div style="font-size:11px;color:var(--txt3);margin-bottom:3px;">Usuario</div>
+              <div style="color:var(--txt2);font-weight:500;">@{{ request.user.username }}</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--txt3);margin-bottom:3px;">Correo</div>
+              <div style="color:var(--txt2);font-weight:500;">{{ request.user.email|default:"Sin correo registrado" }}</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--txt3);margin-bottom:3px;">Teléfono</div>
+              <div style="color:var(--txt2);font-weight:500;">{{ request.user.perfil.telefono|default:"Sin registrar" }}</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--txt3);margin-bottom:3px;">Miembro desde</div>
+              <div style="color:var(--txt2);font-weight:500;">{{ request.user.date_joined|date:"d/m/Y" }}</div>
+            </div>
+          </div>
+          <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--bdr);font-size:12px;color:var(--txt3);line-height:1.5;">
+            🔒 Por seguridad, solo un administrador puede modificar tus datos de acceso o restablecer tu contraseña. Si necesitas un cambio, contáctalo directamente.
+          </div>
+        </div>
+      </div><!-- /p-cuenta -->
 
-<!-- Modal cambiar contraseña (reutiliza el endpoint existente /usuarios/password/ajax/) -->
-<div class="modal-overlay" id="modal-cambiar-password" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
-  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:380px;max-width:92vw;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-      <div style="font-size:15px;font-weight:700;">Cambiar contraseña</div>
-      <button onclick="cerrarCambiarPassword()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
     </div>
-    <div id="cp-error" style="display:none;background:#fee2e2;color:#dc2626;font-size:12px;padding:8px 10px;border-radius:7px;margin-bottom:10px;"></div>
-    <div style="margin-bottom:10px;">
-      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Contraseña actual</label>
-      <input type="password" id="cp-actual" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
-    </div>
-    <div style="margin-bottom:10px;">
-      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Nueva contraseña</label>
-      <input type="password" id="cp-nueva" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
-    </div>
-    <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Confirmar nueva contraseña</label>
-      <input type="password" id="cp-confirmacion" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
-    </div>
-    <button id="cp-btn" onclick="guardarCambiarPassword()" style="width:100%;background:var(--blue);color:#fff;border:none;padding:10px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Guardar</button>
   </div>
 </div>
 
 <!-- Modal: ver cita (reutiliza citas:detalle_ajax, ya valida que la cita sea de este asesor) -->
-<div class="modal-overlay" id="modal-ver-cita-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
-  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:400px;max-width:92vw;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-      <div style="font-size:15px;font-weight:700;">Detalle de la cita</div>
-      <button onclick="cerrarVerCitaAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+<div id="modal-ver-cita-asesor" class="modal-detalle">
+  <div class="md-box">
+    <div class="md-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="md-avatar" id="vca-avatar">--</div>
+        <div>
+          <div class="md-title" id="vca-nombre">—</div>
+          <div class="md-sub" id="vca-motivo">—</div>
+        </div>
+      </div>
+      <button class="md-close" onclick="cerrarVerCitaAsesor()">×</button>
     </div>
-    <div style="display:flex;flex-direction:column;gap:9px;font-size:13px;color:var(--txt2);">
-      <div><strong id="vca-nombre">—</strong></div>
-      <div>✉️ <span id="vca-correo">—</span></div>
-      <div>📞 <span id="vca-telefono">—</span></div>
-      <div>📅 <span id="vca-fecha-hora">—</span></div>
-      <div>💼 <span id="vca-motivo">—</span></div>
-      <div>🏷️ <span id="vca-estado">—</span></div>
-      <div>📝 <span id="vca-comentarios">—</span></div>
-      <div style="font-size:11px;color:var(--txt3);">Registrada: <span id="vca-creada">—</span></div>
+    <div class="md-body">
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div><div class="md-label">Correo</div><div class="md-val" id="vca-correo">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div><div class="md-label">Teléfono</div><div class="md-val" id="vca-telefono">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div><div class="md-label">Fecha y hora</div><div class="md-val" id="vca-fecha-hora">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="md-label">Estado actual</div><div class="md-val" id="vca-estado">—</div></div>
+      </div>
+      <div class="md-row" id="vca-row-comentarios" style="display:none;">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div><div class="md-label">Comentarios</div><div class="md-val" id="vca-comentarios">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div><div class="md-label">Registrada</div><div class="md-val" id="vca-creada">—</div></div>
+      </div>
+    </div>
+    <div class="md-actions">
+      <button class="md-btn-secondary" onclick="cerrarVerCitaAsesor()">Cerrar</button>
     </div>
   </div>
 </div>
 
 <!-- Modal: editar cita (reutiliza citas:editar_ajax; sin selector de asesor — solo Admin puede reasignar) -->
-<div class="modal-overlay" id="modal-editar-cita-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
-  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:440px;max-width:92vw;max-height:88vh;overflow:auto;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-      <div style="font-size:15px;font-weight:700;">Editar cita</div>
-      <button onclick="cerrarEditarCitaAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+<div id="modal-editar-cita-asesor" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)cerrarEditarCitaAsesor();">
+  <div style="background:#fff;width:430px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+      <div style="font-size:16px;font-weight:700;color:var(--txt);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" style="vertical-align:-2px;margin-right:6px;"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M12 14v4"/><path d="M9 17h6"/></svg>
+        Cambiar cita
+      </div>
+      <button type="button" onclick="cerrarEditarCitaAsesor()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
     </div>
-    <div id="eca-error" style="display:none;background:#fee2e2;color:#dc2626;font-size:12px;padding:8px 10px;border-radius:7px;margin-bottom:10px;"></div>
-    <input type="hidden" id="eca-id">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-      <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Nombre</label><input id="eca-nombre" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
-      <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Apellidos</label><input id="eca-apellidos" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
+
+    <div id="eca-loading" style="text-align:center;padding:2rem;color:var(--txt3);font-size:13px;">
+      <div style="width:28px;height:28px;border:3px solid var(--bdr);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;"></div>
+      Cargando…
     </div>
-    <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Correo</label><input id="eca-correo" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
-    <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Teléfono</label><input id="eca-telefono" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-      <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Fecha</label><input type="date" id="eca-fecha" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
-      <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Hora</label><input type="time" id="eca-hora" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
-    </div>
-    <div style="margin-bottom:10px;">
-      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Motivo</label>
-      <select id="eca-motivo" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
-        <option value="seguro_vida">Seguro de vida</option>
-        <option value="medico">Gastos médicos mayores</option>
-        <option value="auto">Seguro de auto</option>
-        <option value="hogar">Seguro de hogar</option>
-        <option value="inversion">Inversión y ahorro</option>
-        <option value="empresa">Empresarial</option>
-        <option value="otro">Otro</option>
-      </select>
-    </div>
-    <div style="margin-bottom:10px;">
-      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Estado</label>
-      <select id="eca-estado" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
-        <option value="pendiente">Pendiente</option>
-        <option value="confirmada">Confirmada</option>
-        <option value="completada">Completada</option>
-        <option value="cancelada">Cancelada</option>
-      </select>
-    </div>
-    <div style="margin-bottom:14px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Comentarios</label><textarea id="eca-comentarios" rows="3" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;"></textarea></div>
-    <button id="eca-btn-guardar" onclick="guardarEdicionCitaAsesor()" style="width:100%;background:var(--blue);color:#fff;border:none;padding:10px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Guardar cambios</button>
+
+    <form id="form-editar-cita-asesor" style="display:none;">
+      <input type="hidden" id="eca-id">
+      <!-- Igual que en el admin: datos del cliente viajan ocultos, no se editan aquí -->
+      <input type="hidden" id="eca-nombre">
+      <input type="hidden" id="eca-apellidos">
+      <input type="hidden" id="eca-correo">
+      <input type="hidden" id="eca-telefono">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Nueva fecha *</label>
+          <input id="eca-fecha" type="date" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Nueva hora *</label>
+          <input id="eca-hora" type="time" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Motivo de la cita *</label>
+        <select id="eca-motivo" required onchange="document.getElementById('eca-otro-bloque').style.display = (this.value === 'otro') ? '' : 'none';" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;background:#fff;">
+          <option value="seguro_vida">Seguro de vida</option>
+          <option value="medico">Gastos médicos mayores</option>
+          <option value="auto">Seguro de auto</option>
+          <option value="hogar">Seguro de hogar</option>
+          <option value="inversion">Inversión y ahorro</option>
+          <option value="empresa">Empresarial</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+
+      <div id="eca-otro-bloque" style="display:none;margin-top:14px;">
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Especificar motivo</label>
+        <input id="eca-motivo-otro" type="text" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
+      </div>
+
+      <div style="margin-top:14px;">
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Estado *</label>
+        <select id="eca-estado" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;background:#fff;">
+          <option value="pendiente">Pendiente</option>
+          <option value="confirmada">Confirmada</option>
+          <option value="completada">Completada</option>
+          <option value="cancelada">Cancelada</option>
+        </select>
+      </div>
+      <!-- Sin selector de asesor: solo Admin puede reasignar (citas/views.py::editar_ajax) -->
+
+      <div style="margin-top:14px;">
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Comentarios</label>
+        <textarea id="eca-comentarios" rows="2" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;resize:vertical;" placeholder="Información adicional..."></textarea>
+      </div>
+
+      <div id="eca-error" style="display:none;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 12px;border-radius:7px;font-size:12px;margin-top:1rem;"></div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;">
+        <button type="button" onclick="cerrarEditarCitaAsesor()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
+        <button type="button" id="eca-btn-guardar" onclick="guardarEdicionCitaAsesor()" style="background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">✓ Guardar cambios</button>
+      </div>
+    </form>
   </div>
 </div>
 
 <!-- Modal: mensaje de cita (reutiliza citas:mensaje_generado_ajax + WhatsApp) -->
-<div class="modal-overlay" id="modal-mensaje-cita-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
-  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:420px;max-width:92vw;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-      <div style="font-size:15px;font-weight:700;">Enviar mensaje</div>
-      <button onclick="cerrarMensajeCitaAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+<div id="modal-mensaje-asesor" class="modal-detalle">
+  <div class="md-box" style="width:520px;">
+    <div class="md-header">
+      <div>
+        <div class="md-title" id="msga-titulo">Mensaje</div>
+        <div class="md-sub" id="msga-sub">—</div>
+      </div>
+      <button class="md-close" onclick="cerrarModalMensajeAsesor()">&times;</button>
     </div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
-      <span class="act-btn" onclick="generarMensajeCitaAsesor('confirmacion')">Confirmación</span>
-      <span class="act-btn" onclick="generarMensajeCitaAsesor('recordatorio')">Recordatorio</span>
-      <span class="act-btn" onclick="generarMensajeCitaAsesor('reagendar')">Reagendar</span>
-      <span class="act-btn" onclick="generarMensajeCitaAsesor('seguimiento')">Seguimiento</span>
-      <span class="act-btn" onclick="generarMensajeCitaAsesor('cancelacion')">Cancelación</span>
+    <div class="md-body">
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Plantilla</label>
+        <select id="msga-plantilla-select" class="filter-select" style="width:100%;" onchange="_cargarMensajeSeleccionadoAsesor()"></select>
+      </div>
+      <div>
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Mensaje generado</label>
+        <textarea id="msga-texto" rows="7" readonly style="width:100%;background:var(--gray);border:1px solid var(--bdr);border-radius:6px;padding:10px 12px;font-size:13px;font-family:var(--ff);color:var(--txt);resize:vertical;"></textarea>
+      </div>
     </div>
-    <textarea id="msg-cita-texto" rows="6" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;margin-bottom:12px;" placeholder="Elige una plantilla arriba…"></textarea>
-    <button onclick="enviarMensajeCitaWhatsapp()" style="width:100%;background:#22c55e;color:#fff;border:none;padding:10px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Enviar por WhatsApp</button>
+    <div class="md-actions">
+      <button class="md-btn-secondary" onclick="cerrarModalMensajeAsesor()">Cerrar</button>
+      <button class="md-btn-secondary" onclick="_enviarMensajeWhatsappAsesor()">💬 Enviar por WhatsApp</button>
+    </div>
   </div>
 </div>
 
@@ -641,27 +826,6 @@ tr:last-child td{border-bottom:none;}
   </div>
 </div>
 
-<!-- Modal: mensaje de prospecto (reutiliza prospectos:mensaje_generado_ajax + WhatsApp) -->
-<div class="modal-overlay" id="modal-mensaje-prospecto-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
-  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:420px;max-width:92vw;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-      <div style="font-size:15px;font-weight:700;">Enviar mensaje</div>
-      <button onclick="cerrarMensajeProspectoAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
-    </div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
-      <span class="act-btn" onclick="generarMensajeProspectoAsesor('primer_contacto')">Primer contacto</span>
-      <span class="act-btn" onclick="generarMensajeProspectoAsesor('seguimiento')">Seguimiento</span>
-      <span class="act-btn" onclick="generarMensajeProspectoAsesor('seguimiento_cotizacion')">Cotización</span>
-      <span class="act-btn" onclick="generarMensajeProspectoAsesor('recordatorio')">Recordatorio</span>
-      <span class="act-btn" onclick="generarMensajeProspectoAsesor('no_responde')">No responde</span>
-      <span class="act-btn" onclick="generarMensajeProspectoAsesor('agradecimiento')">Agradecimiento</span>
-      <span class="act-btn" onclick="generarMensajeProspectoAsesor('conversion')">Conversión</span>
-    </div>
-    <textarea id="msg-prospecto-texto" rows="6" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;margin-bottom:12px;" placeholder="Elige una plantilla arriba…"></textarea>
-    <button onclick="enviarMensajeProspectoWhatsapp()" style="width:100%;background:#22c55e;color:#fff;border:none;padding:10px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Enviar por WhatsApp</button>
-  </div>
-</div>
-
 <!-- Modal: confirmar eliminar prospecto (reutiliza prospectos:eliminar) -->
 <div class="modal-overlay" id="modal-eliminar-prospecto-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
   <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:360px;max-width:92vw;">
@@ -701,67 +865,120 @@ document.addEventListener('click', function(e){
   if (wrap && !wrap.contains(e.target)) document.getElementById('user-dropdown').classList.remove('open');
 });
 
-function abrirCambiarPassword(){
-  document.getElementById('user-dropdown').classList.remove('open');
-  document.getElementById('cp-error').style.display = 'none';
-  document.getElementById('cp-actual').value = '';
-  document.getElementById('cp-nueva').value = '';
-  document.getElementById('cp-confirmacion').value = '';
-  document.getElementById('modal-cambiar-password').style.display = 'flex';
+/* ─── CAMPANITA DE NOTIFICACIONES (mismo patrón que dashboard/index.html) ─── */
+var _notifCargando = false;
+var _notifTimer    = null;
+var _notifInterval = 2 * 60 * 1000; // 2 minutos
+
+var _notifIconos = {
+  cita_hoy:                     { icono: '📅', bg: '#dcfce7' },
+  prospecto_sin_seguimiento:    { icono: '💬', bg: '#fef3c7' },
+  prospecto_seguimiento_tardio: { icono: '⏳', bg: '#fef3c7' },
+};
+
+function toggleNotif(){
+  var panel  = document.getElementById('notif-panel');
+  var isOpen = panel.classList.contains('open');
+  document.getElementById('user-dropdown').classList.remove('open'); // cerrar menú de usuario si estaba abierto
+  if (isOpen) {
+    panel.classList.remove('open');
+  } else {
+    panel.classList.add('open');
+    _fetchNotificaciones();
+  }
 }
-function cerrarCambiarPassword(){
-  document.getElementById('modal-cambiar-password').style.display = 'none';
+function cerrarNotif(){
+  var panel = document.getElementById('notif-panel');
+  if (panel) panel.classList.remove('open');
 }
-function guardarCambiarPassword(){
-  var btn = document.getElementById('cp-btn');
-  var errDiv = document.getElementById('cp-error');
-  var csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+document.addEventListener('click', function(e){
+  var wrap = document.getElementById('notif-wrap');
+  if (wrap && !wrap.contains(e.target)) cerrarNotif();
+});
 
-  var body = new URLSearchParams();
-  body.append('password_actual', document.getElementById('cp-actual').value);
-  body.append('password_nueva', document.getElementById('cp-nueva').value);
-  body.append('password_confirmacion', document.getElementById('cp-confirmacion').value);
-
-  btn.disabled = true;
-  btn.textContent = 'Guardando…';
-  errDiv.style.display = 'none';
-
-  fetch('{% url "usuarios:cambiar_password_ajax" %}', {
-    method: 'POST',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRFToken': csrf,
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: body.toString()
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    btn.disabled = false;
-    btn.textContent = 'Guardar';
-    if (data.ok) {
-      cerrarCambiarPassword();
-    } else {
-      errDiv.textContent = data.error || 'No se pudo actualizar la contraseña.';
-      errDiv.style.display = 'block';
-    }
-  })
-  .catch(function(){
-    btn.disabled = false;
-    btn.textContent = 'Guardar';
-    errDiv.textContent = 'Error de conexión. Intenta de nuevo.';
-    errDiv.style.display = 'block';
-  });
+function _fetchNotificaciones(){
+  if (_notifCargando) return;
+  _notifCargando = true;
+  fetch('/dashboard/notificaciones/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      _notifCargando = false;
+      if (!data.ok) return;
+      _renderNotificaciones(data.items, data.total);
+    })
+    .catch(function(){ _notifCargando = false; });
 }
 
-/* ─── Toast simple ─── */
-function toastAsesor(msg){
+function _renderNotificaciones(items, total){
+  var dot   = document.getElementById('notif-dot');
+  var count = document.getElementById('np-count');
+  if (dot)   dot.style.display = total > 0 ? 'block' : 'none';
+  if (count) {
+    count.textContent = total > 9 ? '9+' : String(total);
+    count.classList.toggle('hidden', total === 0);
+  }
+
+  var body = document.getElementById('np-body');
+  if (!body) return;
+
+  if (items.length === 0) {
+    body.innerHTML =
+      '<div class="np-empty">' +
+        '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>' +
+        '<p>Sin notificaciones pendientes</p>' +
+      '</div>';
+    return;
+  }
+
+  // Mapeo tipo de notificación → sección del dashboard del asesor.
+  // El asesor solo puede recibir estos tres tipos (cita_hoy, prospecto_sin_seguimiento,
+  // prospecto_seguimiento_tardio): dashboard/views.py::_calcular_notificaciones ya
+  // excluye postulante_nuevo y vacante_por_vencer para usuarios que no son admin.
+  var _navDestinos = {
+    'cita_hoy':                     'citas',
+    'prospecto_sin_seguimiento':    'prospectos',
+    'prospecto_seguimiento_tardio': 'prospectos',
+  };
+
+  body.innerHTML = items.map(function(item){
+    var meta  = item.prioridad_meta || { label: '', color: '#64748b', bg: '#f1f5f9' };
+    var icono = _notifIconos[item.tipo] || { icono: '🔔', bg: '#f1f5f9' };
+    var destino = _navDestinos[item.tipo] || 'inicio';
+    var onclick = "cerrarNotif(); nav('" + destino + "', null);";
+
+    return (
+      '<div class="np-item" onclick="' + onclick + '">' +
+        '<div class="np-icon" style="background:' + icono.bg + ';">' + icono.icono + '</div>' +
+        '<div class="np-item-body">' +
+          '<div class="np-item-title">' + item.titulo + '</div>' +
+          '<div class="np-item-msg">'   + item.mensaje + '</div>' +
+          '<span class="np-prio" style="background:' + meta.bg + ';color:' + meta.color + ';">' +
+            meta.label +
+          '</span>' +
+        '</div>' +
+      '</div>'
+    );
+  }).join('');
+}
+
+_fetchNotificaciones(); // primera carga inmediata
+_notifTimer = setInterval(_fetchNotificaciones, _notifInterval);
+
+/* ─── Toast (idéntico al del dashboard admin) ─── */
+function toast(msg, tipo, duracion){
+  tipo = tipo || 'success'; duracion = duracion || 3500;
+  var icons = {
+    success: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
+    error:   '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    warning: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+  };
   var t = document.createElement('div');
-  t.textContent = msg;
-  t.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--dark2);color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.2);';
-  document.body.appendChild(t);
-  setTimeout(function(){ t.remove(); }, 3000);
+  t.className = 'toast toast-' + tipo;
+  t.innerHTML = icons[tipo] + '<span class="toast-msg">' + msg + '</span><button class="toast-close" onclick="this.parentElement.remove()">×</button>';
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(function(){ t.classList.add('hide'); setTimeout(function(){ t.remove(); }, 320); }, duracion);
 }
+function toastAsesor(msg){ toast(msg, 'success'); }
 function _citaCsrf(){
   return document.querySelector('[name=csrfmiddlewaretoken]').value;
 }
@@ -778,47 +995,88 @@ function filtrarCitasTabla(){
 }
 
 /* ─── CITAS: ver detalle (citas:detalle_ajax — ya valida acceso) ─── */
+var _estadoBadgeCitaAsesor = {
+  pendiente:  '<span class="badge b-yellow">Pendiente</span>',
+  confirmada: '<span class="badge b-green">Confirmada</span>',
+  completada: '<span class="badge b-blue">Atendida</span>',
+  cancelada:  '<span class="badge b-red">Cancelada</span>',
+};
+
 function abrirVerCitaAsesor(id){
-  fetch('/citas/admin/' + id + '/detalle/ajax/', { headers: {'X-Requested-With':'XMLHttpRequest'} })
-    .then(function(r){ return r.json(); })
+  var m = document.getElementById('modal-ver-cita-asesor');
+  m.classList.add('show');
+  ['vca-nombre','vca-motivo','vca-correo','vca-telefono','vca-fecha-hora','vca-creada'].forEach(function(i){
+    var el = document.getElementById(i); if (el) el.textContent = 'Cargando…';
+  });
+  document.getElementById('vca-avatar').textContent = '…';
+  document.getElementById('vca-estado').innerHTML = '';
+  document.getElementById('vca-row-comentarios').style.display = 'none';
+
+  fetch('/citas/admin/' + id + '/detalle/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(function(d){
-      if(!d.ok){ toastAsesor(d.error || 'No se pudo cargar la cita.'); return; }
-      document.getElementById('vca-nombre').textContent = d.nombre_cliente + ' ' + d.apellidos_cliente;
-      document.getElementById('vca-correo').textContent = d.correo;
-      document.getElementById('vca-telefono').textContent = d.telefono;
-      document.getElementById('vca-fecha-hora').textContent = d.fecha + ' — ' + d.hora;
-      document.getElementById('vca-motivo').textContent = d.motivo_display;
-      document.getElementById('vca-estado').textContent = d.estado_display;
-      document.getElementById('vca-comentarios').textContent = d.comentarios || 'Sin comentarios.';
-      document.getElementById('vca-creada').textContent = d.creada;
-      document.getElementById('modal-ver-cita-asesor').style.display = 'flex';
+      if (d.ok === false) { toast(d.error || 'No se pudo cargar la cita.', 'error'); cerrarVerCitaAsesor(); return; }
+      var iniciales = (d.nombre_cliente || '?').charAt(0).toUpperCase() + (d.apellidos_cliente || '?').charAt(0).toUpperCase();
+      document.getElementById('vca-avatar').textContent     = iniciales;
+      document.getElementById('vca-nombre').textContent     = d.nombre_cliente + ' ' + d.apellidos_cliente;
+      document.getElementById('vca-motivo').textContent     = d.motivo_display + (d.motivo_otro ? ': ' + d.motivo_otro : '');
+      document.getElementById('vca-correo').textContent     = d.correo;
+      document.getElementById('vca-telefono').textContent   = d.telefono;
+      document.getElementById('vca-fecha-hora').textContent = d.fecha + ' a las ' + d.hora;
+      document.getElementById('vca-creada').textContent     = d.creada;
+      document.getElementById('vca-estado').innerHTML       = _estadoBadgeCitaAsesor[d.estado] || d.estado_display;
+
+      var bloqueComentarios = document.getElementById('vca-row-comentarios');
+      if (d.comentarios) {
+        document.getElementById('vca-comentarios').textContent = d.comentarios;
+        bloqueComentarios.style.display = 'flex';
+      } else {
+        bloqueComentarios.style.display = 'none';
+      }
     })
-    .catch(function(){ toastAsesor('Error de conexión.'); });
+    .catch(function(){ toast('Error al cargar la cita.', 'error'); });
 }
 function cerrarVerCitaAsesor(){
-  document.getElementById('modal-ver-cita-asesor').style.display = 'none';
+  document.getElementById('modal-ver-cita-asesor').classList.remove('show');
 }
+document.getElementById('modal-ver-cita-asesor').addEventListener('click', function(e){
+  if (e.target === this) cerrarVerCitaAsesor();
+});
 
 /* ─── CITAS: editar (citas:detalle_ajax + citas:editar_ajax — ya valida acceso) ─── */
 function abrirEditarCitaAsesor(id){
-  fetch('/citas/admin/' + id + '/detalle/ajax/', { headers: {'X-Requested-With':'XMLHttpRequest'} })
-    .then(function(r){ return r.json(); })
+  var loading = document.getElementById('eca-loading');
+  var form    = document.getElementById('form-editar-cita-asesor');
+  var err     = document.getElementById('eca-error');
+
+  loading.style.display = 'block';
+  form.style.display    = 'none';
+  err.style.display     = 'none';
+  document.getElementById('modal-editar-cita-asesor').style.display = 'flex';
+
+  fetch('/citas/admin/' + id + '/detalle/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(function(d){
-      if(!d.ok){ toastAsesor(d.error || 'No se pudo cargar la cita.'); return; }
-      document.getElementById('eca-id').value = d.id;
-      document.getElementById('eca-nombre').value = d.nombre_cliente;
-      document.getElementById('eca-apellidos').value = d.apellidos_cliente;
-      document.getElementById('eca-correo').value = d.correo;
-      document.getElementById('eca-telefono').value = d.telefono;
-      document.getElementById('eca-fecha').value = d.fecha;
-      document.getElementById('eca-hora').value = d.hora.slice(0,5);
-      document.getElementById('eca-motivo').value = d.motivo;
-      document.getElementById('eca-estado').value = d.estado;
-      document.getElementById('eca-comentarios').value = d.comentarios;
-      document.getElementById('eca-error').style.display = 'none';
-      document.getElementById('modal-editar-cita-asesor').style.display = 'flex';
+      document.getElementById('eca-id').value        = d.id;
+      document.getElementById('eca-nombre').value     = d.nombre_cliente;
+      document.getElementById('eca-apellidos').value  = d.apellidos_cliente;
+      document.getElementById('eca-correo').value     = d.correo;
+      document.getElementById('eca-telefono').value   = d.telefono;
+      document.getElementById('eca-fecha').value      = d.fecha;
+      document.getElementById('eca-hora').value       = d.hora.slice(0,5);
+      document.getElementById('eca-motivo').value     = d.motivo;
+      document.getElementById('eca-motivo-otro').value = d.motivo_otro || '';
+      document.getElementById('eca-estado').value     = d.estado || 'pendiente';
+      document.getElementById('eca-comentarios').value = d.comentarios || '';
+
+      document.getElementById('eca-otro-bloque').style.display = (d.motivo === 'otro') ? '' : 'none';
+
+      loading.style.display = 'none';
+      form.style.display    = 'block';
     })
-    .catch(function(){ toastAsesor('Error de conexión.'); });
+    .catch(function(){
+      loading.innerHTML = '<p style="color:#dc2626;font-size:13px;">Error al cargar la cita.</p>';
+    });
 }
 function cerrarEditarCitaAsesor(){
   document.getElementById('modal-editar-cita-asesor').style.display = 'none';
@@ -836,6 +1094,7 @@ function guardarEdicionCitaAsesor(){
   body.append('fecha', document.getElementById('eca-fecha').value);
   body.append('hora', document.getElementById('eca-hora').value);
   body.append('motivo', document.getElementById('eca-motivo').value);
+  body.append('motivo_otro', document.getElementById('eca-motivo-otro').value);
   body.append('estado', document.getElementById('eca-estado').value);
   body.append('comentarios', document.getElementById('eca-comentarios').value);
   // Nota: NO se envía asesor_id — el backend solo lo lee si el usuario es
@@ -858,50 +1117,116 @@ function guardarEdicionCitaAsesor(){
   .then(function(r){ return r.json(); })
   .then(function(d){
     btn.disabled = false;
-    btn.textContent = 'Guardar cambios';
+    btn.textContent = '✓ Guardar cambios';
     if (!d.ok) {
       errDiv.textContent = d.error || 'No se pudo guardar.';
       errDiv.style.display = 'block';
       return;
     }
     cerrarEditarCitaAsesor();
-    toastAsesor('Cita actualizada correctamente.');
+    toast('Cita actualizada correctamente.', 'success');
     setTimeout(function(){ window.location.reload(); }, 600);
   })
   .catch(function(){
     btn.disabled = false;
-    btn.textContent = 'Guardar cambios';
+    btn.textContent = '✓ Guardar cambios';
     errDiv.textContent = 'Error de conexión.';
     errDiv.style.display = 'block';
   });
 }
 
-/* ─── CITAS: mensaje (citas:mensaje_generado_ajax — ya valida acceso) ─── */
-var _mensajeCitaId = null;
+/* ─── MENSAJES (sistema genérico compartido Citas + Prospectos, idéntico al admin) ─── */
+var _PLANTILLAS_CITAS_ASESOR = {
+  confirmacion: 'Confirmación de cita',
+  recordatorio: 'Recordatorio de cita',
+  reagendar:    'Reagendar cita',
+  seguimiento:  'Seguimiento posterior',
+  cancelacion:  'Cancelación de cita',
+};
+var _PLANTILLAS_PROSPECTOS_ASESOR = {
+  primer_contacto:        'Primer contacto / presentación',
+  seguimiento:             'Seguimiento de prospecto',
+  seguimiento_cotizacion:  'Seguimiento de cotización',
+  recordatorio:            'Recordatorio de atención',
+  no_responde:             'Prospecto no responde',
+  agradecimiento:          'Mensaje de agradecimiento',
+  conversion:              'Conversión a cliente',
+};
+
+var _msgModuloAsesor   = null;
+var _msgObjetoIdAsesor = null;
+var _msgTelefonoAsesor = '';
+
+function _urlMensajeAjaxAsesor(modulo, id, clave){
+  if (modulo === 'citas') return '/citas/admin/' + id + '/mensaje/' + clave + '/ajax/';
+  return '/prospectos/' + id + '/mensaje/' + clave + '/ajax/';
+}
+
+function _abrirModalMensajeAsesor(modulo, id, telefono, nombre, plantillas){
+  _msgModuloAsesor   = modulo;
+  _msgObjetoIdAsesor = id;
+  _msgTelefonoAsesor = telefono || '';
+
+  document.getElementById('msga-titulo').textContent = 'Mensaje para ' + (nombre || '');
+  document.getElementById('msga-sub').textContent     = _msgTelefonoAsesor ? _msgTelefonoAsesor : 'Sin teléfono registrado';
+
+  var sel = document.getElementById('msga-plantilla-select');
+  sel.innerHTML = '';
+  Object.keys(plantillas).forEach(function(clave){
+    var opt = document.createElement('option');
+    opt.value = clave;
+    opt.textContent = plantillas[clave];
+    sel.appendChild(opt);
+  });
+
+  document.getElementById('msga-texto').value = '';
+  document.getElementById('modal-mensaje-asesor').classList.add('show');
+  _cargarMensajeSeleccionadoAsesor();
+}
+
+function _cargarMensajeSeleccionadoAsesor(){
+  var clave = document.getElementById('msga-plantilla-select').value;
+  if (!clave || !_msgModuloAsesor || !_msgObjetoIdAsesor) return;
+
+  document.getElementById('msga-texto').value = 'Generando…';
+
+  fetch(_urlMensajeAjaxAsesor(_msgModuloAsesor, _msgObjetoIdAsesor, clave), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(d){
+      if (!d.ok) { document.getElementById('msga-texto').value = ''; toast('No se pudo generar el mensaje.', 'error'); return; }
+      document.getElementById('msga-texto').value = d.texto;
+    })
+    .catch(function(){
+      document.getElementById('msga-texto').value = '';
+      toast('Error de conexión al generar el mensaje.', 'error');
+    });
+}
+
+function cerrarModalMensajeAsesor(){
+  document.getElementById('modal-mensaje-asesor').classList.remove('show');
+}
+document.getElementById('modal-mensaje-asesor').addEventListener('click', function(e){
+  if (e.target === this) cerrarModalMensajeAsesor();
+});
+
+function _enviarMensajeWhatsappAsesor(){
+  var texto = document.getElementById('msga-texto').value.trim();
+  if (!texto) { toast('Genera el mensaje antes de enviarlo.', 'warning'); return; }
+  if (!_msgTelefonoAsesor) { toast('Este registro no tiene teléfono registrado.', 'warning'); return; }
+  var limpio = _msgTelefonoAsesor.replace(/[\s\-()]/g, '');
+  window.open('https://wa.me/52' + limpio + '?text=' + encodeURIComponent(texto), '_blank');
+}
+
+// ── Punto de entrada: Citas ──
 function abrirMensajeCitaAsesor(id){
-  _mensajeCitaId = id;
-  document.getElementById('msg-cita-texto').value = '';
-  document.getElementById('modal-mensaje-cita-asesor').style.display = 'flex';
-}
-function cerrarMensajeCitaAsesor(){
-  document.getElementById('modal-mensaje-cita-asesor').style.display = 'none';
-}
-function generarMensajeCitaAsesor(clave){
-  fetch('/citas/admin/' + _mensajeCitaId + '/mensaje/' + clave + '/ajax/', { headers: {'X-Requested-With':'XMLHttpRequest'} })
+  fetch('/citas/admin/' + id + '/detalle/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(function(r){ return r.json(); })
     .then(function(d){
-      if(!d.ok){ toastAsesor(d.error || 'No se pudo generar el mensaje.'); return; }
-      document.getElementById('msg-cita-texto').value = d.texto;
+      if (!d.ok) { toast('No se pudo cargar la cita.', 'error'); return; }
+      var nombre = (d.nombre_cliente + ' ' + (d.apellidos_cliente || '')).trim();
+      _abrirModalMensajeAsesor('citas', id, d.telefono, nombre, _PLANTILLAS_CITAS_ASESOR);
     })
-    .catch(function(){ toastAsesor('Error de conexión.'); });
-}
-function enviarMensajeCitaWhatsapp(){
-  var texto = document.getElementById('msg-cita-texto').value;
-  if(!texto){ toastAsesor('Elige una plantilla primero.'); return; }
-  var fila = document.querySelector('tr[data-cita-id="' + _mensajeCitaId + '"]');
-  var tel = fila ? fila.dataset.telefono : '';
-  var url = 'https://wa.me/' + (tel || '').replace(/\D/g,'') + '?text=' + encodeURIComponent(texto);
-  window.open(url, '_blank');
+    .catch(function(){ toast('Error de conexión al cargar la cita.', 'error'); });
 }
 
 /* ─── CITAS: eliminar (citas:eliminar_ajax — ya valida acceso) ─── */
@@ -927,6 +1252,298 @@ function ejecutarEliminarCitaAsesor(){
     setTimeout(function(){ window.location.reload(); }, 500);
   })
   .catch(function(){ toastAsesor('Error de conexión.'); });
+}
+
+/* ─── PROSPECTOS: filtro de la cuadrícula ─── */
+window._filtroProspectosEstado = '';
+function filtrarProspectosAsesor(estadoParam){
+  if (estadoParam !== null) window._filtroProspectosEstado = estadoParam;
+  var estado = window._filtroProspectosEstado || '';
+  var busq = (document.getElementById('busq-prospectos-asesor').value || '').trim().toLowerCase();
+  document.querySelectorAll('#pros-grid-asesor .pros-card').forEach(function(card){
+    var okEstado = !estado || card.dataset.estado === estado;
+    var okBusq = !busq || card.dataset.nombre.indexOf(busq) !== -1;
+    card.style.display = (okEstado && okBusq) ? '' : 'none';
+  });
+}
+
+/* ─── PROSPECTOS: nuevo (prospectos:crear — ya fuerza asesor_asignado=self si no es admin) ─── */
+function abrirNuevoProspectoAsesor(){
+  document.getElementById('np-nombre').value = '';
+  document.getElementById('np-correo').value = '';
+  document.getElementById('np-telefono').value = '';
+  document.getElementById('np-interes').value = 'general';
+  document.getElementById('np-notas').value = '';
+  document.getElementById('npa-error').style.display = 'none';
+  document.getElementById('modal-nuevo-prospecto-asesor').style.display = 'flex';
+}
+function cerrarNuevoProspectoAsesor(){
+  document.getElementById('modal-nuevo-prospecto-asesor').style.display = 'none';
+}
+function guardarNuevoProspectoAsesor(){
+  var errDiv = document.getElementById('npa-error');
+  var body = new URLSearchParams();
+  body.append('nombre', document.getElementById('np-nombre').value);
+  body.append('correo', document.getElementById('np-correo').value);
+  body.append('telefono', document.getElementById('np-telefono').value);
+  body.append('interes', document.getElementById('np-interes').value);
+  body.append('notas', document.getElementById('np-notas').value);
+  body.append('estado', 'nuevo');
+  body.append('tipo_registro', 'prospecto');
+  // No se envía asesor_asignado: prospectos/views.py::crear() ya fuerza
+  // asesor_asignado = request.user cuando el usuario no es admin, así que
+  // un asesor nunca puede crear un prospecto "huérfano" o asignado a otro.
+  errDiv.style.display = 'none';
+
+  fetch('/prospectos/crear/', {
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': _citaCsrf(),
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: body.toString()
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (!d.ok) {
+      errDiv.textContent = d.error || 'No se pudo crear el prospecto. Verifica los datos.';
+      errDiv.style.display = 'block';
+      return;
+    }
+    cerrarNuevoProspectoAsesor();
+    toastAsesor('Prospecto creado correctamente.');
+    setTimeout(function(){ window.location.reload(); }, 500);
+  })
+  .catch(function(){
+    errDiv.textContent = 'Error de conexión.';
+    errDiv.style.display = 'block';
+  });
+}
+
+/* ─── PROSPECTOS: eliminar (prospectos:eliminar — ya valida acceso) ─── */
+var _delProspectoId = null;
+function abrirEliminarProspectoAsesor(id, nombre){
+  _delProspectoId = id;
+  document.getElementById('dpa-nombre').textContent = nombre;
+  document.getElementById('modal-eliminar-prospecto-asesor').style.display = 'flex';
+}
+function cerrarEliminarProspectoAsesor(){
+  document.getElementById('modal-eliminar-prospecto-asesor').style.display = 'none';
+}
+function ejecutarEliminarProspectoAsesor(){
+  fetch('/prospectos/' + _delProspectoId + '/eliminar/', {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _citaCsrf() }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (!d.ok) { toastAsesor(d.error || 'No se pudo eliminar.'); return; }
+    cerrarEliminarProspectoAsesor();
+    toastAsesor('Prospecto eliminado.');
+    setTimeout(function(){ window.location.reload(); }, 500);
+  })
+  .catch(function(){ toastAsesor('Error de conexión.'); });
+}
+
+/* ════════════════════════════════════════════════════════
+   EXPEDIENTE — embebido dentro de /dashboard/asesor/
+   (mismo endpoint prospectos:expediente_ajax que ya usa el admin,
+   y que ya valida que el prospecto pertenezca a este asesor)
+   ════════════════════════════════════════════════════════ */
+var _expAId = null;
+var _expATelefono = '';
+
+function abrirExpedienteAsesor(id){
+  _expAId = id;
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
+  document.getElementById('p-expediente').classList.add('on');
+  document.querySelectorAll('.sb-item').forEach(function(i){ i.classList.remove('on'); });
+  var sb = document.querySelector('.sb-item[onclick*="nav(\'prospectos\'"]');
+  if (sb) sb.classList.add('on');
+
+  document.getElementById('expa-loading').style.display = 'block';
+  document.getElementById('expa-contenido').style.display = 'none';
+  document.getElementById('expa-editar').style.display = 'none';
+  _cargarExpedienteAsesor();
+}
+
+function _fechaContactoToISO(str){
+  if (!str) return '';
+  var m = str.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
+  if (!m) return '';
+  return m[3] + '-' + m[2] + '-' + m[1] + 'T' + m[4] + ':' + m[5];
+}
+
+function _cargarExpedienteAsesor(){
+  fetch('/prospectos/' + _expAId + '/expediente/ajax/', { headers: { 'X-Requested-With':'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d.ok) { toastAsesor(d.error || 'No se pudo cargar el expediente.'); nav('prospectos'); return; }
+
+      _expATelefono = d.telefono;
+
+      document.getElementById('expa-nombre').textContent = d.nombre;
+      document.getElementById('expa-estado-txt').textContent = d.estado_display;
+      document.getElementById('expa-correo').textContent = d.correo || '—';
+      document.getElementById('expa-telefono').textContent = d.telefono || '—';
+      document.getElementById('expa-interes').textContent = d.interes_display || '—';
+      document.getElementById('expa-tipo').textContent = d.tipo_registro_display || '—';
+      document.getElementById('expa-referido').textContent = d.es_referido ? ('Sí' + (d.nombre_referente ? ' — ' + d.nombre_referente : '')) : 'No';
+      document.getElementById('expa-fecha').textContent = d.fecha_alta || '—';
+      document.getElementById('expa-notas').textContent = d.notas || 'Sin notas.';
+      document.getElementById('expa-select-estado').value = d.estado;
+
+      // Formulario de edición: se precargan también los campos que la UI del
+      // asesor no muestra, para reenviarlos sin cambios y que prospectos:editar
+      // no los borre (mensaje, tipo_registro, servicios_interes, etc.).
+      document.getElementById('exed-nombre').value = d.nombre;
+      document.getElementById('exed-correo').value = d.correo;
+      document.getElementById('exed-telefono').value = d.telefono;
+      document.getElementById('exed-interes').value = d.interes;
+      document.getElementById('exed-notas').value = d.notas;
+      document.getElementById('exed-tipo-registro').value = d.tipo_registro;
+      document.getElementById('exed-mensaje').value = d.mensaje;
+      document.getElementById('exed-servicios-interes').value = d.servicios_interes;
+      document.getElementById('exed-promociones-actuales').value = d.promociones_actuales;
+      document.getElementById('exed-fecha-contacto').value = _fechaContactoToISO(d.fecha_contacto);
+
+      var segHtml = '';
+      d.seguimientos.forEach(function(s){
+        segHtml += '<div style="border-bottom:1px solid var(--bdr);padding:8px 0;font-size:12px;">' +
+          '<div style="color:var(--txt);">' + String(s.comentario).replace(/</g,'&lt;') + '</div>' +
+          '<div style="color:var(--txt3);margin-top:3px;">' + s.asesor_nombre + ' — ' + s.fecha + '</div>' +
+        '</div>';
+      });
+      document.getElementById('expa-seguimientos').innerHTML = segHtml || '<div style="color:var(--txt3);font-size:12px;">Sin seguimientos registrados.</div>';
+
+      document.getElementById('expa-loading').style.display = 'none';
+      document.getElementById('expa-contenido').style.display = 'block';
+    })
+    .catch(function(){ toastAsesor('Error de conexión.'); });
+}
+
+function toggleEditarProspectoAsesor(){
+  var el = document.getElementById('expa-editar');
+  el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
+}
+
+function guardarEdicionProspectoAsesor(){
+  var errDiv = document.getElementById('exed-error');
+  var body = new URLSearchParams();
+  body.append('nombre', document.getElementById('exed-nombre').value);
+  body.append('correo', document.getElementById('exed-correo').value);
+  body.append('telefono', document.getElementById('exed-telefono').value);
+  body.append('interes', document.getElementById('exed-interes').value);
+  body.append('notas', document.getElementById('exed-notas').value);
+  body.append('estado', document.getElementById('expa-select-estado').value);
+  body.append('tipo_registro', document.getElementById('exed-tipo-registro').value);
+  body.append('mensaje', document.getElementById('exed-mensaje').value);
+  body.append('servicios_interes', document.getElementById('exed-servicios-interes').value);
+  body.append('promociones_actuales', document.getElementById('exed-promociones-actuales').value);
+  body.append('fecha_contacto', document.getElementById('exed-fecha-contacto').value);
+  // No se envía asesor_asignado: si el usuario no es admin, prospectos/views.py
+  // ::editar() conserva el asesor_asignado original sin importar qué se mande.
+  errDiv.style.display = 'none';
+
+  fetch('/prospectos/' + _expAId + '/editar/', {
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': _citaCsrf(),
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: body.toString()
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (!d.ok) {
+      errDiv.textContent = d.error || 'No se pudo guardar. Verifica los datos.';
+      errDiv.style.display = 'block';
+      return;
+    }
+    toastAsesor('Prospecto actualizado.');
+    toggleEditarProspectoAsesor();
+    _cargarExpedienteAsesor();
+  })
+  .catch(function(){
+    errDiv.textContent = 'Error de conexión.';
+    errDiv.style.display = 'block';
+  });
+}
+
+function cambiarEstadoProspectoAsesor(){
+  var nuevo = document.getElementById('expa-select-estado').value;
+  var body = new URLSearchParams();
+  body.append('estado', nuevo);
+
+  fetch('/prospectos/' + _expAId + '/estado/ajax/', {
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': _citaCsrf(),
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: body.toString()
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (!d.ok) { toastAsesor(d.error || 'No se pudo cambiar el estado.'); return; }
+    toastAsesor('Estado actualizado a "' + d.estado_display + '".');
+    document.getElementById('expa-estado-txt').textContent = d.estado_display;
+  })
+  .catch(function(){ toastAsesor('Error de conexión.'); });
+}
+
+function agregarSeguimientoAsesor(){
+  var textarea = document.getElementById('expa-nuevo-seguimiento');
+  var texto = textarea.value.trim();
+  if (!texto) { toastAsesor('Escribe un comentario primero.'); return; }
+
+  var body = new URLSearchParams();
+  body.append('comentario', texto);
+
+  fetch('/prospectos/' + _expAId + '/seguimiento/', {
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': _citaCsrf(),
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: body.toString()
+  })
+  .then(function(){
+    textarea.value = '';
+    toastAsesor('Seguimiento agregado.');
+    _cargarExpedienteAsesor();
+  })
+  .catch(function(){ toastAsesor('Error de conexión.'); });
+}
+
+function llamarProspectoAsesor(){
+  if (_expATelefono) window.location.href = 'tel:' + _expATelefono;
+}
+function whatsappProspectoAsesor(){
+  document.getElementById('msg-prospecto-texto').value = '';
+  document.getElementById('modal-mensaje-prospecto-asesor').style.display = 'flex';
+}
+function cerrarMensajeProspectoAsesor(){
+  document.getElementById('modal-mensaje-prospecto-asesor').style.display = 'none';
+}
+function generarMensajeProspectoAsesor(clave){
+  fetch('/prospectos/' + _expAId + '/mensaje/' + clave + '/ajax/', { headers: { 'X-Requested-With':'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d.ok) { toastAsesor(d.error || 'No se pudo generar el mensaje.'); return; }
+      document.getElementById('msg-prospecto-texto').value = d.texto;
+    })
+    .catch(function(){ toastAsesor('Error de conexión.'); });
+}
+function enviarMensajeProspectoWhatsapp(){
+  var texto = document.getElementById('msg-prospecto-texto').value;
+  if (!texto) { toastAsesor('Elige una plantilla primero.'); return; }
+  var url = 'https://wa.me/' + (_expATelefono || '').replace(/\D/g,'') + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
 }
 </script>
 </body>

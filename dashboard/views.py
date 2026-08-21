@@ -25,20 +25,23 @@ logger = logging.getLogger(__name__)
 def _es_admin(user):
     """
     Determina si el usuario tiene privilegios administrativos (Superadmin o
-    Administrador). Mismo criterio que _qs_prospectos() más abajo.
+    Administrador). is_superuser se revisa PRIMERO (mismo criterio que
+    usuarios/permisos.py::es_admin(); ver notas en prospectos/views.py::_rol
+    y citas/views.py::_es_admin sobre el bug que esto corrige).
     """
+    if user.is_superuser:
+        return True
     perfil = getattr(user, 'perfil', None)
-    return perfil.es_admin if perfil else user.is_superuser
+    return bool(perfil and perfil.es_admin)
 
 
 def _qs_prospectos(user):
     """
     Devuelve el queryset base de Prospecto visible para este usuario.
     Admin/superuser → todos. Asesor → solo los asignados a él.
+    Reutiliza _es_admin() para no duplicar el criterio (ver su docstring).
     """
-    perfil   = getattr(user, 'perfil', None)
-    es_admin = perfil.es_admin if perfil else user.is_superuser
-    if es_admin:
+    if _es_admin(user):
         return Prospecto.objects.all()
     return Prospecto.objects.filter(asesor_asignado=user)
 
@@ -116,11 +119,7 @@ def index(request):
         citas_hoy = Cita.objects.filter(fecha=hoy.date()).count()
 
         # Rol del usuario actual (para mostrar/ocultar el selector de asesor en modales)
-        es_admin_dashboard = (
-            request.user.perfil.es_admin
-            if getattr(request.user, 'perfil', None)
-            else request.user.is_superuser
-        )
+        es_admin_dashboard = _es_admin(request.user)
 
         contexto = {
             # ── KPIs principales (tarjetas del dashboard) ──────────────────

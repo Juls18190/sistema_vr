@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Inicio — Grupo V&R Consultores{% endblock %}
 
 {% block extra_css %}
@@ -219,41 +220,36 @@ box-shadow:0 8px 25px rgba(0,0,0,.25);
     color:var(--muted);
 }
 
-/* ══ SERVICIOS ══ */
-.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
-.svc-card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;transition:all .25s;cursor:pointer;}
-.svc-card:hover{border-color:rgba(21,96,189,.4);transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.3);}
-.svc-img-wrap{
-    width:100%;
-    height:200px;
-    overflow:hidden;
-}
-.svc-img-wrap-vacio{background:linear-gradient(135deg,#0b2540,#1a4a7a);display:flex;align-items:center;justify-content:center;}
-.svc-vacio{grid-column:1/-1;text-align:center;padding:2.5rem;color:var(--muted);font-size:14px;background:rgba(255,255,255,0.02);border:0.5px solid var(--border);border-radius:12px;}
+/* ══ SERVICIOS (mismo patrón de fila que /vacantes/) ══ */
+.svc-cat-block{margin-bottom:2.5rem;}
+.svc-cat-block:last-child{margin-bottom:0;}
+.svc-cat-title{font-size:14px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:0.5px solid var(--border);}
+.svc-grid{display:flex;flex-direction:column;gap:1rem;}
+.svc-card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:12px;padding:1.5rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:start;transition:all .25s;}
+.svc-card:hover{border-color:rgba(21,96,189,.4);}
+.svc-main{display:flex;gap:14px;align-items:flex-start;}
+.svc-thumb{width:64px;height:64px;border-radius:10px;background-size:cover;background-position:center;flex-shrink:0;cursor:pointer;}
+.svc-thumb-ph{width:64px;height:64px;border-radius:10px;background:rgba(255,255,255,0.04);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.svc-title{font-size:16px;font-weight:600;color:#fff;margin-bottom:6px;}
+.svc-desc{font-size:13px;color:var(--muted);line-height:1.7;}
+.svc-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:120px;}
+.svc-vacio{text-align:center;padding:2.5rem;color:var(--muted);font-size:14px;background:rgba(255,255,255,0.02);border:0.5px solid var(--border);border-radius:12px;}
 .svc-vacio svg{margin-bottom:.75rem;}
 .svc-vacio p{margin-bottom:.9rem;}
-
-.svc-img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    transition:.35s;
+@media(max-width:640px){
+  .svc-card{grid-template-columns:1fr;}
+  .svc-right{align-items:flex-start;flex-direction:row;}
 }
 
-.svc-card:hover .svc-img{
-    transform:scale(1.05);
-}
 .bg-medico{background:linear-gradient(135deg,#0b2d4a,#1a5276);}
 .bg-vida{background:linear-gradient(135deg,#1a3a1a,#2d6a2d);}
 .bg-auto{background:linear-gradient(135deg,#2d1b00,#5c3800);}
 .bg-hogar{background:linear-gradient(135deg,#2d0a2d,#5c1f5c);}
 .bg-inversion{background:linear-gradient(135deg,#0a2d2d,#1f5c5c);}
 .bg-empresa{background:linear-gradient(135deg,#0a0a2d,#1f1f5c);}
-.svc-body{padding:1rem;}
-.svc-body h3{font-size:14px;font-weight:500;color:#fff;margin-bottom:6px;}
-.svc-body p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:.75rem;}
 .svc-link{font-size:12px;color:var(--accent);transition:gap .2s;display:inline-flex;align-items:center;gap:4px;}
-.svc-card:hover .svc-link{gap:8px;}
+.badge-img{font-size:10px;background:rgba(21,96,189,0.14);color:var(--accent);border:0.5px solid rgba(21,96,189,0.3);padding:3px 10px;border-radius:10px;font-weight:600;cursor:pointer;font-family:var(--ff);}
+.badge-img:hover{background:rgba(21,96,189,0.24);}
 
 /* ══ VACANTES DESTACADAS ══ */
 .vd-wrap{position:relative;margin-top:1rem;}
@@ -261,8 +257,25 @@ box-shadow:0 8px 25px rgba(0,0,0,.25);
 .vd-track::-webkit-scrollbar{display:none;}
 .vd-card{scroll-snap-align:start;flex:0 0 290px;background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:12px;overflow:hidden;transition:all .25s;}
 .vd-card:hover{border-color:rgba(21,96,189,.4);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.25);}
-.vd-img{height:150px;background-size:cover;background-position:center;position:relative;}
+.vd-img{height:150px;background-size:cover;background-position:center;position:relative;cursor:pointer;}
 .vd-badge{position:absolute;top:10px;left:10px;background:rgba(10,22,40,.85);backdrop-filter:blur(6px);color:var(--accent);font-size:10px;padding:4px 10px;border-radius:12px;font-weight:600;border:0.5px solid rgba(79,195,247,.3);}
+.vd-zoom{position:absolute;inset:auto 0 0 0;background:linear-gradient(0deg,rgba(5,12,22,.9),transparent);color:#fff;font-size:10px;font-weight:600;padding:20px 10px 6px;text-align:center;opacity:0;transform:translateY(6px);transition:opacity .25s ease,transform .25s ease;pointer-events:none;}
+.vd-img:hover .vd-zoom{opacity:1;transform:translateY(0);}
+
+/* ══ LIGHTBOX DE IMÁGENES (flyers de Servicios y Vacantes Destacadas) ══ */
+.vac-lightbox{display:none;position:fixed;inset:0;background:rgba(5,12,22,.92);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;padding:2rem;}
+.vac-lightbox.open{display:flex;}
+.vac-lightbox img{max-width:90vw;max-height:85vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5);object-fit:contain;}
+.vac-lightbox-close{position:fixed;top:20px;right:24px;width:42px;height:42px;border-radius:50%;border:0.5px solid var(--border);background:rgba(10,22,40,.9);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:1000;}
+.vac-lightbox-close:hover{background:rgba(21,96,189,.7);}
+.vac-lightbox-nav{position:fixed;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;pointer-events:none;}
+.vac-lightbox-arrow{pointer-events:auto;width:44px;height:44px;border-radius:50%;border:0.5px solid var(--border);background:rgba(10,22,40,.9);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.vac-lightbox-arrow:hover{background:rgba(21,96,189,.7);}
+@media(max-width:600px){
+  .vac-lightbox{padding:1rem;}
+  .vac-lightbox img{max-width:94vw;max-height:80vh;}
+  .vac-lightbox-close{top:14px;right:14px;width:38px;height:38px;}
+}
 .vd-body{padding:1.1rem 1.25rem 1.25rem;}
 .vd-title{font-size:15px;font-weight:600;color:#fff;margin-bottom:10px;line-height:1.3;min-height:39px;}
 .vd-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;}
@@ -388,6 +401,22 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
 .fab-wa::before{background:rgba(37,211,102,0.3);}
 .fab-call{background:var(--blue);box-shadow:0 4px 16px rgba(21,96,189,0.4);}
 .fab-call::before{background:rgba(21,96,189,0.3);}
+
+/* ══ RESPONSIVE — GRIDS A 1 COLUMNA EN TABLET/MÓVIL ══ */
+@media(max-width:820px){
+  .nos-grid{grid-template-columns:1fr;gap:2rem;}
+  .nos-img{height:320px;}
+  .pillars{grid-template-columns:1fr;}
+
+  .citas-grid{grid-template-columns:1fr;gap:2rem;}
+  .fgrid{grid-template-columns:1fr;}
+
+  .mapa-grid{grid-template-columns:1fr;}
+
+  .ft-grid{grid-template-columns:1fr;gap:1.75rem;}
+  .ft-brand p{max-width:none;}
+  .ft-bottom{flex-direction:column;gap:6px;text-align:center;}
+}
 </style>
 {% endblock %}
 
@@ -403,9 +432,20 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
 {% include 'inicio/sections/faq.html' %}
 {% include 'inicio/sections/citas.html' %}
 {% include 'inicio/sections/ubicacion.html' %}
+
+<!-- Lightbox de imágenes (flyers de Servicios y Vacantes Destacadas) -->
+<div class="vac-lightbox" id="vacLightbox" onclick="if(event.target===this) cerrarLightbox()">
+  <button type="button" class="vac-lightbox-close" onclick="cerrarLightbox()" aria-label="Cerrar imagen">✕</button>
+  <div class="vac-lightbox-nav" id="vacLightboxNav" style="display:none;">
+    <button type="button" class="vac-lightbox-arrow" onclick="lightboxSiguiente(-1)" aria-label="Imagen anterior">‹</button>
+    <button type="button" class="vac-lightbox-arrow" onclick="lightboxSiguiente(1)" aria-label="Imagen siguiente">›</button>
+  </div>
+  <img id="vacLightboxImg" src="" alt="Imagen ampliada" onclick="event.stopPropagation()">
+</div>
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/main.js' %}"></script>
 <script>
 
 // ── FAQ animado ──
