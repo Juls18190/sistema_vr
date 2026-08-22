@@ -191,6 +191,74 @@ tr:last-child td{border-bottom:none;}
 .filter-select{padding:7px 10px;border:1px solid var(--bdr);border-radius:7px;font-family:var(--ff);font-size:12px;color:var(--txt2);background:var(--white);}
 .tc-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 
+/* ── Expediente (idéntico al del dashboard admin) ── */
+.exp-hero{background:linear-gradient(135deg,var(--dark2),#1e3a5f);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;}
+.exp-avatar{width:56px;height:56px;background:rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0;}
+.exp-hero-info{flex:1;}
+.exp-nombre{font-size:20px;font-weight:700;color:#fff;margin-bottom:3px;}
+.exp-sub{font-size:12px;color:rgba(255,255,255,.55);}
+.exp-hero-actions{display:flex;gap:7px;flex-wrap:wrap;}
+.btn-accion{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;font-family:var(--ff);font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+.btn-regresar{background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2);}
+.btn-regresar:hover{background:rgba(255,255,255,.18);}
+.btn-editar-exp{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);}
+.btn-editar-exp:hover{background:rgba(255,255,255,.22);}
+.btn-eliminar-exp{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3);}
+.btn-eliminar-exp:hover{background:rgba(239,68,68,.3);}
+.btn-llamar-exp{background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.3);}
+.btn-llamar-exp:hover{background:rgba(59,130,246,.3);}
+.btn-whatsapp-exp{background:#25D366;color:#fff;}
+.btn-whatsapp-exp:hover{background:#1ebe57;}
+.btn-cita-exp{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);}
+.btn-cita-exp:hover{background:rgba(255,255,255,.22);}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.1rem;}
+.exp-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:1.1rem;}
+.exp-card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--txt3);margin-bottom:.9rem;display:flex;align-items:center;gap:6px;}
+.exp-card-title svg{color:var(--blue);}
+.field-row{display:flex;flex-direction:column;gap:2px;margin-bottom:.75rem;}
+.field-row:last-child{margin-bottom:0;}
+.field-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--txt3);}
+.field-value{font-size:13px;color:var(--txt2);font-weight:500;}
+.field-value a{color:var(--blue);text-decoration:none;}
+.field-value a:hover{text-decoration:underline;}
+.seg-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin-bottom:1.1rem;}
+.seg-header{padding:.9rem 1.1rem;border-bottom:1px solid var(--bdr);}
+.seg-header-title{font-size:13px;font-weight:700;}
+.seg-form{padding:1rem 1.1rem;border-bottom:1px solid var(--bdr);}
+.seg-form label{display:block;font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:5px;}
+.seg-form textarea{width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 11px;font-size:13px;font-family:var(--ff);color:var(--txt);outline:none;resize:vertical;min-height:70px;}
+.seg-form textarea:focus{border-color:var(--blue);}
+.btn-seg{display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-family:var(--ff);font-weight:600;cursor:pointer;margin-top:8px;}
+.btn-seg:hover{background:var(--blue2);}
+.timeline{padding:1rem 1.1rem;}
+.tl-item{display:flex;gap:10px;margin-bottom:1rem;position:relative;}
+.tl-item:last-child{margin-bottom:0;}
+.tl-dot{width:30px;height:30px;background:var(--gray);border:2px solid var(--bdr);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:var(--blue);}
+.tl-connector{position:absolute;left:15px;top:30px;bottom:-10px;width:1px;background:var(--bdr);}
+.tl-item:last-child .tl-connector{display:none;}
+.tl-body{flex:1;padding-top:3px;}
+.tl-meta{display:flex;align-items:center;gap:7px;margin-bottom:4px;flex-wrap:wrap;}
+.tl-asesor{font-size:12px;font-weight:600;color:var(--txt);}
+.tl-fecha{font-size:11px;color:var(--txt3);}
+.tl-comentario{font-size:12px;color:var(--txt2);line-height:1.5;background:var(--gray);border-radius:7px;padding:8px 10px;}
+
+/* Modal genérico tipo admin (usado por Editar registro / Nueva cita) */
+.modal{background:#fff;border-radius:14px;padding:1.5rem;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.modal-title{font-size:16px;font-weight:700;color:var(--txt);}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;}
+.modal-close:hover{color:var(--txt);}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;}
+.btn-cancel{background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;}
+.btn-submit{background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;}
+.form-group{margin-bottom:10px;}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;text-transform:none;}
+.form-group input[type=text],.form-group input[type=email],.form-group input[type=date],.form-group input[type=time],.form-group select,.form-group textarea{width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 11px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;}
+.form-group textarea{resize:vertical;}
+.multi-check-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;}
+.multi-check-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txt2);}
+.multi-check-item input{width:auto;accent-color:var(--blue);}
+
 .pros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
 .pros-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;transition:box-shadow .2s,transform .2s;}
 .pros-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.07);transform:translateY(-2px);}
@@ -499,8 +567,18 @@ tr:last-child td{border-bottom:none;}
               {% endif %}
             </div>
             <div class="pcard-footer">
-              <span class="act-btn" onclick="abrirExpedienteAsesor({{ p.id }})">Ver expediente</span>
-              <span class="act-btn" title="Eliminar" style="color:#dc2626;border-color:#fecaca;margin-left:auto;" onclick="abrirEliminarProspectoAsesor({{ p.id }}, '{{ p.nombre|escapejs }}')">Eliminar</span>
+              <span class="act-btn" title="Ver prospecto" onclick="verProspectoDesdeCardAsesor({{ p.id }})">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </span>
+              <span class="act-btn" title="Editar prospecto" onclick="editarProspectoDesdeCardAsesor({{ p.id }})">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
+              </span>
+              <span class="act-btn" title="Enviar mensaje" onclick="mensajeProspectoDesdeCardAsesor({{ p.id }})">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+              </span>
+              <span class="act-btn act-btn-del" title="Eliminar prospecto" style="margin-left:auto;" onclick="abrirEliminarProspectoAsesor({{ p.id }}, '{{ p.nombre|escapejs }}')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </span>
             </div>
           </div>
           {% empty %}
@@ -511,81 +589,109 @@ tr:last-child td{border-bottom:none;}
       </div><!-- /p-prospectos -->
 
       <div id="p-expediente" class="page">
-        <div class="page-header">
-          <div>
-            <span class="tc-link" style="cursor:pointer;" onclick="nav('prospectos')">← Volver a Prospectos</span>
-            <div class="page-title" id="expa-nombre" style="margin-top:6px;">—</div>
-            <div class="page-sub" id="expa-estado-txt">—</div>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <span class="act-btn" onclick="llamarProspectoAsesor()">📞 Llamar</span>
-            <span class="act-btn" onclick="whatsappProspectoAsesor()">💬 WhatsApp</span>
-            <span class="act-btn" onclick="toggleEditarProspectoAsesor()">✏️ Editar</span>
-          </div>
-        </div>
 
-        <div id="expa-loading" style="padding:2rem;text-align:center;color:var(--txt3);font-size:13px;">Cargando expediente…</div>
+        <div id="expa-loading" style="text-align:center;padding:4rem;color:var(--txt3);">
+          <div style="width:32px;height:32px;border:3px solid var(--bdr);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;"></div>
+          Cargando expediente…
+        </div>
 
         <div id="expa-contenido" style="display:none;">
-          <div class="table-card" style="padding:1.25rem;">
-            <div id="expa-vista" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:var(--txt2);">
-              <div><strong>Correo:</strong> <span id="expa-correo">—</span></div>
-              <div><strong>Teléfono:</strong> <span id="expa-telefono">—</span></div>
-              <div><strong>Interés:</strong> <span id="expa-interes">—</span></div>
-              <div><strong>Tipo:</strong> <span id="expa-tipo">—</span></div>
-              <div><strong>Referido:</strong> <span id="expa-referido">—</span></div>
-              <div><strong>Alta:</strong> <span id="expa-fecha">—</span></div>
-              <div style="grid-column:1/-1;"><strong>Notas:</strong> <span id="expa-notas">—</span></div>
-            </div>
 
-            <div style="margin-top:16px;max-width:260px;">
-              <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Cambiar estado</label>
-              <select id="expa-select-estado" onchange="cambiarEstadoProspectoAsesor()" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
-                <option value="nuevo">Nuevo</option>
-                <option value="contactado">Contactado</option>
-                <option value="convertido">Convertido en cliente</option>
-                <option value="descartado">Descartado</option>
-              </select>
+          <!-- HERO -->
+          <div class="exp-hero">
+            <div class="exp-avatar" id="expa-avatar"></div>
+            <div class="exp-hero-info">
+              <div class="exp-nombre" id="expa-nombre"></div>
+              <div class="exp-sub" id="expa-sub"></div>
             </div>
-
-            <div id="expa-editar" style="display:none;margin-top:16px;border-top:1px solid var(--bdr);padding-top:16px;">
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-                <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Nombre</label><input id="exed-nombre" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
-                <div><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Teléfono</label><input id="exed-telefono" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
-              </div>
-              <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Correo</label><input id="exed-correo" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
-              <div style="margin-bottom:10px;">
-                <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Interés</label>
-                <select id="exed-interes" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
-                  <option value="seguro_vida">Seguro de vida</option>
-                  <option value="medico">Gastos médicos</option>
-                  <option value="auto">Seguro de auto</option>
-                  <option value="hogar">Seguro de hogar</option>
-                  <option value="inversion">Inversión y ahorro</option>
-                  <option value="empresa">Empresarial</option>
-                  <option value="general">Información general</option>
-                </select>
-              </div>
-              <div style="margin-bottom:12px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Notas</label><textarea id="exed-notas" rows="3" style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;"></textarea></div>
-              <!-- Campos que este formulario no expone en la UI del asesor, pero que se
-                   reenvían con su valor actual para que prospectos:editar no los borre. -->
-              <input type="hidden" id="exed-tipo-registro">
-              <input type="hidden" id="exed-mensaje">
-              <input type="hidden" id="exed-servicios-interes">
-              <input type="hidden" id="exed-promociones-actuales">
-              <input type="hidden" id="exed-fecha-contacto">
-              <div id="exed-error" style="display:none;background:#fee2e2;color:#dc2626;font-size:12px;padding:8px 10px;border-radius:7px;margin-bottom:10px;"></div>
-              <button onclick="guardarEdicionProspectoAsesor()" style="background:var(--blue);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Guardar cambios</button>
+            <div class="exp-hero-actions">
+              <button class="btn-accion btn-regresar" onclick="nav('prospectos')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Regresar a Prospectos
+              </button>
+              <button class="btn-accion btn-llamar-exp" id="expa-btn-llamar" style="display:none;" onclick="llamarProspectoAsesor()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                Llamar
+              </button>
+              <button class="btn-accion btn-whatsapp-exp" id="expa-btn-whatsapp" style="display:none;" onclick="whatsappProspectoAsesor()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M20.52 3.449C18.24 1.245 15.24 0 12.05 0 5.495 0 .157 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.304-1.654a11.86 11.86 0 005.683 1.448h.005c6.554 0 11.893-5.335 11.893-11.893 0-3.18-1.24-6.169-3.416-8.452zM12.05 21.785h-.004a9.885 9.885 0 01-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374a9.86 9.86 0 01-1.512-5.26c0-5.45 4.436-9.884 9.891-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c0 5.45-4.435 9.885-9.886 9.885z"/></svg>
+                WhatsApp
+              </button>
+              <button class="btn-accion btn-cita-exp" id="expa-btn-cita" onclick="agendarCitaExpAsesor()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Agendar cita
+              </button>
+              <button class="btn-accion btn-editar-exp" id="expa-btn-editar" onclick="document.getElementById('expa-modal-editar').classList.add('show')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
+                Editar
+              </button>
+              <button class="btn-accion btn-eliminar-exp" onclick="abrirEliminarProspectoAsesor(_expAId, document.getElementById('expa-nombre').textContent)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                Eliminar
+              </button>
+              <!-- Sin "Convertir a cliente": esa función administrativa queda para Admin/Superadmin -->
             </div>
           </div>
 
-          <div class="table-card" style="padding:1.25rem;margin-top:14px;">
-            <h3 style="font-size:14px;margin-bottom:12px;">Seguimientos</h3>
-            <div id="expa-seguimientos" style="margin-bottom:14px;"></div>
-            <textarea id="expa-nuevo-seguimiento" rows="2" placeholder="Agregar comentario de seguimiento…" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;margin-bottom:8px;"></textarea>
-            <button onclick="agregarSeguimientoAsesor()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 16px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Agregar seguimiento</button>
+          <!-- DATOS -->
+          <div class="exp-grid">
+            <div class="exp-card">
+              <div class="exp-card-title">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Datos de contacto
+              </div>
+              <div class="field-row"><div class="field-label">Correo</div><div class="field-value" id="expa-correo"></div></div>
+              <div class="field-row"><div class="field-label">Teléfono</div><div class="field-value" id="expa-telefono"></div></div>
+              <div class="field-row"><div class="field-label">Origen del registro</div><div class="field-value" id="expa-referido"></div></div>
+            </div>
+            <div class="exp-card">
+              <div class="exp-card-title">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Datos comerciales
+              </div>
+              <div class="field-row"><div class="field-label">Tipo de registro</div><div class="field-value" id="expa-tipo-registro"></div></div>
+              <div class="field-row"><div class="field-label" id="expa-label-servicios">Servicios de interés</div><div class="field-value" id="expa-servicios-lista"></div></div>
+              <div class="field-row"><div class="field-label">Estado</div><div class="field-value" id="expa-estado"></div></div>
+              <div class="field-row"><div class="field-label">Fecha de alta</div><div class="field-value" id="expa-fecha"></div></div>
+            </div>
           </div>
-        </div>
+
+          <!-- Notas -->
+          <div id="expa-notas-card" class="exp-card" style="margin-bottom:1.1rem;display:none;">
+            <div class="exp-card-title">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+              Notas internas
+            </div>
+            <p id="expa-notas-texto" style="font-size:13px;color:var(--txt2);line-height:1.6;"></p>
+          </div>
+
+          <!-- Seguimientos -->
+          <div class="seg-card">
+            <div class="seg-header">
+              <div class="seg-header-title">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" style="vertical-align:-2px;margin-right:5px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Historial de seguimientos
+                <span id="expa-seg-count" style="font-size:11px;color:var(--txt3);font-weight:400;margin-left:5px;"></span>
+              </div>
+            </div>
+            <div class="seg-form">
+              <form id="expa-form-seg" onsubmit="enviarSeguimientoExpAsesor(event)">
+                <label>Agregar comentario de seguimiento</label>
+                <textarea id="expa-seg-comentario" name="comentario" placeholder="Escribe el comentario de seguimiento…" required></textarea>
+                <button type="submit" class="btn-seg">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Registrar seguimiento
+                </button>
+              </form>
+            </div>
+            <div class="timeline" id="expa-timeline">
+              <div style="text-align:center;padding:1.5rem;color:var(--txt3);font-size:12px;">
+                No hay seguimientos registrados aún.
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /expa-contenido -->
       </div><!-- /p-expediente -->
 
       <div id="p-cuenta" class="page">
@@ -799,6 +905,202 @@ tr:last-child td{border-bottom:none;}
 
 <!-- Modal: nuevo prospecto (reutiliza prospectos:crear; SIN selector de asesor —
      prospectos/views.py::crear() ya fuerza asesor_asignado=request.user si no es admin) -->
+<div id="modal-ver-prospecto-asesor" class="modal-detalle">
+  <div class="md-box">
+    <div class="md-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="md-avatar" id="verp-avatar">--</div>
+        <div>
+          <div class="md-title" id="verp-nombre">—</div>
+          <div class="md-sub" id="verp-interes">—</div>
+        </div>
+      </div>
+      <button class="md-close" onclick="cerrarModalVerProspectoAsesor()">×</button>
+    </div>
+    <div class="md-body">
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div><div class="md-label">Correo</div><div class="md-val" id="verp-correo">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 012 2.18 2 2 0 014 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div><div class="md-label">Teléfono</div><div class="md-val" id="verp-telefono">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div><div class="md-label">Alta</div><div class="md-val" id="verp-fecha">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="md-label">Estado</div><div class="md-val" id="verp-estado">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 00-3 3v6a3 3 0 006 0V5a3 3 0 00-3-3z"/></svg></div>
+        <div><div class="md-label">Tipo de registro</div><div class="md-val" id="verp-tipo">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <div><div class="md-label">Referido</div><div class="md-val" id="verp-referido">—</div></div>
+      </div>
+      <div class="md-row" id="verp-notas-wrap" style="display:none;">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div><div class="md-label">Notas</div><div class="md-val" id="verp-notas">—</div></div>
+      </div>
+    </div>
+    <div class="md-actions">
+      <button class="md-btn-secondary" onclick="cerrarModalVerProspectoAsesor()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="expa-modal-editar">
+  <div class="modal" style="width:600px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-header">
+      <div class="modal-title">Editar registro</div>
+      <button class="modal-close" onclick="document.getElementById('expa-modal-editar').classList.remove('show')">×</button>
+    </div>
+    <form id="expa-form-editar" method="POST" action="#">
+      <input type="hidden" id="expa-edit-interes" name="interes" value="general">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+
+        <div class="exp-card-title" style="grid-column:1/-1;">DATOS PERSONALES</div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Nombre completo *</label>
+          <input type="text" id="expa-edit-nombre" name="nombre" required>
+        </div>
+        <div class="form-group">
+          <label>Correo electrónico *</label>
+          <input type="email" id="expa-edit-correo" name="correo" required>
+        </div>
+        <div class="form-group">
+          <label>Teléfono *</label>
+          <input type="text" id="expa-edit-telefono" name="telefono" required>
+        </div>
+
+        <div class="exp-card-title" style="grid-column:1/-1;margin-top:.5rem;">TIPO DE REGISTRO</div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <span class="badge b-blue" id="expa-form-tipo-badge">🔵 Prospecto</span>
+          <div style="font-size:11px;color:var(--txt3);margin-top:6px;">Solo un administrador puede convertir un prospecto en cliente.</div>
+          <input type="hidden" id="expa-edit-tipo" name="tipo_registro" value="prospecto">
+        </div>
+
+        <div class="exp-card-title" style="grid-column:1/-1;margin-top:.5rem;">ORIGEN</div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <div style="display:flex;gap:18px;margin-top:4px;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:600;">
+              <input type="radio" id="expa-edit-origen-nuevo" name="es_referido" value="false" style="width:auto;accent-color:var(--blue);" checked>
+              Cliente nuevo
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:600;">
+              <input type="radio" id="expa-edit-origen-referido" name="es_referido" value="true" style="width:auto;accent-color:var(--blue);">
+              Referido
+            </label>
+          </div>
+        </div>
+
+        <div class="exp-card-title" style="grid-column:1/-1;margin-top:.5rem;">INFORMACIÓN COMERCIAL</div>
+        <div class="form-group">
+          <label>Estado *</label>
+          <select id="expa-edit-estado" name="estado" required>
+            <option value="nuevo">Nuevo</option>
+            <option value="contactado">Contactado</option>
+            <option value="convertido">Convertido en cliente</option>
+            <option value="descartado">Descartado</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="grid-column:1/-1;" id="expa-bloque-servicios-interes">
+          <label>Servicios de interés</label>
+          <div class="multi-check-grid">
+            <div class="multi-check-item"><input type="checkbox" id="expa-si-vida" name="servicios_interes" value="seguro_vida"><label for="expa-si-vida">Seguro de Vida</label></div>
+            <div class="multi-check-item"><input type="checkbox" id="expa-si-medico" name="servicios_interes" value="medico"><label for="expa-si-medico">Gastos Médicos</label></div>
+            <div class="multi-check-item"><input type="checkbox" id="expa-si-auto" name="servicios_interes" value="auto"><label for="expa-si-auto">Seguro de Auto</label></div>
+            <div class="multi-check-item"><input type="checkbox" id="expa-si-hogar" name="servicios_interes" value="hogar"><label for="expa-si-hogar">Seguro de Hogar</label></div>
+            <div class="multi-check-item"><input type="checkbox" id="expa-si-inversion" name="servicios_interes" value="inversion"><label for="expa-si-inversion">Inversión y Ahorro</label></div>
+            <div class="multi-check-item"><input type="checkbox" id="expa-si-empresa" name="servicios_interes" value="empresarial"><label for="expa-si-empresa">Empresarial</label></div>
+          </div>
+        </div>
+
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Notas internas</label>
+          <textarea id="expa-edit-notas" name="notas" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div id="expa-edit-error" style="display:none;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 12px;border-radius:7px;font-size:12px;margin-bottom:.5rem;"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="document.getElementById('expa-modal-editar').classList.remove('show')">Cancelar</button>
+        <button type="submit" class="btn-submit">✓ Guardar cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: agendar cita desde el expediente (reutiliza citas:crear_ajax, que asigna la cita automáticamente al usuario que la crea) -->
+<div id="modal-nueva-cita-asesor" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none';">
+  <div style="background:#fff;width:620px;max-width:95%;max-height:90vh;overflow:auto;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+      <div style="font-size:16px;font-weight:700;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" style="vertical-align:-2px;margin-right:6px;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Agendar nueva cita
+      </div>
+      <button onclick="document.getElementById('modal-nueva-cita-asesor').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+    </div>
+    <form id="form-nueva-cita-asesor">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Nombre *</label>
+          <input id="nca-nombre" name="nombre" type="text" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;" placeholder="Nombre(s)">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Apellidos *</label>
+          <input id="nca-apellidos" name="apellidos" type="text" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;" placeholder="Apellidos">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Correo *</label>
+          <input id="nca-correo" name="correo" type="email" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;" placeholder="correo@ejemplo.com">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Teléfono *</label>
+          <input id="nca-telefono" name="telefono" type="tel" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;" placeholder="10 dígitos">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Fecha *</label>
+          <input id="nca-fecha" name="fecha" type="date" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Hora *</label>
+          <input id="nca-hora" name="hora" type="time" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
+        </div>
+        <div style="grid-column:1/3;">
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Motivo *</label>
+          <select id="nca-motivo" name="motivo" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;background:#fff;">
+            <option value="">— Selecciona un motivo —</option>
+            <option value="seguro_vida">Seguro de vida</option>
+            <option value="medico">Gastos médicos mayores</option>
+            <option value="auto">Seguro de auto</option>
+            <option value="hogar">Seguro de hogar</option>
+            <option value="inversion">Inversión y ahorro</option>
+            <option value="empresa">Empresarial</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div style="grid-column:1/3;">
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Comentarios</label>
+          <textarea id="nca-comentarios" name="comentarios" rows="2" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;resize:vertical;" placeholder="Información adicional..."></textarea>
+        </div>
+      </div>
+      <div id="nca-error" style="display:none;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 12px;border-radius:7px;font-size:12px;margin-top:1rem;"></div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;">
+        <button type="button" onclick="document.getElementById('modal-nueva-cita-asesor').style.display='none'" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
+        <button type="submit" id="nca-btn-guardar" style="background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">+ Agendar cita</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-nuevo-prospecto-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
   <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:420px;max-width:92vw;max-height:88vh;overflow:auto;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
@@ -1353,198 +1655,349 @@ function ejecutarEliminarProspectoAsesor(){
    ════════════════════════════════════════════════════════ */
 var _expAId = null;
 var _expATelefono = '';
+var _expACorreo = '';
+var _expANombre = '';
+var _expAInteres = '';
+
+var _estadoBadgeExpAsesor = {
+  nuevo:      '<span class="badge b-blue">Nuevo</span>',
+  contactado: '<span class="badge b-yellow">Contactado</span>',
+  convertido: '<span class="badge b-green">Convertido</span>',
+  descartado: '<span class="badge b-gray">Descartado</span>',
+};
 
 function abrirExpedienteAsesor(id){
   _expAId = id;
+
+  var loading   = document.getElementById('expa-loading');
+  var contenido = document.getElementById('expa-contenido');
+  loading.style.display   = 'block';
+  contenido.style.display = 'none';
+
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
   document.getElementById('p-expediente').classList.add('on');
   document.querySelectorAll('.sb-item').forEach(function(i){ i.classList.remove('on'); });
   var sb = document.querySelector('.sb-item[onclick*="nav(\'prospectos\'"]');
   if (sb) sb.classList.add('on');
 
-  document.getElementById('expa-loading').style.display = 'block';
-  document.getElementById('expa-contenido').style.display = 'none';
-  document.getElementById('expa-editar').style.display = 'none';
-  _cargarExpedienteAsesor();
-}
-
-function _fechaContactoToISO(str){
-  if (!str) return '';
-  var m = str.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
-  if (!m) return '';
-  return m[3] + '-' + m[2] + '-' + m[1] + 'T' + m[4] + ':' + m[5];
-}
-
-function _cargarExpedienteAsesor(){
-  fetch('/prospectos/' + _expAId + '/expediente/ajax/', { headers: { 'X-Requested-With':'XMLHttpRequest' } })
+  fetch('/prospectos/' + id + '/expediente/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (!d.ok) { toastAsesor(d.error || 'No se pudo cargar el expediente.'); nav('prospectos'); return; }
-
-      _expATelefono = d.telefono;
-
-      document.getElementById('expa-nombre').textContent = d.nombre;
-      document.getElementById('expa-estado-txt').textContent = d.estado_display;
-      document.getElementById('expa-correo').textContent = d.correo || '—';
-      document.getElementById('expa-telefono').textContent = d.telefono || '—';
-      document.getElementById('expa-interes').textContent = d.interes_display || '—';
-      document.getElementById('expa-tipo').textContent = d.tipo_registro_display || '—';
-      document.getElementById('expa-referido').textContent = d.es_referido ? ('Sí' + (d.nombre_referente ? ' — ' + d.nombre_referente : '')) : 'No';
-      document.getElementById('expa-fecha').textContent = d.fecha_alta || '—';
-      document.getElementById('expa-notas').textContent = d.notas || 'Sin notas.';
-      document.getElementById('expa-select-estado').value = d.estado;
-
-      // Formulario de edición: se precargan también los campos que la UI del
-      // asesor no muestra, para reenviarlos sin cambios y que prospectos:editar
-      // no los borre (mensaje, tipo_registro, servicios_interes, etc.).
-      document.getElementById('exed-nombre').value = d.nombre;
-      document.getElementById('exed-correo').value = d.correo;
-      document.getElementById('exed-telefono').value = d.telefono;
-      document.getElementById('exed-interes').value = d.interes;
-      document.getElementById('exed-notas').value = d.notas;
-      document.getElementById('exed-tipo-registro').value = d.tipo_registro;
-      document.getElementById('exed-mensaje').value = d.mensaje;
-      document.getElementById('exed-servicios-interes').value = d.servicios_interes;
-      document.getElementById('exed-promociones-actuales').value = d.promociones_actuales;
-      document.getElementById('exed-fecha-contacto').value = _fechaContactoToISO(d.fecha_contacto);
-
-      var segHtml = '';
-      d.seguimientos.forEach(function(s){
-        segHtml += '<div style="border-bottom:1px solid var(--bdr);padding:8px 0;font-size:12px;">' +
-          '<div style="color:var(--txt);">' + String(s.comentario).replace(/</g,'&lt;') + '</div>' +
-          '<div style="color:var(--txt3);margin-top:3px;">' + s.asesor_nombre + ' — ' + s.fecha + '</div>' +
-        '</div>';
-      });
-      document.getElementById('expa-seguimientos').innerHTML = segHtml || '<div style="color:var(--txt3);font-size:12px;">Sin seguimientos registrados.</div>';
-
-      document.getElementById('expa-loading').style.display = 'none';
-      document.getElementById('expa-contenido').style.display = 'block';
-    })
-    .catch(function(){ toastAsesor('Error de conexión.'); });
+    .then(function(d){ _poblarExpedienteAsesor(d); })
+    .catch(function(){
+      loading.innerHTML = '<p style="color:#dc2626;">Error al cargar el expediente. <button onclick="abrirExpedienteAsesor(' + id + ')" class="btn-seg" style="margin-left:8px;">Reintentar</button></p>';
+    });
 }
 
-function toggleEditarProspectoAsesor(){
-  var el = document.getElementById('expa-editar');
-  el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
+function _poblarExpedienteAsesor(d){
+  if (d.ok === false) { toastAsesor(d.error || 'No se pudo cargar el expediente.'); nav('prospectos'); return; }
+
+  var iniciales = (d.nombre || '').split(' ').slice(0,2).map(function(w){ return w[0] || ''; }).join('').toUpperCase();
+  document.getElementById('expa-avatar').textContent = iniciales;
+  document.getElementById('expa-nombre').textContent = d.nombre;
+
+  document.getElementById('expa-sub').innerHTML =
+    (d.interes_display || '') + ' &nbsp;·&nbsp; Alta: ' + d.fecha_alta +
+    ' &nbsp;·&nbsp; ' + (_estadoBadgeExpAsesor[d.estado] || d.estado_display);
+
+  document.getElementById('expa-correo').innerHTML   = d.correo   ? '<a href="mailto:' + d.correo + '">' + d.correo + '</a>' : '—';
+  document.getElementById('expa-telefono').innerHTML = d.telefono ? '<a href="tel:' + d.telefono + '">' + d.telefono + '</a>' : '—';
+  _expATelefono = d.telefono || '';
+  _expACorreo   = d.correo || '';
+  _expANombre   = d.nombre || '';
+  _expAInteres  = d.interes || '';
+
+  var btnLlamar = document.getElementById('expa-btn-llamar');
+  var btnWhats  = document.getElementById('expa-btn-whatsapp');
+  if (btnLlamar) btnLlamar.style.display = d.telefono ? '' : 'none';
+  if (btnWhats)  btnWhats.style.display  = d.telefono ? '' : 'none';
+
+  document.getElementById('expa-referido').innerHTML = d.es_referido
+    ? '<span class="badge b-purple">Referido</span>'
+    : '<span class="badge b-blue">Cliente nuevo</span>';
+
+  document.getElementById('expa-tipo-registro').innerHTML =
+    d.tipo_registro === 'cliente' ? '<span class="badge b-green">✅ Cliente</span>' : '<span class="badge b-blue">🔵 Prospecto</span>';
+
+  var items = d.servicios_interes_lista || [];
+  var listaServ = document.getElementById('expa-servicios-lista');
+  listaServ.innerHTML = items.length
+    ? items.map(function(s){ return '<span style="display:inline-block;background:#eff6ff;color:#1d4ed8;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:600;margin:2px 2px 2px 0;">' + s + '</span>'; }).join('')
+    : '<span style="color:var(--txt3);">—</span>';
+
+  document.getElementById('expa-estado').innerHTML = _estadoBadgeExpAsesor[d.estado] || d.estado_display;
+  document.getElementById('expa-fecha').textContent = d.fecha_alta;
+
+  var notasCard = document.getElementById('expa-notas-card');
+  if (d.notas) {
+    document.getElementById('expa-notas-texto').textContent = d.notas;
+    notasCard.style.display = '';
+  } else {
+    notasCard.style.display = 'none';
+  }
+
+  _renderTimelineAsesor(d.seguimientos || []);
+  _precargarModalEditarAsesor(d);
+
+  document.getElementById('expa-loading').style.display   = 'none';
+  document.getElementById('expa-contenido').style.display = '';
+
+  if (_expAbrirEditarPendienteAsesor) {
+    _expAbrirEditarPendienteAsesor = false;
+    document.getElementById('expa-modal-editar').classList.add('show');
+  }
 }
 
-function guardarEdicionProspectoAsesor(){
-  var errDiv = document.getElementById('exed-error');
-  var body = new URLSearchParams();
-  body.append('nombre', document.getElementById('exed-nombre').value);
-  body.append('correo', document.getElementById('exed-correo').value);
-  body.append('telefono', document.getElementById('exed-telefono').value);
-  body.append('interes', document.getElementById('exed-interes').value);
-  body.append('notas', document.getElementById('exed-notas').value);
-  body.append('estado', document.getElementById('expa-select-estado').value);
-  body.append('tipo_registro', document.getElementById('exed-tipo-registro').value);
-  body.append('mensaje', document.getElementById('exed-mensaje').value);
-  body.append('servicios_interes', document.getElementById('exed-servicios-interes').value);
-  body.append('promociones_actuales', document.getElementById('exed-promociones-actuales').value);
-  body.append('fecha_contacto', document.getElementById('exed-fecha-contacto').value);
-  // No se envía asesor_asignado: si el usuario no es admin, prospectos/views.py
-  // ::editar() conserva el asesor_asignado original sin importar qué se mande.
-  errDiv.style.display = 'none';
+function _renderTimelineAsesor(segs){
+  var tl    = document.getElementById('expa-timeline');
+  var count = document.getElementById('expa-seg-count');
+  count.textContent = '(' + segs.length + ' registro' + (segs.length !== 1 ? 's' : '') + ')';
 
-  fetch('/prospectos/' + _expAId + '/editar/', {
-    method: 'POST',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRFToken': _citaCsrf(),
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: body.toString()
+  if (segs.length === 0) {
+    tl.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--txt3);font-size:12px;">No hay seguimientos registrados aún.</div>';
+    return;
+  }
+
+  tl.innerHTML = segs.map(function(s, i){
+    return '<div class="tl-item">' +
+      '<div><div class="tl-dot">' + (segs.length - i) + '</div><div class="tl-connector"></div></div>' +
+      '<div class="tl-body">' +
+        '<div class="tl-meta"><span class="tl-asesor">' + s.asesor_nombre + '</span><span class="tl-fecha">' + s.fecha + '</span></div>' +
+        '<div class="tl-comentario">' + String(s.comentario).replace(/</g,'&lt;') + '</div>' +
+      '</div></div>';
+  }).join('');
+}
+
+function enviarSeguimientoExpAsesor(e){
+  e.preventDefault();
+  var texto = document.getElementById('expa-seg-comentario').value.trim();
+  if (!texto) return;
+
+  fetch('/prospectos/' + _expAId + '/seguimiento/', {
+    method:  'POST',
+    headers: { 'X-CSRFToken': _citaCsrf() },
+    body:    new URLSearchParams({ comentario: texto }),
   })
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    if (!d.ok) {
-      errDiv.textContent = d.error || 'No se pudo guardar. Verifica los datos.';
-      errDiv.style.display = 'block';
-      return;
-    }
-    toastAsesor('Prospecto actualizado.');
-    toggleEditarProspectoAsesor();
-    _cargarExpedienteAsesor();
+  .then(function(){
+    document.getElementById('expa-seg-comentario').value = '';
+    toastAsesor('Seguimiento registrado.');
+    abrirExpedienteAsesor(_expAId);
   })
-  .catch(function(){
-    errDiv.textContent = 'Error de conexión.';
-    errDiv.style.display = 'block';
+  .catch(function(){ toastAsesor('Error al guardar el seguimiento.'); });
+}
+
+/* ── Modal "Editar registro" (idéntico al admin, incluye submit AJAX) ── */
+function _precargarModalEditarAsesor(d){
+  var campos = {
+    'expa-edit-nombre':   d.nombre,
+    'expa-edit-correo':   d.correo,
+    'expa-edit-telefono': d.telefono,
+    'expa-edit-notas':    d.notas,
+  };
+  Object.keys(campos).forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.value = campos[id] || '';
+  });
+
+  var selEst = document.getElementById('expa-edit-estado');
+  if (selEst) selEst.value = d.estado || 'nuevo';
+
+  var origenNuevo    = document.getElementById('expa-edit-origen-nuevo');
+  var origenReferido = document.getElementById('expa-edit-origen-referido');
+  if (origenNuevo && origenReferido) {
+    origenReferido.checked = !!d.es_referido;
+    origenNuevo.checked    = !d.es_referido;
+  }
+
+  var interes = document.getElementById('expa-edit-interes');
+  if (interes) interes.value = d.interes || 'general';
+
+  // Checkboxes de servicios de interés, a partir del CSV "seguro_vida,auto"
+  var valores = (d.servicios_interes || '').split(',').map(function(v){ return v.trim(); });
+  document.querySelectorAll('#expa-bloque-servicios-interes input[type=checkbox]').forEach(function(cb){
+    cb.checked = valores.indexOf(cb.value) !== -1;
   });
 }
 
-function cambiarEstadoProspectoAsesor(){
-  var nuevo = document.getElementById('expa-select-estado').value;
-  var body = new URLSearchParams();
-  body.append('estado', nuevo);
+document.addEventListener('DOMContentLoaded', function(){
+  var formEditar = document.getElementById('expa-form-editar');
+  if (!formEditar) return;
 
-  fetch('/prospectos/' + _expAId + '/estado/ajax/', {
-    method: 'POST',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRFToken': _citaCsrf(),
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: body.toString()
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    if (!d.ok) { toastAsesor(d.error || 'No se pudo cambiar el estado.'); return; }
-    toastAsesor('Estado actualizado a "' + d.estado_display + '".');
-    document.getElementById('expa-estado-txt').textContent = d.estado_display;
-  })
-  .catch(function(){ toastAsesor('Error de conexión.'); });
+  formEditar.addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn    = formEditar.querySelector('[type=submit]');
+    var errDiv = document.getElementById('expa-edit-error');
+
+    btn.disabled    = true;
+    btn.textContent = 'Guardando…';
+    if (errDiv) errDiv.style.display = 'none';
+
+    fetch('/prospectos/' + _expAId + '/editar/', {
+      method:  'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _citaCsrf() },
+      body:    new FormData(formEditar),
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      btn.disabled    = false;
+      btn.textContent = '✓ Guardar cambios';
+      if (!data.ok) {
+        if (errDiv) { errDiv.textContent = data.error || 'Error al guardar.'; errDiv.style.display = 'block'; }
+        return;
+      }
+      document.getElementById('expa-modal-editar').classList.remove('show');
+      toastAsesor('Prospecto "' + data.nombre + '" actualizado.');
+      abrirExpedienteAsesor(_expAId);
+    })
+    .catch(function(){
+      btn.disabled    = false;
+      btn.textContent = '✓ Guardar cambios';
+      if (errDiv) { errDiv.textContent = 'Error de conexión.'; errDiv.style.display = 'block'; }
+    });
+  });
+});
+
+/* ── Agendar cita desde el expediente (citas:crear_ajax — asigna la cita al usuario que la crea) ── */
+function agendarCitaExpAsesor(){
+  if (!_expAId) return;
+
+  var formNC = document.getElementById('form-nueva-cita-asesor');
+  if (formNC) formNC.reset();
+  document.getElementById('nca-error').style.display = 'none';
+
+  var partes    = (_expANombre || '').trim().split(' ');
+  var nombre    = partes.shift() || '';
+  var apellidos = partes.join(' ');
+
+  document.getElementById('nca-nombre').value    = nombre;
+  document.getElementById('nca-apellidos').value = apellidos;
+  document.getElementById('nca-correo').value    = _expACorreo || '';
+  document.getElementById('nca-telefono').value  = _expATelefono || '';
+
+  // El interés del prospecto comparte 6 de 7 claves con Cita.MOTIVO_CHOICES
+  // ('general' de Prospecto no tiene equivalente directo en Cita → se deja sin preseleccionar).
+  var motivosValidos = ['seguro_vida', 'medico', 'auto', 'hogar', 'inversion', 'empresa'];
+  var motivoSel = document.getElementById('nca-motivo');
+  motivoSel.value = motivosValidos.indexOf(_expAInteres) !== -1 ? _expAInteres : '';
+
+  document.getElementById('modal-nueva-cita-asesor').style.display = 'flex';
 }
 
-function agregarSeguimientoAsesor(){
-  var textarea = document.getElementById('expa-nuevo-seguimiento');
-  var texto = textarea.value.trim();
-  if (!texto) { toastAsesor('Escribe un comentario primero.'); return; }
+document.addEventListener('DOMContentLoaded', function(){
+  var formNC = document.getElementById('form-nueva-cita-asesor');
+  if (!formNC) return;
 
-  var body = new URLSearchParams();
-  body.append('comentario', texto);
+  formNC.addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn    = document.getElementById('nca-btn-guardar');
+    var errDiv = document.getElementById('nca-error');
 
-  fetch('/prospectos/' + _expAId + '/seguimiento/', {
-    method: 'POST',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRFToken': _citaCsrf(),
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: body.toString()
-  })
-  .then(function(){
-    textarea.value = '';
-    toastAsesor('Seguimiento agregado.');
-    _cargarExpedienteAsesor();
-  })
-  .catch(function(){ toastAsesor('Error de conexión.'); });
-}
+    btn.disabled    = true;
+    btn.textContent = 'Agendando…';
+    errDiv.style.display = 'none';
+
+    fetch('/citas/admin/crear/ajax/', {
+      method:  'POST',
+      headers: { 'X-CSRFToken': _citaCsrf() },
+      body:    new FormData(formNC),
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      btn.disabled    = false;
+      btn.textContent = '+ Agendar cita';
+      if (!data.ok) {
+        errDiv.textContent   = data.error || 'Error al agendar la cita.';
+        errDiv.style.display = 'block';
+        return;
+      }
+      document.getElementById('modal-nueva-cita-asesor').style.display = 'none';
+      formNC.reset();
+      toastAsesor('Cita agendada: ' + data.nombre_cliente + ' ' + data.apellidos_cliente);
+    })
+    .catch(function(){
+      btn.disabled    = false;
+      btn.textContent = '+ Agendar cita';
+      errDiv.textContent   = 'Error de conexión. Intenta de nuevo.';
+      errDiv.style.display = 'block';
+    });
+  });
+});
 
 function llamarProspectoAsesor(){
   if (_expATelefono) window.location.href = 'tel:' + _expATelefono;
 }
 function whatsappProspectoAsesor(){
-  document.getElementById('msg-prospecto-texto').value = '';
-  document.getElementById('modal-mensaje-prospecto-asesor').style.display = 'flex';
+  if (!_expAId) return;
+  var nombre = document.getElementById('expa-nombre').textContent || '';
+  _abrirModalMensajeAsesor('prospectos', _expAId, _expATelefono, nombre, _PLANTILLAS_PROSPECTOS_ASESOR);
 }
-function cerrarMensajeProspectoAsesor(){
-  document.getElementById('modal-mensaje-prospecto-asesor').style.display = 'none';
-}
-function generarMensajeProspectoAsesor(clave){
-  fetch('/prospectos/' + _expAId + '/mensaje/' + clave + '/ajax/', { headers: { 'X-Requested-With':'XMLHttpRequest' } })
+
+/* ─── PROSPECTOS: acciones rápidas desde la tarjeta (mismo patrón que el admin) ─── */
+function mensajeProspectoDesdeCardAsesor(id){
+  fetch('/prospectos/' + id + '/expediente/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(function(r){ return r.json(); })
     .then(function(d){
-      if (!d.ok) { toastAsesor(d.error || 'No se pudo generar el mensaje.'); return; }
-      document.getElementById('msg-prospecto-texto').value = d.texto;
+      if (!d.ok) { toast(d.error || 'No se pudo cargar el prospecto.', 'error'); return; }
+      _abrirModalMensajeAsesor('prospectos', id, d.telefono, d.nombre, _PLANTILLAS_PROSPECTOS_ASESOR);
     })
-    .catch(function(){ toastAsesor('Error de conexión.'); });
+    .catch(function(){ toast('Error de conexión al cargar el prospecto.', 'error'); });
 }
-function enviarMensajeProspectoWhatsapp(){
-  var texto = document.getElementById('msg-prospecto-texto').value;
-  if (!texto) { toastAsesor('Elige una plantilla primero.'); return; }
-  var url = 'https://wa.me/' + (_expATelefono || '').replace(/\D/g,'') + '?text=' + encodeURIComponent(texto);
-  window.open(url, '_blank');
+
+var _expAbrirEditarPendienteAsesor = false;
+function editarProspectoDesdeCardAsesor(id){
+  _expAbrirEditarPendienteAsesor = true;
+  abrirExpedienteAsesor(id);
 }
+
+/* ─── PROSPECTOS: modal "Ver" (solo lectura, idéntico al admin) ─── */
+var _estadoBadgeProspectoAsesor = {
+  nuevo:      '<span class="badge b-blue">Nuevo</span>',
+  contactado: '<span class="badge b-yellow">Contactado</span>',
+  convertido: '<span class="badge b-green">Convertido</span>',
+  descartado: '<span class="badge b-gray">Descartado</span>',
+};
+function verProspectoDesdeCardAsesor(id){
+  var modal = document.getElementById('modal-ver-prospecto-asesor');
+  modal.classList.add('show');
+
+  ['verp-nombre','verp-correo','verp-telefono','verp-interes','verp-tipo','verp-referido','verp-fecha'].forEach(function(campId){
+    var el = document.getElementById(campId); if (el) el.textContent = 'Cargando…';
+  });
+  document.getElementById('verp-avatar').textContent = '…';
+  document.getElementById('verp-estado').innerHTML = '';
+  document.getElementById('verp-notas-wrap').style.display = 'none';
+
+  fetch('/prospectos/' + id + '/expediente/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(d){
+      if (!d.ok) { toast(d.error || 'No se pudo cargar el prospecto.', 'error'); cerrarModalVerProspectoAsesor(); return; }
+
+      document.getElementById('verp-avatar').textContent   = (d.nombre || '?').charAt(0).toUpperCase();
+      document.getElementById('verp-nombre').textContent   = d.nombre;
+      document.getElementById('verp-interes').textContent  = d.interes_display || '—';
+      document.getElementById('verp-correo').textContent   = d.correo || '—';
+      document.getElementById('verp-telefono').textContent = d.telefono || '—';
+      document.getElementById('verp-tipo').textContent     = d.tipo_registro_display || '—';
+      document.getElementById('verp-referido').textContent = d.es_referido ? ('Sí' + (d.nombre_referente ? ' — ' + d.nombre_referente : '')) : 'No';
+      document.getElementById('verp-fecha').textContent    = d.fecha_alta || '—';
+      document.getElementById('verp-estado').innerHTML     = _estadoBadgeProspectoAsesor[d.estado] || d.estado_display;
+
+      var notasWrap = document.getElementById('verp-notas-wrap');
+      if (d.notas) {
+        document.getElementById('verp-notas').textContent = d.notas;
+        notasWrap.style.display = 'flex';
+      } else {
+        notasWrap.style.display = 'none';
+      }
+    })
+    .catch(function(){ toast('Error de conexión al cargar el prospecto.', 'error'); });
+}
+function cerrarModalVerProspectoAsesor(){
+  document.getElementById('modal-ver-prospecto-asesor').classList.remove('show');
+}
+document.getElementById('modal-ver-prospecto-asesor').addEventListener('click', function(e){
+  if (e.target === this) cerrarModalVerProspectoAsesor();
+});
 </script>
 </body>
+
 </html>

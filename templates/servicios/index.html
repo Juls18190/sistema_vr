@@ -98,8 +98,6 @@ nav.scrolled{background:rgba(5,12,24,0.99);box-shadow:0 4px 20px rgba(0,0,0,0.3)
 .hero-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.3);border:none;cursor:pointer;padding:0;transition:all .2s;}
 .hero-dot.active{background:var(--accent);width:22px;border-radius:5px;}
 @media(max-width:768px){ .hero-float{display:none;} }
-@media(max-width:900px){ .svc-grid{grid-template-columns:repeat(2,1fr);} }
-@media(max-width:560px){ .svc-grid{grid-template-columns:1fr;} }
 .w{border-radius:1px;background:rgba(79,195,247,0.08);}
 .w.lit{background:rgba(255,220,120,0.25);animation:shimmer 3s ease infinite;background-size:200% 100%;}
 .w.lit2{background:rgba(79,195,247,0.3);}
@@ -234,60 +232,29 @@ box-shadow:0 8px 25px rgba(0,0,0,.25);
 .page-hero h1{font-family:var(--fd);font-size:38px;font-weight:600;color:#fff;margin-bottom:12px;line-height:1.2;}
 .page-hero p{font-size:15px;color:rgba(255,255,255,.7);max-width:560px;line-height:1.7;}
 @media(max-width:560px){ .page-hero{padding:3rem 1.25rem 2rem;} }
-.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
-.svc-card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;transition:all .25s;}
-.svc-card:hover{border-color:rgba(21,96,189,.4);transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.3);}
-.svc-img-wrap{
-    width:100%;
-    height:200px;
-    overflow:hidden;
-    position:relative;
-    display:block;
-    padding:0;
-    border:none;
-    background:none;
-    cursor:pointer;
-    font-family:var(--ff);
-}
-.svc-img-wrap-vacio{background:linear-gradient(135deg,#0b2540,#1a4a7a);display:flex;align-items:center;justify-content:center;cursor:default;}
-.svc-vacio{grid-column:1/-1;text-align:center;padding:2.5rem;color:var(--muted);font-size:14px;background:rgba(255,255,255,0.02);border:0.5px solid var(--border);border-radius:12px;}
-.svc-vacio svg{margin-bottom:.75rem;}
-.svc-vacio p{margin-bottom:.9rem;}
 
-.svc-img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-    transition:.35s;
-}
+/* ══ SERVICIOS (mismo patrón de fila que /vacantes/) ══ */
+.svc-cat-block{margin-bottom:1.5rem;}
+.svc-cat-block:last-child{margin-bottom:0;}
+.svc-cat-title{font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:0.5px solid var(--border);}
+.svc-cat-vacio{font-size:12px;color:var(--muted);font-style:italic;padding:.5rem 0 .25rem;}
+.svc-grid{display:flex;flex-direction:column;gap:.5rem;}
+.svc-card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:9px;padding:.6rem .75rem;display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:center;transition:all .25s;}
+.svc-card:hover{border-color:rgba(21,96,189,.4);}
+.svc-main{display:flex;gap:8px;align-items:center;}
+.svc-thumb{width:38px;height:38px;border-radius:7px;background-size:cover;background-position:center;flex-shrink:0;cursor:pointer;}
+.svc-thumb-ph{width:38px;height:38px;border-radius:7px;background:rgba(255,255,255,0.04);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.svc-thumb-ph svg{width:16px;height:16px;}
+.svc-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:1px;}
+.svc-desc{font-size:11px;color:var(--muted);line-height:1.4;}
+.svc-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:88px;}
 
-.svc-card:hover .svc-img{
-    transform:scale(1.05);
-}
-.svc-zoom{
-    position:absolute; inset:auto 0 0 0;
-    background:linear-gradient(0,rgba(5,12,22,.92),transparent);
-    color:#fff; font-size:11px; font-weight:600;
-    padding:22px 12px 8px; text-align:center;
-    opacity:0; transform:translateY(6px);
-    transition:opacity .25s ease, transform .25s ease;
-    pointer-events:none;
-}
-.svc-img-wrap:hover .svc-zoom,
-.svc-img-wrap:focus-visible .svc-zoom{ opacity:1; transform:translateY(0); }
-.svc-img-wrap:focus-visible{ outline:2px solid var(--accent); outline-offset:-2px; }
 .bg-medico{background:linear-gradient(135deg,#0b2d4a,#1a5276);}
 .bg-vida{background:linear-gradient(135deg,#1a3a1a,#2d6a2d);}
 .bg-auto{background:linear-gradient(135deg,#2d1b00,#5c3800);}
 .bg-hogar{background:linear-gradient(135deg,#2d0a2d,#5c1f5c);}
 .bg-inversion{background:linear-gradient(135deg,#0a2d2d,#1f5c5c);}
 .bg-empresa{background:linear-gradient(135deg,#0a0a2d,#1f1f5c);}
-.svc-body{padding:1rem;}
-.svc-body h3{font-size:14px;font-weight:500;color:#fff;margin-bottom:6px;}
-.svc-body p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:.75rem;}
-.svc-link{font-size:12px;color:var(--accent);transition:gap .2s;display:inline-flex;align-items:center;gap:4px;text-decoration:none;}
-.svc-card:hover .svc-link{gap:8px;}
 
 /* ══ VACANTES DESTACADAS ══ */
 .vd-wrap{position:relative;margin-top:1rem;}
@@ -519,38 +486,58 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
   <p>Soluciones integrales para cada etapa de tu vida: seguros, inversión, ahorro y asesoría financiera personalizada por expertos.</p>
 </div>
 
-<!-- CATÁLOGO COMPLETO (todos los servicios activos, no solo un destacado) -->
+<!-- CATÁLOGO COMPLETO (todos los servicios activos, agrupados por categoría) -->
 <div class="sec">
-  <div class="svc-grid">
-    {% if servicios %}
-      {% for s in servicios %}
-        <div class="svc-card">
-          {% if s.imagen %}
-            <div class="svc-img-wrap" onclick="abrirLightbox('{{ s.imagen.url }}')" role="button" tabindex="0" aria-label="Ver imagen completa de {{ s.nombre }}">
-              <img src="{{ s.imagen.url }}" class="svc-img" alt="{{ s.nombre }}">
-              <div class="svc-zoom">🔍 Ver imagen completa</div>
-            </div>
-          {% else %}
-            <div class="svc-img-wrap svc-img-wrap-vacio">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-          {% endif %}
-          <div class="svc-body">
-            <h3>{{ s.nombre }}</h3>
-            <p>{{ s.descripcion|default:s.descripcion_corta|linebreaksbr }}</p>
+  {% if servicios %}
+    {% for cat_slug, cat_label, cat_lista in categorias_servicios %}
+      <div class="svc-cat-block">
+        <h3 class="svc-cat-title">{{ cat_label }}</h3>
+        {% if cat_lista %}
+          <div class="svc-grid">
+            {% for s in cat_lista %}
+              <div class="svc-card">
+                <div class="svc-main">
+                  {% if s.imagen %}
+                    <div class="svc-thumb" style="background-image:url('{{ s.imagen.url }}');" onclick="abrirLightbox('{{ s.imagen.url }}')" role="button" aria-label="Ver imagen de {{ s.nombre }}"></div>
+                  {% else %}
+                    <div class="svc-thumb-ph">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                  {% endif %}
+                  <div>
+                    <div class="svc-title">{{ s.nombre }}</div>
+                    <p class="svc-desc">{{ s.descripcion|default:s.descripcion_corta|linebreaksbr }}</p>
+                  </div>
+                </div>
+                <div class="svc-right">
+                  {% if s.imagen %}
+                    <button type="button" class="badge-img" onclick="abrirLightbox('{{ s.imagen.url }}')">🖼 Ver imagen</button>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
           </div>
-        </div>
-      {% endfor %}
-    {% else %}
-      <p style="grid-column:1/-1;text-align:center;color:var(--muted);padding:2rem 0;">
-        Por el momento no hay servicios publicados.
-      </p>
-    {% endif %}
-  </div>
+        {% else %}
+          <div class="svc-cat-vacio">Aún no hay servicios activos en esta categoría.</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <p style="text-align:center;color:var(--muted);padding:2rem 0;">
+      Por el momento no hay servicios publicados.
+    </p>
+  {% endif %}
 </div>
 
-{% include 'inicio/sections/cta.html' %}
-{% include 'inicio/sections/citas.html' %}
+<div class="sec">
+  <div class="cta-band">
+    <div>
+      <h3>¿Listo para proteger lo que más te importa?</h3>
+      <p>Agenda una cita con uno de nuestros asesores, sin costo ni compromiso.</p>
+    </div>
+    <a href="/citas/agendar/" class="btn-cta-w" style="text-decoration:none;display:inline-block;">Agendar Cita →</a>
+  </div>
+</div>
 
 <div class="sec">
   <div class="cta-band" style="background:rgba(255,255,255,0.03);border:0.5px solid var(--border);">

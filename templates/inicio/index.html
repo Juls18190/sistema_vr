@@ -91,8 +91,6 @@ nav.scrolled{background:rgba(5,12,24,0.99);box-shadow:0 4px 20px rgba(0,0,0,0.3)
 .hero-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.3);border:none;cursor:pointer;padding:0;transition:all .2s;}
 .hero-dot.active{background:var(--accent);width:22px;border-radius:5px;}
 @media(max-width:768px){ .hero-float{display:none;} }
-@media(max-width:900px){ .svc-grid{grid-template-columns:repeat(2,1fr);} }
-@media(max-width:560px){ .svc-grid{grid-template-columns:1fr;} }
 .w{border-radius:1px;background:rgba(79,195,247,0.08);}
 .w.lit{background:rgba(255,220,120,0.25);animation:shimmer 3s ease infinite;background-size:200% 100%;}
 .w.lit2{background:rgba(79,195,247,0.3);}
@@ -221,18 +219,19 @@ box-shadow:0 8px 25px rgba(0,0,0,.25);
 }
 
 /* ══ SERVICIOS (mismo patrón de fila que /vacantes/) ══ */
-.svc-cat-block{margin-bottom:2.5rem;}
+.svc-cat-block{margin-bottom:1.75rem;}
 .svc-cat-block:last-child{margin-bottom:0;}
-.svc-cat-title{font-size:14px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:0.5px solid var(--border);}
-.svc-grid{display:flex;flex-direction:column;gap:1rem;}
-.svc-card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:12px;padding:1.5rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:start;transition:all .25s;}
+.svc-cat-title{font-size:13px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:0.5px solid var(--border);}
+.svc-grid{display:flex;flex-direction:column;gap:.6rem;}
+.svc-card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:10px;padding:.85rem 1rem;display:grid;grid-template-columns:1fr auto;gap:.75rem;align-items:center;transition:all .25s;}
 .svc-card:hover{border-color:rgba(21,96,189,.4);}
-.svc-main{display:flex;gap:14px;align-items:flex-start;}
-.svc-thumb{width:64px;height:64px;border-radius:10px;background-size:cover;background-position:center;flex-shrink:0;cursor:pointer;}
-.svc-thumb-ph{width:64px;height:64px;border-radius:10px;background:rgba(255,255,255,0.04);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.svc-title{font-size:16px;font-weight:600;color:#fff;margin-bottom:6px;}
-.svc-desc{font-size:13px;color:var(--muted);line-height:1.7;}
-.svc-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:120px;}
+.svc-main{display:flex;gap:10px;align-items:center;}
+.svc-thumb{width:46px;height:46px;border-radius:8px;background-size:cover;background-position:center;flex-shrink:0;cursor:pointer;}
+.svc-thumb-ph{width:46px;height:46px;border-radius:8px;background:rgba(255,255,255,0.04);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.svc-thumb-ph svg{width:18px;height:18px;}
+.svc-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:2px;}
+.svc-desc{font-size:12px;color:var(--muted);line-height:1.45;}
+.svc-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:96px;}
 .svc-vacio{text-align:center;padding:2.5rem;color:var(--muted);font-size:14px;background:rgba(255,255,255,0.02);border:0.5px solid var(--border);border-radius:12px;}
 .svc-vacio svg{margin-bottom:.75rem;}
 .svc-vacio p{margin-bottom:.9rem;}
@@ -430,7 +429,17 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
 {% include 'inicio/sections/cta.html' %}
 {% include 'inicio/sections/testimonios.html' %}
 {% include 'inicio/sections/faq.html' %}
-{% include 'inicio/sections/citas.html' %}
+
+<div class="sec">
+  <div class="cta-band">
+    <div>
+      <h3>¿Listo para proteger lo que más te importa?</h3>
+      <p>Agenda una cita con uno de nuestros asesores, sin costo ni compromiso.</p>
+    </div>
+    <a href="/citas/agendar/" class="btn-cta-w" style="text-decoration:none;display:inline-block;">Agendar Cita →</a>
+  </div>
+</div>
+
 {% include 'inicio/sections/ubicacion.html' %}
 
 <!-- Lightbox de imágenes (flyers de Servicios y Vacantes Destacadas) -->

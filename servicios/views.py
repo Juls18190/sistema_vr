@@ -11,7 +11,15 @@ from usuarios.permisos import solo_admin
 
 def index(request):
     servicios = Servicio.objects.filter(activo=True).order_by('orden')
-    return render(request, 'servicios/index.html', {'servicios': servicios})
+    categorias_servicios = [
+        ('personal', 'Seguros Personales', servicios.filter(categoria='personal')),
+        ('inversion', 'Ahorro e Inversión', servicios.filter(categoria='inversion')),
+        ('empresarial', 'Empresarial', servicios.filter(categoria='empresarial')),
+    ]
+    return render(request, 'servicios/index.html', {
+        'servicios': servicios,
+        'categorias_servicios': categorias_servicios,
+    })
 
 
 # ── AJAX: detalle de un servicio ──────────────────────────────────────────────
