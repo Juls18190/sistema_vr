@@ -83,6 +83,52 @@ def _datos_mensuales():
     return meses_labels, citas_data, posts_data
 
 
+def _datos_mensuales_asesor(user):
+    """
+    Igual que _datos_mensuales(), pero filtrado a los datos de UN asesor:
+    sus propias citas (Cita.asesor=user) y sus propios prospectos
+    (Prospecto.asesor_asignado=user), últimos 6 meses. El asesor no ve
+    Postulantes (módulo exclusivo del admin), así que aquí se usa
+    Prospectos como segunda serie en vez de Postulantes.
+    """
+    MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+
+    hoy = timezone.now()
+    periodos = []
+    for i in range(5, -1, -1):
+        mes = hoy.month - i
+        año = hoy.year
+        while mes <= 0:
+            mes += 12
+            año -= 1
+        periodos.append((año, mes))
+
+    citas_qs = (
+        Cita.objects
+        .filter(asesor=user)
+        .annotate(mes=TruncMonth('creada'))
+        .values('mes')
+        .annotate(total=Count('id'))
+    )
+    citas_map = {(r['mes'].year, r['mes'].month): r['total'] for r in citas_qs}
+
+    pros_qs = (
+        Prospecto.objects
+        .filter(asesor_asignado=user)
+        .annotate(mes=TruncMonth('fecha'))
+        .values('mes')
+        .annotate(total=Count('id'))
+    )
+    pros_map = {(r['mes'].year, r['mes'].month): r['total'] for r in pros_qs}
+
+    meses_labels = [MESES_ES[m - 1] for _, m in periodos]
+    citas_data   = [citas_map.get(p, 0) for p in periodos]
+    pros_data    = [pros_map.get(p, 0) for p in periodos]
+
+    return meses_labels, citas_data, pros_data
+
+
 @never_cache
 @login_required(login_url='/usuarios/login/')
 def index(request):
@@ -591,6 +637,8 @@ def index_asesor(request):
     qs_citas      = _qs_citas(request.user)
     qs_prospectos = Prospecto.objects.filter(asesor_asignado=request.user)
 
+    meses_labels, citas_mensual, prospectos_mensual = _datos_mensuales_asesor(request.user)
+
     citas_hoy = (
         qs_citas
         .filter(fecha=hoy)
@@ -618,6 +666,17 @@ def index_asesor(request):
         'citas_confirmadas': qs_citas.filter(estado='confirmada').count(),
         'citas_atendidas':   qs_citas.filter(estado='completada').count(),
         'citas_canceladas':  qs_citas.filter(estado='cancelada').count(),
+
+        # ── Gráficas de "Inicio" (mismo patrón que el admin, filtrado a este asesor) ──
+        'chart_meses':       meses_labels,
+        'chart_citas':       citas_mensual,
+        'chart_prospectos':  prospectos_mensual,
+        'chart_doughnut': [
+            qs_citas.filter(estado='pendiente').count(),
+            qs_citas.filter(estado='confirmada').count(),
+            qs_citas.filter(estado='completada').count(),
+            qs_citas.filter(estado='cancelada').count(),
+        ],
 
         # ── Citas — listado completo para la sección embebida "Citas" ──
         # Mismo queryset _qs_citas() que usaba la vista independiente

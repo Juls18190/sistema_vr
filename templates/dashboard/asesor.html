@@ -7,6 +7,7 @@
 <title>Mi Dashboard — Grupo V&amp;R Consultores</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 :root{
   --dark:#0d1b2a;--dark2:#112240;--blue:#1560BD;--blue2:#3a82e8;
@@ -190,6 +191,22 @@ tr:last-child td{border-bottom:none;}
 .search-box input{border:none;outline:none;font-family:var(--ff);font-size:12px;color:var(--txt2);width:150px;background:transparent;}
 .filter-select{padding:7px 10px;border:1px solid var(--bdr);border-radius:7px;font-family:var(--ff);font-size:12px;color:var(--txt2);background:var(--white);}
 .tc-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+.modal-overlay.show{display:flex;}
+
+.btn-new{background:var(--blue);color:#fff;border:none;padding:8px 18px;border-radius:7px;font-size:12px;font-family:var(--ff);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .2s;box-shadow:0 3px 10px rgba(21,96,189,0.25);}
+.btn-new:hover{background:var(--blue2);transform:translateY(-1px);}
+
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:1.5rem;}
+.chart-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:1.25rem;}
+.cc-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem;}
+.cc-title{font-size:14px;font-weight:600;color:var(--txt);}
+.cc-sub{font-size:11px;color:var(--txt3);margin-top:2px;}
+.cc-badge{font-size:11px;background:var(--gray2);color:var(--txt3);padding:3px 8px;border-radius:5px;font-weight:500;}
+.chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.cl-item{font-size:11px;display:flex;align-items:center;gap:4px;color:var(--txt3);}
+.cl-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
 
 /* ── Expediente (idéntico al del dashboard admin) ── */
 .exp-hero{background:linear-gradient(135deg,var(--dark2),#1e3a5f);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;}
@@ -394,6 +411,34 @@ tr:last-child td{border-bottom:none;}
           <div class="kpi" style="cursor:pointer;" onclick="nav('prospectos')"><div><div class="kpi-label">Prospectos</div><div class="kpi-num">{{ prospectos_total }}</div></div><div class="kpi-icon ki-purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div></div>
           <div class="kpi" style="cursor:pointer;" onclick="nav('prospectos')"><div><div class="kpi-label">Prospectos nuevos</div><div class="kpi-num">{{ prospectos_nuevos }}</div></div><div class="kpi-icon ki-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div></div>
         </div>
+
+        <!-- CHARTS -->
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="cc-head">
+              <div>
+                <div class="cc-title">Actividad mensual</div>
+                <div class="cc-sub">Tus citas y prospectos · últimos 6 meses</div>
+              </div>
+            </div>
+            <canvas id="chartBarAsesor" style="max-height:200px;"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="cc-head">
+              <div>
+                <div class="cc-title">Estado de tus citas</div>
+                <div class="cc-sub">Distribución actual</div>
+              </div>
+            </div>
+            <canvas id="chartDoughnutAsesor" style="max-height:160px;"></canvas>
+            <div class="chart-legend">
+              <div class="cl-item"><div class="cl-dot" style="background:#f59e0b;"></div>Pendiente ({{ citas_pendientes }})</div>
+              <div class="cl-item"><div class="cl-dot" style="background:#22c55e;"></div>Confirmada ({{ citas_confirmadas }})</div>
+              <div class="cl-item"><div class="cl-dot" style="background:#94a3b8;"></div>Completada ({{ citas_atendidas }})</div>
+              <div class="cl-item"><div class="cl-dot" style="background:#ef4444;"></div>Cancelada ({{ citas_canceladas }})</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div id="p-citas" class="page">
@@ -402,6 +447,7 @@ tr:last-child td{border-bottom:none;}
           <div class="page-title">Citas</div>
           <div class="page-sub">Resumen de tu agenda</div>
         </div>
+        <button class="btn-new" onclick="abrirNuevaCitaAsesor()">+ Agendar cita</button>
       </div>
       <div class="kpi-grid">
         <div class="kpi"><div><div class="kpi-label">Hoy</div><div class="kpi-num">{{ citas_hoy_total }}</div></div><div class="kpi-icon ki-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div>
@@ -1101,30 +1147,88 @@ tr:last-child td{border-bottom:none;}
   </div>
 </div>
 
-<div class="modal-overlay" id="modal-nuevo-prospecto-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
-  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:420px;max-width:92vw;max-height:88vh;overflow:auto;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-      <div style="font-size:15px;font-weight:700;">Nuevo prospecto</div>
-      <button onclick="cerrarNuevoProspectoAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+<div class="modal-overlay" id="modal-nuevo-prospecto-asesor">
+  <div class="modal" style="width:600px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-header">
+      <div class="modal-title">Nuevo prospecto</div>
+      <button class="modal-close" onclick="cerrarNuevoProspectoAsesor()">×</button>
     </div>
-    <div id="npa-error" style="display:none;background:#fee2e2;color:#dc2626;font-size:12px;padding:8px 10px;border-radius:7px;margin-bottom:10px;"></div>
-    <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Nombre completo</label><input id="np-nombre" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
-    <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Correo</label><input id="np-correo" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
-    <div style="margin-bottom:10px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Teléfono</label><input id="np-telefono" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);"></div>
-    <div style="margin-bottom:10px;">
-      <label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Interés</label>
-      <select id="np-interes" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);">
-        <option value="seguro_vida">Seguro de vida</option>
-        <option value="medico">Gastos médicos</option>
-        <option value="auto">Seguro de auto</option>
-        <option value="hogar">Seguro de hogar</option>
-        <option value="inversion">Inversión y ahorro</option>
-        <option value="empresa">Empresarial</option>
-        <option value="general" selected>Información general</option>
-      </select>
-    </div>
-    <div style="margin-bottom:14px;"><label style="display:block;font-size:11px;color:var(--txt3);margin-bottom:4px;">Notas</label><textarea id="np-notas" rows="3" style="width:100%;padding:9px 11px;border:1px solid var(--bdr);border-radius:8px;font-family:var(--ff);resize:vertical;"></textarea></div>
-    <button onclick="guardarNuevoProspectoAsesor()" style="width:100%;background:var(--blue);color:#fff;border:none;padding:10px;border-radius:8px;font-family:var(--ff);font-weight:600;cursor:pointer;">Crear prospecto</button>
+    <form id="form-nuevo-prospecto-asesor">
+      <input type="hidden" name="interes" value="general">
+      <!-- Tipo de registro fijo en "prospecto": convertir a cliente es función
+           administrativa (queda para Admin/Superadmin, ver expediente). -->
+      <input type="hidden" name="tipo_registro" value="prospecto">
+      <!-- Sin selector de asesor: prospectos:crear ya fuerza asesor_asignado=self si no es admin. -->
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="exp-card-title" style="grid-column:1/-1;">DATOS PERSONALES</div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Nombre completo *</label>
+          <input type="text" id="npa-nombre" name="nombre" required>
+        </div>
+        <div class="form-group">
+          <label>Correo electrónico *</label>
+          <input type="email" id="npa-correo" name="correo" required>
+        </div>
+        <div class="form-group">
+          <label>Teléfono *</label>
+          <input type="text" id="npa-telefono" name="telefono" required>
+        </div>
+
+        <div class="exp-card-title" style="grid-column:1/-1;margin-top:.5rem;">ORIGEN</div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <div style="display:flex;gap:18px;margin-top:4px;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:600;">
+              <input type="radio" name="es_referido" value="false" checked onchange="npaToggleReferido()" style="width:auto;accent-color:var(--blue);">
+              Cliente nuevo
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:600;">
+              <input type="radio" name="es_referido" value="true" onchange="npaToggleReferido()" style="width:auto;accent-color:var(--blue);">
+              Referido
+            </label>
+          </div>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;display:none;" id="npa-bloque-referente">
+          <label>Nombre del referente</label>
+          <input type="text" id="npa-referente" name="nombre_referente">
+        </div>
+
+        <div class="exp-card-title" style="grid-column:1/-1;margin-top:.5rem;">INFORMACIÓN COMERCIAL</div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Estado *</label>
+          <select id="npa-estado" name="estado" required>
+            <option value="nuevo" selected>Nuevo</option>
+            <option value="contactado">Contactado</option>
+            <option value="convertido">Convertido en cliente</option>
+            <option value="descartado">Descartado</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Servicios de interés</label>
+          <div class="multi-check-grid">
+            <div class="multi-check-item"><input type="checkbox" id="npa-si-vida" name="servicios_interes" value="seguro_vida"><label for="npa-si-vida">Seguro de Vida</label></div>
+            <div class="multi-check-item"><input type="checkbox" id="npa-si-medico" name="servicios_interes" value="medico"><label for="npa-si-medico">Gastos Médicos</label></div>
+            <div class="multi-check-item"><input type="checkbox" id="npa-si-auto" name="servicios_interes" value="auto"><label for="npa-si-auto">Seguro de Auto</label></div>
+            <div class="multi-check-item"><input type="checkbox" id="npa-si-hogar" name="servicios_interes" value="hogar"><label for="npa-si-hogar">Seguro de Hogar</label></div>
+            <div class="multi-check-item"><input type="checkbox" id="npa-si-inversion" name="servicios_interes" value="inversion"><label for="npa-si-inversion">Inversión y Ahorro</label></div>
+            <div class="multi-check-item"><input type="checkbox" id="npa-si-empresa" name="servicios_interes" value="empresarial"><label for="npa-si-empresa">Empresarial</label></div>
+          </div>
+        </div>
+
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Notas internas</label>
+          <textarea id="npa-notas" name="notas" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div id="npa-error" style="display:none;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 12px;border-radius:7px;font-size:12px;margin-bottom:.5rem;"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="cerrarNuevoProspectoAsesor()">Cancelar</button>
+        <button type="submit" class="btn-submit">Guardar prospecto</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -1157,6 +1261,44 @@ function nav(id, el){
     if (item) item.classList.add('on');
   }
 }
+
+/* ─── CHARTS de Inicio (mismo patrón que dashboard/index.html) ─── */
+var chartBarAsesorInst = null, chartDoughnutAsesorInst = null;
+function initChartsAsesor(){
+  var ctx1 = document.getElementById('chartBarAsesor');
+  if (ctx1) {
+    chartBarAsesorInst = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: {{ chart_meses|safe }},
+        datasets: [
+          {label:'Citas',      data:{{ chart_citas|safe }},      backgroundColor:'rgba(21,96,189,0.75)', borderRadius:5, borderSkipped:false},
+          {label:'Prospectos', data:{{ chart_prospectos|safe }}, backgroundColor:'rgba(79,195,247,0.55)', borderRadius:5, borderSkipped:false}
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{labels:{font:{family:'Sora'},boxWidth:12}}, tooltip:{mode:'index'}},
+        scales:{x:{grid:{display:false},ticks:{font:{family:'Sora',size:11}}}, y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{family:'Sora',size:11},precision:0}}}
+      }
+    });
+  }
+  var ctx2 = document.getElementById('chartDoughnutAsesor');
+  if (ctx2) {
+    chartDoughnutAsesorInst = new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pendiente','Confirmada','Completada','Cancelada'],
+        datasets: [{data:{{ chart_doughnut|safe }}, backgroundColor:['#f59e0b','#22c55e','#94a3b8','#ef4444'], borderWidth:0, hoverOffset:5}]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false, cutout:'72%',
+        plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){ return ' ' + c.label + ': ' + c.raw; }}}}
+      }
+    });
+  }
+}
+document.addEventListener('DOMContentLoaded', function(){ setTimeout(initChartsAsesor, 200); });
 
 function toggleUserMenu(){
   var dd = document.getElementById('user-dropdown');
@@ -1571,57 +1713,58 @@ function filtrarProspectosAsesor(estadoParam){
 
 /* ─── PROSPECTOS: nuevo (prospectos:crear — ya fuerza asesor_asignado=self si no es admin) ─── */
 function abrirNuevoProspectoAsesor(){
-  document.getElementById('np-nombre').value = '';
-  document.getElementById('np-correo').value = '';
-  document.getElementById('np-telefono').value = '';
-  document.getElementById('np-interes').value = 'general';
-  document.getElementById('np-notas').value = '';
-  document.getElementById('npa-error').style.display = 'none';
-  document.getElementById('modal-nuevo-prospecto-asesor').style.display = 'flex';
+  var form = document.getElementById('form-nuevo-prospecto-asesor');
+  form.reset();
+  document.getElementById('npa-bloque-referente').style.display = 'none';
+  var err = document.getElementById('npa-error');
+  if (err) err.style.display = 'none';
+  document.getElementById('modal-nuevo-prospecto-asesor').classList.add('show');
 }
 function cerrarNuevoProspectoAsesor(){
-  document.getElementById('modal-nuevo-prospecto-asesor').style.display = 'none';
+  document.getElementById('modal-nuevo-prospecto-asesor').classList.remove('show');
 }
-function guardarNuevoProspectoAsesor(){
-  var errDiv = document.getElementById('npa-error');
-  var body = new URLSearchParams();
-  body.append('nombre', document.getElementById('np-nombre').value);
-  body.append('correo', document.getElementById('np-correo').value);
-  body.append('telefono', document.getElementById('np-telefono').value);
-  body.append('interes', document.getElementById('np-interes').value);
-  body.append('notas', document.getElementById('np-notas').value);
-  body.append('estado', 'nuevo');
-  body.append('tipo_registro', 'prospecto');
-  // No se envía asesor_asignado: prospectos/views.py::crear() ya fuerza
-  // asesor_asignado = request.user cuando el usuario no es admin, así que
-  // un asesor nunca puede crear un prospecto "huérfano" o asignado a otro.
-  errDiv.style.display = 'none';
+function npaToggleReferido(){
+  var val = document.querySelector('#form-nuevo-prospecto-asesor input[name="es_referido"]:checked').value;
+  document.getElementById('npa-bloque-referente').style.display = (val === 'true') ? '' : 'none';
+}
 
-  fetch('/prospectos/crear/', {
-    method: 'POST',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRFToken': _citaCsrf(),
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: body.toString()
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    if (!d.ok) {
-      errDiv.textContent = d.error || 'No se pudo crear el prospecto. Verifica los datos.';
-      errDiv.style.display = 'block';
-      return;
-    }
-    cerrarNuevoProspectoAsesor();
-    toastAsesor('Prospecto creado correctamente.');
-    setTimeout(function(){ window.location.reload(); }, 500);
-  })
-  .catch(function(){
-    errDiv.textContent = 'Error de conexión.';
-    errDiv.style.display = 'block';
+document.addEventListener('DOMContentLoaded', function(){
+  var formNP = document.getElementById('form-nuevo-prospecto-asesor');
+  if (!formNP) return;
+
+  formNP.addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn    = formNP.querySelector('[type=submit]');
+    var errDiv = document.getElementById('npa-error');
+
+    btn.disabled    = true;
+    btn.textContent = 'Guardando…';
+    if (errDiv) errDiv.style.display = 'none';
+
+    fetch('/prospectos/crear/', {
+      method:  'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _citaCsrf() },
+      body:    new FormData(formNP),
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      btn.disabled    = false;
+      btn.textContent = 'Guardar prospecto';
+      if (!data.ok) {
+        if (errDiv) { errDiv.textContent = data.error || 'Error al guardar.'; errDiv.style.display = 'block'; }
+        return;
+      }
+      cerrarNuevoProspectoAsesor();
+      toastAsesor('Prospecto "' + data.nombre + '" creado correctamente.');
+      setTimeout(function(){ window.location.reload(); }, 500);
+    })
+    .catch(function(){
+      btn.disabled    = false;
+      btn.textContent = 'Guardar prospecto';
+      if (errDiv) { errDiv.textContent = 'Error de conexión. Intenta de nuevo.'; errDiv.style.display = 'block'; }
+    });
   });
-}
+});
 
 /* ─── PROSPECTOS: eliminar (prospectos:eliminar — ya valida acceso) ─── */
 var _delProspectoId = null;
@@ -1856,6 +1999,14 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 });
 
+/* ── Agendar cita: botón general de la página Citas (sin prospecto asociado) ── */
+function abrirNuevaCitaAsesor(){
+  var formNC = document.getElementById('form-nueva-cita-asesor');
+  if (formNC) formNC.reset();
+  document.getElementById('nca-error').style.display = 'none';
+  document.getElementById('modal-nueva-cita-asesor').style.display = 'flex';
+}
+
 /* ── Agendar cita desde el expediente (citas:crear_ajax — asigna la cita al usuario que la crea) ── */
 function agendarCitaExpAsesor(){
   if (!_expAId) return;
@@ -1912,6 +2063,7 @@ document.addEventListener('DOMContentLoaded', function(){
       document.getElementById('modal-nueva-cita-asesor').style.display = 'none';
       formNC.reset();
       toastAsesor('Cita agendada: ' + data.nombre_cliente + ' ' + data.apellidos_cliente);
+      setTimeout(function(){ window.location.reload(); }, 600);
     })
     .catch(function(){
       btn.disabled    = false;
