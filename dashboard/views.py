@@ -164,6 +164,20 @@ def index(request):
         # Citas cuya fecha de cita (no de creación) es hoy
         citas_hoy = Cita.objects.filter(fecha=hoy.date()).count()
 
+        # Mismas listas que ya usa index_asesor() para las mini-tablas
+        # "Citas de hoy" / "Próximas citas" — aquí sin filtrar por asesor,
+        # porque el admin ve todas.
+        citas_hoy_lista = (
+            Cita.objects.filter(fecha=hoy.date())
+            .select_related('asesor')
+            .order_by('hora')
+        )
+        proximas_citas = (
+            Cita.objects.filter(fecha__gt=hoy.date(), estado__in=['pendiente', 'confirmada'])
+            .select_related('asesor')
+            .order_by('fecha', 'hora')[:10]
+        )
+
         # Rol del usuario actual (para mostrar/ocultar el selector de asesor en modales)
         es_admin_dashboard = _es_admin(request.user)
 
@@ -192,6 +206,8 @@ def index(request):
             'citas_confirmadas':        Cita.objects.filter(estado='confirmada').count(),
             'citas_completadas':        Cita.objects.filter(estado='completada').count(),
             'citas_canceladas':         Cita.objects.filter(estado='cancelada').count(),
+            'citas_hoy_lista':          citas_hoy_lista,
+            'proximas_citas':           proximas_citas,
 
             # ── Vacantes ──────────────────────────────────────────────────
             'vacantes': Vacante.objects.annotate(

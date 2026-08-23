@@ -190,6 +190,10 @@ body{font-family:var(--ff);background:var(--bg);color:var(--txt);}
 .ki-blue{background:#dbeafe;}
 .ki-green{background:#dcfce7;}
 .ki-yellow{background:#fef9c3;}
+.ki-teal{background:#ccfbf1;}
+
+.tc-link{font-size:12px;color:var(--blue);font-weight:600;text-decoration:none;}
+.tc-link:hover{text-decoration:underline;}
 .ki-purple{background:#ede9fe;}
 .ki-red{background:#fee2e2;}
 
@@ -211,6 +215,8 @@ body{font-family:var(--ff);background:var(--bg);color:var(--txt);}
 .tc-actions{display:flex;gap:8px;align-items:center;}
 .search-box{display:flex;align-items:center;gap:6px;background:var(--gray);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;}
 .search-box input{background:none;border:none;outline:none;font-size:12px;color:var(--txt2);width:160px;font-family:var(--ff);}
+.search-form{display:flex;align-items:center;gap:6px;background:var(--gray);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;}
+.search-form input{background:none;border:none;outline:none;font-size:12px;color:var(--txt2);width:160px;font-family:var(--ff);}
 table{width:100%;border-collapse:collapse;}
 th{background:var(--gray);padding:9px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.3px;color:var(--txt3);text-align:left;font-weight:600;border-bottom:1px solid var(--bdr);}
 td{padding:11px 14px;font-size:13px;color:var(--txt2);border-bottom:1px solid #f8fafc;vertical-align:middle;}
@@ -469,6 +475,7 @@ tr:hover td{background:#fafbfc;}
 .pkpi{background:var(--white);border:1px solid var(--bdr);border-radius:9px;padding:.65rem .8rem;text-align:center;cursor:pointer;transition:box-shadow .2s;}
 .pkpi:hover{box-shadow:0 2px 8px rgba(0,0,0,0.07);}
 .pkpi.act{outline:2px solid var(--blue);}
+.kpi.act{outline:2px solid var(--blue);}
 .pkpi-num{font-size:18px;font-weight:700;}
 .pkpi-label{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-top:2px;font-weight:600;}
 
@@ -692,7 +699,7 @@ tr:hover td{background:#fafbfc;}
 
         <!-- KPIs -->
         <div class="kpi-grid">
-          <div class="kpi">
+          <div class="kpi" style="cursor:pointer;" onclick="nav('citas',null)">
             <div>
               <div class="kpi-label">Citas pendientes</div>
               <div class="kpi-num" id="kpi-citas">{{ citas_pendientes }}</div>
@@ -704,7 +711,7 @@ tr:hover td{background:#fafbfc;}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             </div>
           </div>
-          <div class="kpi">
+          <div class="kpi" style="cursor:pointer;" onclick="nav('postulantes',null)">
             <div>
               <div class="kpi-label">Postulantes nuevos</div>
               <div class="kpi-num" id="kpi-post">{{ postulantes_nuevos }}</div>
@@ -714,7 +721,7 @@ tr:hover td{background:#fafbfc;}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             </div>
           </div>
-          <div class="kpi">
+          <div class="kpi" style="cursor:pointer;" onclick="nav('prospectos',null)">
             <div>
               <div class="kpi-label">Prospectos nuevos</div>
               <div class="kpi-num" id="kpi-prosp">{{ prospectos_nuevos }}</div>
@@ -724,7 +731,7 @@ tr:hover td{background:#fafbfc;}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
             </div>
           </div>
-          <div class="kpi">
+          <div class="kpi" style="cursor:pointer;" onclick="nav('vacantes',null)">
             <div>
               <div class="kpi-label">Vacantes activas</div>
               <div class="kpi-num" id="kpi-vac">{{ vacantes_activas }}</div>
@@ -862,31 +869,73 @@ tr:hover td{background:#fafbfc;}
             <button class="btn-new" onclick="document.getElementById('modal-nueva-cita').style.display='flex'">+ Agendar cita</button>
           </div>
         </div>
-        <!-- KPI strip citas -->
-        <div class="post-kpi-strip" style="grid-template-columns:repeat(5,1fr);">
-          <div class="pkpi" id="ckpi-total" onclick="filtrarCitasKpi('')">
-            <div class="pkpi-num" style="color:var(--blue);" id="ccnt-total">{{ citas_total }}</div>
-            <div class="pkpi-label">Total</div>
-          </div>
-          <div class="pkpi" id="ckpi-pendiente" onclick="filtrarCitasKpi('pendiente')">
-            <div class="pkpi-num" style="color:#a16207;" id="ccnt-pendiente">{{ citas_pendientes }}</div>
-            <div class="pkpi-label">Pendientes</div>
-          </div>
-          <div class="pkpi" id="ckpi-confirmada" onclick="filtrarCitasKpi('confirmada')">
-            <div class="pkpi-num" style="color:#15803d;" id="ccnt-confirmada">{{ citas_confirmadas }}</div>
-            <div class="pkpi-label">Confirmadas</div>
-          </div>
-          <div class="pkpi" id="ckpi-completada" onclick="filtrarCitasKpi('completada')">
-            <div class="pkpi-num" style="color:#475569;" id="ccnt-completada">{{ citas_completadas }}</div>
-            <div class="pkpi-label">Completadas</div>
-          </div>
-          <div class="pkpi" id="ckpi-cancelada" onclick="filtrarCitasKpi('cancelada')">
-            <div class="pkpi-num" style="color:#dc2626;" id="ccnt-cancelada">{{ citas_canceladas }}</div>
-            <div class="pkpi-label">Canceladas</div>
-          </div>
+        <!-- KPI cards citas (mismo diseño que el dashboard del asesor) -->
+        <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr);">
+          <div class="kpi" id="ckpi-total" onclick="filtrarCitasKpi('')" style="cursor:pointer;"><div><div class="kpi-label">Total</div><div class="kpi-num" id="ccnt-total">{{ citas_total }}</div></div><div class="kpi-icon ki-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div>
+          <div class="kpi" id="ckpi-pendiente" onclick="filtrarCitasKpi('pendiente')" style="cursor:pointer;"><div><div class="kpi-label">Pendientes</div><div class="kpi-num" id="ccnt-pendiente">{{ citas_pendientes }}</div></div><div class="kpi-icon ki-yellow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div>
+          <div class="kpi" id="ckpi-confirmada" onclick="filtrarCitasKpi('confirmada')" style="cursor:pointer;"><div><div class="kpi-label">Confirmadas</div><div class="kpi-num" id="ccnt-confirmada">{{ citas_confirmadas }}</div></div><div class="kpi-icon ki-teal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div>
+          <div class="kpi" id="ckpi-completada" onclick="filtrarCitasKpi('completada')" style="cursor:pointer;"><div><div class="kpi-label">Completadas</div><div class="kpi-num" id="ccnt-completada">{{ citas_completadas }}</div></div><div class="kpi-icon ki-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div></div>
+          <div class="kpi" id="ckpi-cancelada" onclick="filtrarCitasKpi('cancelada')" style="cursor:pointer;"><div><div class="kpi-label">Canceladas</div><div class="kpi-num" id="ccnt-cancelada">{{ citas_canceladas }}</div></div><div class="kpi-icon" style="background:#fee2e2;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div></div>
         </div>
 
+        <!-- Citas de hoy -->
         <div class="table-card">
+          <div class="tc-head">
+            <h3>Citas de hoy</h3>
+            <a class="tc-link" href="#citas-tabla-completa">Ver todas ↓</a>
+          </div>
+          <table>
+            <thead><tr><th>Hora</th><th>Cliente</th><th>Motivo</th><th>Asesor</th><th>Estado</th></tr></thead>
+            <tbody>
+              {% for c in citas_hoy_lista %}
+              <tr>
+                <td>{{ c.hora|time:"H:i" }}</td>
+                <td>{{ c.nombre_cliente }} {{ c.apellidos_cliente }}</td>
+                <td>{{ c.get_motivo_display }}</td>
+                <td>{% if c.asesor %}{{ c.asesor.get_full_name|default:c.asesor.username }}{% else %}<span style="color:var(--txt3);">Sin asignar</span>{% endif %}</td>
+                <td>
+                  {% if c.estado == 'pendiente' %}<span class="badge b-yellow">Pendiente</span>
+                  {% elif c.estado == 'confirmada' %}<span class="badge b-green">Confirmada</span>
+                  {% elif c.estado == 'completada' %}<span class="badge b-gray">Completada</span>
+                  {% else %}<span class="badge b-red">Cancelada</span>{% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5" style="text-align:center;padding:20px;color:var(--txt3);">No hay citas programadas para hoy.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Próximas citas -->
+        <div class="table-card">
+          <div class="tc-head">
+            <h3>Próximas citas</h3>
+            <a class="tc-link" href="#citas-tabla-completa">Ver todas ↓</a>
+          </div>
+          <table>
+            <thead><tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Motivo</th><th>Asesor</th><th>Estado</th></tr></thead>
+            <tbody>
+              {% for c in proximas_citas %}
+              <tr>
+                <td>{{ c.fecha|date:"d/m/Y" }}</td>
+                <td>{{ c.hora|time:"H:i" }}</td>
+                <td>{{ c.nombre_cliente }} {{ c.apellidos_cliente }}</td>
+                <td>{{ c.get_motivo_display }}</td>
+                <td>{% if c.asesor %}{{ c.asesor.get_full_name|default:c.asesor.username }}{% else %}<span style="color:var(--txt3);">Sin asignar</span>{% endif %}</td>
+                <td>
+                  {% if c.estado == 'pendiente' %}<span class="badge b-yellow">Pendiente</span>
+                  {% else %}<span class="badge b-green">Confirmada</span>{% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" style="text-align:center;padding:20px;color:var(--txt3);">No hay próximas citas registradas.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-card" id="citas-tabla-completa">
           <div class="tc-head">
             <h3 id="cita-tabla-titulo">Todas las citas</h3>
             <div class="tc-actions">
@@ -3288,7 +3337,7 @@ function ejecutarAsignarProspecto() {
 function confirmarEliminarCita(id, nombre) {
   document.getElementById('del-cita-id').value            = id;
   document.getElementById('del-cita-nombre').textContent  = nombre;
-  document.getElementById('modal-del-cita').style.display = 'flex';
+  document.getElementById('modal-del-cita').classList.add('show');
 }
 
 function ejecutarEliminarCita() {
@@ -3300,7 +3349,7 @@ function ejecutarEliminarCita() {
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
-    document.getElementById('modal-del-cita').style.display = 'none';
+    document.getElementById('modal-del-cita').classList.remove('show');
 
     if (!data.ok) {
       toast(data.error || 'No se pudo eliminar la cita.', 'error');
@@ -3554,7 +3603,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ── KPIs: filtrar tabla y recalcular ─────────────────────────────────────────
 function filtrarCitasKpi(estado) {
-  document.querySelectorAll('.pkpi[id^="ckpi-"]').forEach(function(el) { el.classList.remove('act'); });
+  document.querySelectorAll('.kpi[id^="ckpi-"]').forEach(function(el) { el.classList.remove('act'); });
   var kpiEl = document.getElementById(estado ? 'ckpi-' + estado : 'ckpi-total');
   if (kpiEl) kpiEl.classList.add('act');
 
@@ -3804,7 +3853,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function abrirModalNuevoPostulante() {
   document.getElementById('form-nuevo-postulante').reset();
-  document.getElementById('np-error').style.display = 'none';
+  document.getElementById('npo-error').style.display = 'none';
   var btn = document.getElementById('np-btn');
   btn.disabled    = false;
   btn.innerHTML   = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-1px;margin-right:4px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Registrar postulante';
@@ -3819,7 +3868,7 @@ function guardarNuevoPostulante(e) {
   e.preventDefault();
 
   var btn    = document.getElementById('np-btn');
-  var errDiv = document.getElementById('np-error');
+  var errDiv = document.getElementById('npo-error');
 
   errDiv.style.display = 'none';
   btn.disabled    = true;
@@ -4010,6 +4059,7 @@ function verProspectoDesdeCard(id){
     if (!d.ok) { toast('No se pudo cargar la información del prospecto.', 'error'); return; }
 
     document.getElementById('ver-p-nombre').textContent   = d.nombre;
+    document.getElementById('ver-p-avatar').textContent   = (d.nombre || '?').charAt(0).toUpperCase();
     document.getElementById('ver-p-correo').textContent   = d.correo || '—';
     document.getElementById('ver-p-telefono').textContent = d.telefono || '—';
     document.getElementById('ver-p-interes').textContent  = d.interes_display || '—';
@@ -5023,7 +5073,7 @@ function toggleEstadoVacante(id, btn) {
 function confirmarEliminarVacante(id, titulo) {
   document.getElementById('del-vac-id').value           = id;
   document.getElementById('del-vac-nombre').textContent = titulo;
-  document.getElementById('modal-del-vacante').style.display = 'flex';
+  document.getElementById('modal-del-vacante').classList.add('show');
 }
 
 function ejecutarEliminarVacante() {
@@ -5034,7 +5084,7 @@ function ejecutarEliminarVacante() {
   })
   .then(function(r) {
     // La vista redirige; cualquier respuesta 2xx/3xx es éxito
-    document.getElementById('modal-del-vacante').style.display = 'none';
+    document.getElementById('modal-del-vacante').classList.remove('show');
     toast('Vacante eliminada correctamente.', 'success');
 
     var fila = document.getElementById('fila-v-' + id);
@@ -5329,17 +5379,19 @@ function guardarServicio(){
 </script>
 
 <!-- ══ MODAL: VER SERVICIO ══════════════════════════════════════════════════ -->
-<div id="modal-ver-servicio" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none';">
-  <div style="background:#fff;width:520px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
-      <div style="font-size:16px;font-weight:700;">Detalle del servicio</div>
-      <button onclick="document.getElementById('modal-ver-servicio').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+<div id="modal-ver-servicio" class="modal-detalle">
+  <div class="md-box" style="width:520px;">
+    <div class="md-header">
+      <div class="md-title">Detalle del servicio</div>
+      <button class="md-close" onclick="document.getElementById('modal-ver-servicio').classList.remove('show')">×</button>
     </div>
-    <div id="ver-serv-body" style="font-size:13px;color:var(--txt2);line-height:1.6;">
-      <p style="text-align:center;color:var(--txt3);">Cargando…</p>
+    <div class="md-body" style="padding-top:0;">
+      <div id="ver-serv-body" style="font-size:13px;color:var(--txt2);line-height:1.6;">
+        <p style="text-align:center;color:var(--txt3);">Cargando…</p>
+      </div>
     </div>
-    <div style="display:flex;justify-content:flex-end;margin-top:1.25rem;gap:8px;">
-      <button onclick="document.getElementById('modal-ver-servicio').style.display='none'" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cerrar</button>
+    <div class="md-actions">
+      <button class="md-btn-secondary" onclick="document.getElementById('modal-ver-servicio').classList.remove('show')">Cerrar</button>
       <button id="ver-serv-btn-editar" style="background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Editar</button>
     </div>
   </div>
@@ -5401,17 +5453,17 @@ function guardarServicio(){
 </div>
 
 <!-- ══ MODAL: CONFIRMAR ELIMINAR SERVICIO ═══════════════════════════════════ -->
-<div id="modal-del-servicio" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none';">
-  <div style="background:#fff;width:360px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-      <div style="font-size:16px;font-weight:700;color:#dc2626;">⚠️ Eliminar servicio</div>
-      <button onclick="document.getElementById('modal-del-servicio').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+<div id="modal-del-servicio" class="modal-eliminar">
+  <div class="me-box">
+    <div class="me-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
     </div>
-    <p style="font-size:13px;color:var(--txt2);margin-bottom:1.25rem;">¿Eliminar el servicio <strong id="del-serv-nombre"></strong>? Esta acción no se puede deshacer.</p>
+    <div class="me-title">Eliminar servicio</div>
+    <div class="me-sub">¿Eliminar el servicio <strong id="del-serv-nombre"></strong>? Esta acción no se puede deshacer.</div>
     <input type="hidden" id="del-serv-id" value="">
-    <div style="display:flex;justify-content:flex-end;gap:8px;">
-      <button onclick="document.getElementById('modal-del-servicio').style.display='none'" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
-      <button onclick="ejecutarEliminarServicio()" style="background:#dc2626;color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Sí, eliminar</button>
+    <div class="me-btns">
+      <button class="me-cancel" onclick="document.getElementById('modal-del-servicio').classList.remove('show')">Cancelar</button>
+      <button class="me-confirm" onclick="ejecutarEliminarServicio()">Sí, eliminar</button>
     </div>
   </div>
 </div>
@@ -5426,7 +5478,7 @@ function abrirVerServicio(id) {
   _servIdActual = id;
   var body = document.getElementById('ver-serv-body');
   body.innerHTML = '<p style="text-align:center;color:var(--txt3);">Cargando…</p>';
-  document.getElementById('modal-ver-servicio').style.display = 'flex';
+  document.getElementById('modal-ver-servicio').classList.add('show');
 
   fetch('/servicios/' + id + '/detalle/ajax/', {
     headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -5450,7 +5502,7 @@ function abrirVerServicio(id) {
       '<div style="margin-bottom:.75rem;"><div style="font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;">Descripción completa</div><div style="color:var(--txt3);">' + escHtml(d.descripcion) + '</div></div>' +
       '<div style="font-size:11px;color:var(--txt3);">Orden de aparición: ' + d.orden + '</div>';
     document.getElementById('ver-serv-btn-editar').onclick = function() {
-      document.getElementById('modal-ver-servicio').style.display = 'none';
+      document.getElementById('modal-ver-servicio').classList.remove('show');
       abrirEditarServicio(d.id, d.nombre);
     };
   })
@@ -5569,7 +5621,7 @@ function guardarEdicionServicio() {
 function confirmarEliminarServicio(id, nombre) {
   document.getElementById('del-serv-id').value = id;
   document.getElementById('del-serv-nombre').textContent = nombre;
-  document.getElementById('modal-del-servicio').style.display = 'flex';
+  document.getElementById('modal-del-servicio').classList.add('show');
 }
 
 function ejecutarEliminarServicio() {
@@ -5583,7 +5635,7 @@ function ejecutarEliminarServicio() {
   .then(function(data) {
     if (!data.ok) { toast('Error al eliminar el servicio.', 'error'); return; }
 
-    document.getElementById('modal-del-servicio').style.display = 'none';
+    document.getElementById('modal-del-servicio').classList.remove('show');
     toast('Servicio "' + data.nombre + '" eliminado.', 'success');
 
     // Eliminar fila del DOM
@@ -5822,20 +5874,20 @@ function toggleActivoServicio(id, btnEl) {
 </div>
 
 <!-- ══ MODAL: CONFIRMAR ELIMINAR VACANTE ════════════════════════════════════ -->
-<div id="modal-del-vacante" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none';">
-  <div style="background:#fff;width:380px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-      <div style="font-size:16px;font-weight:700;color:#dc2626;">⚠️ Eliminar vacante</div>
-      <button onclick="document.getElementById('modal-del-vacante').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+<div id="modal-del-vacante" class="modal-eliminar">
+  <div class="me-box">
+    <div class="me-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
     </div>
-    <p style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:1.25rem;">
+    <div class="me-title">Eliminar vacante</div>
+    <div class="me-sub">
       ¿Eliminar la vacante <strong id="del-vac-nombre"></strong>?<br>
-      <span style="color:var(--txt3);font-size:12px;">Esta acción no se puede deshacer. Los postulantes relacionados quedarán sin vacante asignada.</span>
-    </p>
+      Esta acción no se puede deshacer. Los postulantes relacionados quedarán sin vacante asignada.
+    </div>
     <input type="hidden" id="del-vac-id" value="">
-    <div style="display:flex;justify-content:flex-end;gap:8px;">
-      <button onclick="document.getElementById('modal-del-vacante').style.display='none'" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
-      <button onclick="ejecutarEliminarVacante()" style="background:#dc2626;color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Sí, eliminar</button>
+    <div class="me-btns">
+      <button class="me-cancel" onclick="document.getElementById('modal-del-vacante').classList.remove('show')">Cancelar</button>
+      <button class="me-confirm" onclick="ejecutarEliminarVacante()">Sí, eliminar</button>
     </div>
   </div>
 </div>
@@ -6145,29 +6197,54 @@ function toggleActivoServicio(id, btnEl) {
 </div>
 
 <!-- ══ MODAL: VER PROSPECTO (solo lectura) ══════════════════════════════════ -->
-<div class="modal-overlay" id="modal-ver-prospecto">
-  <div class="modal" style="width:420px;max-height:85vh;overflow-y:auto;">
-    <div class="modal-header">
-      <div class="modal-title">👁️ Ver prospecto</div>
-      <button class="modal-close" onclick="cerrarModalVerProspecto()">×</button>
+<div id="modal-ver-prospecto" class="modal-detalle">
+  <div class="md-box">
+    <div class="md-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="md-avatar" id="ver-p-avatar">--</div>
+        <div>
+          <div class="md-title" id="ver-p-nombre">—</div>
+          <div class="md-sub" id="ver-p-interes">—</div>
+        </div>
+      </div>
+      <button class="md-close" onclick="cerrarModalVerProspecto()">×</button>
     </div>
-    <div style="display:flex;flex-direction:column;gap:.85rem;font-size:13px;color:var(--txt2);">
-      <div><strong style="color:var(--txt);">Nombre:</strong> <span id="ver-p-nombre">—</span></div>
-      <div><strong style="color:var(--txt);">Correo:</strong> <span id="ver-p-correo">—</span></div>
-      <div><strong style="color:var(--txt);">Teléfono:</strong> <span id="ver-p-telefono">—</span></div>
-      <div><strong style="color:var(--txt);">Interés:</strong> <span id="ver-p-interes">—</span></div>
-      <div><strong style="color:var(--txt);">Estado:</strong> <span id="ver-p-estado">—</span></div>
-      <div><strong style="color:var(--txt);">Asesor asignado:</strong> <span id="ver-p-asesor">—</span></div>
-      <div><strong style="color:var(--txt);">Tipo de registro:</strong> <span id="ver-p-tipo">—</span></div>
-      <div><strong style="color:var(--txt);">Referido:</strong> <span id="ver-p-referido">—</span></div>
-      <div><strong style="color:var(--txt);">Fecha de alta:</strong> <span id="ver-p-fecha">—</span></div>
-      <div id="ver-p-notas-wrap" style="display:none;">
-        <strong style="color:var(--txt);">Notas:</strong>
-        <div id="ver-p-notas" style="margin-top:4px;white-space:pre-wrap;"></div>
+    <div class="md-body">
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div><div class="md-label">Correo</div><div class="md-val" id="ver-p-correo">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 012 2.18 2 2 0 014 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div><div class="md-label">Teléfono</div><div class="md-val" id="ver-p-telefono">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div><div class="md-label">Asesor asignado</div><div class="md-val" id="ver-p-asesor">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="md-label">Estado</div><div class="md-val" id="ver-p-estado">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 00-3 3v6a3 3 0 006 0V5a3 3 0 00-3-3z"/></svg></div>
+        <div><div class="md-label">Tipo de registro</div><div class="md-val" id="ver-p-tipo">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <div><div class="md-label">Referido</div><div class="md-val" id="ver-p-referido">—</div></div>
+      </div>
+      <div class="md-row">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div><div class="md-label">Fecha de alta</div><div class="md-val" id="ver-p-fecha">—</div></div>
+      </div>
+      <div class="md-row" id="ver-p-notas-wrap" style="display:none;">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div><div class="md-label">Notas</div><div class="md-val" id="ver-p-notas">—</div></div>
       </div>
     </div>
-    <div class="modal-actions" style="margin-top:1.25rem;">
-      <button type="button" class="btn-cancel" onclick="cerrarModalVerProspecto()">Cerrar</button>
+    <div class="md-actions">
+      <button class="md-btn-secondary" onclick="cerrarModalVerProspecto()">Cerrar</button>
     </div>
   </div>
 </div>
@@ -6747,20 +6824,17 @@ function toggleActivoServicio(id, btnEl) {
 </div>
 
 <!-- ══ MODAL: CONFIRMAR ELIMINAR CITA ════════════════════════════════════════ -->
-<div id="modal-del-cita" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none';">
-  <div style="background:#fff;width:380px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-      <div style="font-size:16px;font-weight:700;color:#dc2626;">⚠️ Eliminar cita</div>
-      <button onclick="document.getElementById('modal-del-cita').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+<div id="modal-del-cita" class="modal-eliminar">
+  <div class="me-box">
+    <div class="me-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
     </div>
-    <p style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:1.25rem;">
-      ¿Eliminar la cita de <strong id="del-cita-nombre"></strong>?<br>
-      <span style="color:var(--txt3);font-size:12px;">Esta acción no se puede deshacer.</span>
-    </p>
+    <div class="me-title">Eliminar cita</div>
+    <div class="me-sub">¿Eliminar la cita de <strong id="del-cita-nombre"></strong>? Esta acción no se puede deshacer.</div>
     <input type="hidden" id="del-cita-id" value="">
-    <div style="display:flex;justify-content:flex-end;gap:8px;">
-      <button onclick="document.getElementById('modal-del-cita').style.display='none'" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
-      <button onclick="ejecutarEliminarCita()" style="background:#dc2626;color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Sí, eliminar</button>
+    <div class="me-btns">
+      <button class="me-cancel" onclick="document.getElementById('modal-del-cita').classList.remove('show')">Cancelar</button>
+      <button class="me-confirm" onclick="ejecutarEliminarCita()">Sí, eliminar</button>
     </div>
   </div>
 </div>
@@ -6814,15 +6888,15 @@ function toggleActivoServicio(id, btnEl) {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div class="form-group" style="grid-column:1/-1;">
           <label>Nombre completo *</label>
-          <input type="text" id="np-nombre" name="nombre" required placeholder="Ej. Ana García López">
+          <input type="text" id="npo-nombre" name="nombre" required placeholder="Ej. Ana García López">
         </div>
         <div class="form-group">
           <label>Correo electrónico *</label>
-          <input type="email" id="np-correo" name="correo" required placeholder="correo@ejemplo.com">
+          <input type="email" id="npo-correo" name="correo" required placeholder="correo@ejemplo.com">
         </div>
         <div class="form-group">
           <label>Teléfono</label>
-          <input type="text" id="np-telefono" name="telefono" placeholder="782-000-0000">
+          <input type="text" id="npo-telefono" name="telefono" placeholder="782-000-0000">
         </div>
         <div class="form-group">
           <label>Vacante</label>
@@ -6843,7 +6917,7 @@ function toggleActivoServicio(id, btnEl) {
             style="border:1px solid var(--bdr);border-radius:8px;padding:8px 12px;font-size:13px;font-family:var(--ff);width:100%;color:var(--txt2);">
         </div>
       </div>
-      <div id="np-error" style="display:none;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 12px;border-radius:7px;font-size:12px;margin-top:.5rem;"></div>
+      <div id="npo-error" style="display:none;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 12px;border-radius:7px;font-size:12px;margin-top:.5rem;"></div>
       <div class="modal-actions">
         <button type="button" class="btn-cancel" onclick="cerrarModalNuevoPostulante()">Cancelar</button>
         <button type="submit" id="np-btn" class="btn-submit">
@@ -7129,17 +7203,23 @@ function toggleActivoServicio(id, btnEl) {
 </div>
 
 <!-- ══ MODAL: VER USUARIO ═════════════════════════════════════════════════ -->
-<div id="modal-ver-usuario" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)cerrarModalVerUsuario();">
-  <div style="background:#fff;width:460px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
-      <div style="font-size:16px;font-weight:700;">Detalle del usuario</div>
-      <button type="button" onclick="cerrarModalVerUsuario()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+<div id="modal-ver-usuario" class="modal-detalle">
+  <div class="md-box">
+    <div class="md-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="md-avatar" id="ver-usuario-avatar">--</div>
+        <div>
+          <div class="md-title" id="ver-usuario-nombre">—</div>
+          <div class="md-sub" id="ver-usuario-username">—</div>
+        </div>
+      </div>
+      <button type="button" class="md-close" onclick="cerrarModalVerUsuario()">×</button>
     </div>
-    <div id="ver-usuario-body" style="font-size:13px;color:var(--txt2);line-height:1.9;">
+    <div class="md-body" id="ver-usuario-body">
       <p style="text-align:center;color:var(--txt3);">Cargando…</p>
     </div>
-    <div style="display:flex;justify-content:flex-end;margin-top:1.25rem;gap:8px;">
-      <button type="button" onclick="cerrarModalVerUsuario()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cerrar</button>
+    <div class="md-actions">
+      <button type="button" class="md-btn-secondary" onclick="cerrarModalVerUsuario()">Cerrar</button>
       <button type="button" id="ver-usuario-btn-editar" onclick="verEditarDesdeVer()" style="background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Editar</button>
     </div>
   </div>
@@ -7209,16 +7289,16 @@ function toggleActivoServicio(id, btnEl) {
 </div>
 
 <!-- ══ MODAL: CONFIRMAR ACTIVAR/DESACTIVAR USUARIO ═══════════════════════ -->
-<div id="modal-estado-usuario" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)cerrarModalEstadoUsuario();">
-  <div style="background:#fff;width:380px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-      <div id="estado-usuario-titulo" style="font-size:16px;font-weight:700;">🔒 Desactivar usuario</div>
-      <button type="button" onclick="cerrarModalEstadoUsuario()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+<div id="modal-estado-usuario" class="modal-eliminar">
+  <div class="me-box">
+    <div class="me-icon" id="estado-usuario-icon-wrap">
+      <svg id="estado-usuario-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
     </div>
-    <p id="estado-usuario-mensaje" style="font-size:13px;color:var(--txt2);margin-bottom:1.25rem;"></p>
-    <div style="display:flex;justify-content:flex-end;gap:8px;">
-      <button type="button" onclick="cerrarModalEstadoUsuario()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
-      <button type="button" id="estado-usuario-btn" onclick="ejecutarCambioEstadoUsuario()" style="background:#dc2626;color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Sí, desactivar</button>
+    <div class="me-title" id="estado-usuario-titulo">Desactivar usuario</div>
+    <div class="me-sub" id="estado-usuario-mensaje"></div>
+    <div class="me-btns">
+      <button type="button" class="me-cancel" onclick="cerrarModalEstadoUsuario()">Cancelar</button>
+      <button type="button" class="me-confirm" id="estado-usuario-btn" onclick="ejecutarCambioEstadoUsuario()">Sí, desactivar</button>
     </div>
   </div>
 </div>
@@ -7384,7 +7464,10 @@ function guardarNuevoUsuario(){
 
 /* ── Ver usuario ── */
 function abrirVerUsuario(id){
-  document.getElementById('modal-ver-usuario').style.display = 'flex';
+  document.getElementById('modal-ver-usuario').classList.add('show');
+  document.getElementById('ver-usuario-avatar').textContent = '…';
+  document.getElementById('ver-usuario-nombre').textContent = 'Cargando…';
+  document.getElementById('ver-usuario-username').textContent = '';
   document.getElementById('ver-usuario-body').innerHTML = '<p style="text-align:center;color:var(--txt3);">Cargando…</p>';
   document.getElementById('ver-usuario-btn-editar').setAttribute('data-id', id);
 
@@ -7396,23 +7479,25 @@ function abrirVerUsuario(id){
         return;
       }
       var u = data.usuario;
+      var nombreCompleto = (u.first_name + ' ' + (u.last_name || '')).trim() || u.username;
+      document.getElementById('ver-usuario-avatar').textContent = nombreCompleto.charAt(0).toUpperCase();
+      document.getElementById('ver-usuario-nombre').textContent = nombreCompleto;
+      document.getElementById('ver-usuario-username').textContent = '@' + u.username;
+
       document.getElementById('ver-usuario-body').innerHTML =
-        '<p><strong>Nombre:</strong> '+(u.first_name || '—')+'</p>'+
-        '<p><strong>Apellidos:</strong> '+(u.last_name || '—')+'</p>'+
-        '<p><strong>Usuario:</strong> @'+u.username+'</p>'+
-        '<p><strong>Correo:</strong> '+(u.email || '—')+'</p>'+
-        '<p><strong>Teléfono:</strong> '+(u.telefono || '—')+'</p>'+
-        '<p><strong>Rol:</strong> '+u.rol_display+'</p>'+
-        '<p><strong>Estado:</strong> '+(u.is_active ? 'Activo' : 'Inactivo')+'</p>'+
-        '<p><strong>Registrado:</strong> '+u.fecha_registro+'</p>'+
-        '<p><strong>Último acceso:</strong> '+u.ultimo_acceso+'</p>';
+        '<div class="md-row"><div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="md-label">Correo</div><div class="md-val">'+(u.email || '—')+'</div></div></div>'+
+        '<div class="md-row"><div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 012 2.18 2 2 0 014 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div><div><div class="md-label">Teléfono</div><div class="md-val">'+(u.telefono || '—')+'</div></div></div>'+
+        '<div class="md-row"><div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="md-label">Rol</div><div class="md-val">'+u.rol_display+'</div></div></div>'+
+        '<div class="md-row"><div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="md-label">Estado</div><div class="md-val">'+(u.is_active ? '<span class="badge b-green">Activo</span>' : '<span class="badge b-gray">Inactivo</span>')+'</div></div></div>'+
+        '<div class="md-row"><div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div><div class="md-label">Registrado</div><div class="md-val">'+u.fecha_registro+'</div></div></div>'+
+        '<div class="md-row"><div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="md-label">Último acceso</div><div class="md-val">'+u.ultimo_acceso+'</div></div></div>';
     })
     .catch(function(){
       document.getElementById('ver-usuario-body').innerHTML = '<p style="color:#dc2626;">Error de conexión.</p>';
     });
 }
 function cerrarModalVerUsuario(){
-  document.getElementById('modal-ver-usuario').style.display = 'none';
+  document.getElementById('modal-ver-usuario').classList.remove('show');
 }
 function verEditarDesdeVer(){
   var id = document.getElementById('ver-usuario-btn-editar').getAttribute('data-id');
@@ -7500,17 +7585,21 @@ function guardarEdicionUsuario(){
 var _usuarioEstadoPendienteId = null;
 function confirmarCambioEstadoUsuario(id, estaActivo, nombre){
   _usuarioEstadoPendienteId = id;
-  document.getElementById('estado-usuario-titulo').textContent = estaActivo ? '🔒 Desactivar usuario' : '🔓 Activar usuario';
+  document.getElementById('estado-usuario-titulo').textContent = estaActivo ? 'Desactivar usuario' : 'Activar usuario';
   document.getElementById('estado-usuario-mensaje').innerHTML = estaActivo
     ? '¿Deseas desactivar a <strong>'+nombre+'</strong>? No podrá iniciar sesión hasta que lo reactives. No se elimina ningún dato ni historial.'
     : '¿Deseas activar a <strong>'+nombre+'</strong>? Podrá volver a iniciar sesión.';
   var btn = document.getElementById('estado-usuario-btn');
   btn.textContent = estaActivo ? 'Sí, desactivar' : 'Sí, activar';
-  btn.style.background = estaActivo ? '#dc2626' : 'var(--blue)';
-  document.getElementById('modal-estado-usuario').style.display = 'flex';
+  var iconWrap = document.getElementById('estado-usuario-icon-wrap');
+  var icon     = document.getElementById('estado-usuario-icon');
+  iconWrap.style.background = estaActivo ? '#fee2e2' : '#dcfce7';
+  icon.setAttribute('stroke', estaActivo ? '#ef4444' : '#22c55e');
+  btn.style.background = estaActivo ? '#ef4444' : '#22c55e';
+  document.getElementById('modal-estado-usuario').classList.add('show');
 }
 function cerrarModalEstadoUsuario(){
-  document.getElementById('modal-estado-usuario').style.display = 'none';
+  document.getElementById('modal-estado-usuario').classList.remove('show');
   _usuarioEstadoPendienteId = null;
 }
 function ejecutarCambioEstadoUsuario(){

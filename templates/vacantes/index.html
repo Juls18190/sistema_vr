@@ -1,290 +1,76 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vacantes — Grupo V&R Consultores</title>
-<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
-<link rel="icon" type="image/png" sizes="256x256" href="{% static 'img/favicon.png' %}">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+{% block title %}Vacantes — Grupo V&R Consultores{% endblock %}
+
+{% block extra_css %}
 <style>
-:root{
-  --dark:#0a1628;--dark2:#0f1e35;--blue:#1560BD;--blue2:#3a82e8;
-  --accent:#4fc3f7;--text:#e8edf5;--muted:#8899aa;
-  --border:rgba(255,255,255,0.09);--ff:'Sora',sans-serif;--fd:'Sora',sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:var(--ff);background:var(--dark);color:var(--text);line-height:1.6;}
-.anim{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
-.anim.vis{opacity:1;transform:none;}
+/* ══════════════════════════════════════════════════════════════
+   VACANTES — Estilos específicos de esta página.
+   Topbar, navbar, footer, botones, .sec/.sh/.uline, cta-band,
+   page-hero, tabs (.svc-tab), formularios (.fcard/.fr/.fgrid) y
+   el lightbox de imágenes YA viven en estilos.css.
+   Aquí solo va: tarjetas de vacantes, Beneficios y Proceso.
+   ══════════════════════════════════════════════════════════════ */
 
-/* TOPBAR */
-.topbar{background:#060c16;padding:6px 2.5rem;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted);border-bottom:0.5px solid var(--border);}
-.topbar a{color:var(--muted);text-decoration:none;margin-right:1.5rem;transition:color .2s;}
-.topbar a:hover{color:var(--accent);}
-.admin-link{background:var(--blue);color:#fff!important;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:500;}
+/* ══ GRID DE TARJETAS DE VACANTES (mismo lenguaje visual que Servicios) ══ */
+.vac-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.25rem; margin-top: .75rem; }
+.vac-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: all .25s; display: flex; flex-direction: column; }
+.vac-card:hover { border-color: var(--blue); transform: translateY(-4px); box-shadow: 0 16px 34px rgba(15,40,80,.1); }
+.vac-img { height: 175px; position: relative; background: var(--blue-50); cursor: pointer; }
+.vac-img img { width: 100%; height: 100%; object-fit: contain; padding: .85rem; box-sizing: border-box; }
+.vac-img-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--blue); opacity: .35; }
+.vac-badge-nueva { position: absolute; top: 10px; left: 10px; background: #16a34a; color: #fff; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 700; z-index: 2; }
+.vac-body { padding: 1.15rem 1.25rem 1.35rem; display: flex; flex-direction: column; flex: 1; }
+.vac-area { font-size: 11px; color: var(--blue); font-weight: 700; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; }
+.vac-title { font-size: 15.5px; font-weight: 700; color: var(--ink); margin-bottom: 8px; line-height: 1.35; }
+.vac-desc { font-size: 12.5px; color: var(--muted); line-height: 1.65; margin-bottom: 1rem; flex: 1; }
+.vac-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: .9rem; }
+.vtag { font-size: 10.5px; background: var(--bg-soft); border: 1px solid var(--border); color: var(--muted); padding: 4px 10px; border-radius: 10px; font-weight: 600; }
+.vtag.blue { background: var(--blue-50); border-color: var(--blue-100); color: var(--blue); }
+.vac-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.badge-img { font-size: 11px; background: var(--blue-50); color: var(--blue); border: 1px solid var(--blue-100); padding: 6px 12px; border-radius: 10px; font-weight: 600; cursor: pointer; font-family: var(--ff); }
+.badge-img:hover { background: var(--blue-100); }
+.badge-pdf { font-size: 11px; background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; padding: 6px 12px; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-block; }
+.badge-pdf:hover { background: #FEE2E2; }
+.empty-msg { text-align: center; padding: 3rem; color: var(--muted); font-size: 14px; grid-column: 1 / -1; }
+.rec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.rec-info { margin-top: 1.25rem; }
+@media (max-width: 768px) { .rec-grid { grid-template-columns: 1fr; } }
 
-/* NAV */
-nav{background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);padding:0 2.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;height:58px;border-bottom:0.5px solid var(--border);}
-.nav-logo{display:flex;align-items:center;gap:10px;}
-.logo-box{width:36px;height:36px;background:var(--dark2);border-radius:8px;display:flex;align-items:center;justify-content:center;}
-.logo-txt{font-size:14px;font-weight:600;color:#fff;}
-.logo-sub{font-size:10px;color:var(--muted);}
-.nav-links{display:flex;list-style:none;height:58px;}
-.nav-links li a{display:flex;align-items:center;height:58px;padding:0 14px;font-size:13px;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;transition:all .2s;}
-.nav-links li a:hover,.nav-links li a.act{color:#fff;border-bottom-color:var(--blue);}
-.btn-nav{background:var(--blue);color:#fff;border:none;padding:10px 20px;border-radius:7px;font-size:12px;font-family:var(--ff);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(21,96,189,0.4);transition:all .2s;text-decoration:none;}
-.btn-nav:hover{background:var(--blue2);transform:translateY(-1px);}
+/* ══ BENEFICIOS ══ */
+.ben-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.1rem; margin-top: 1.5rem; }
+.ben { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 1.35rem; transition: all .25s; }
+.ben:hover { border-color: var(--blue); transform: translateY(-3px); box-shadow: 0 12px 26px rgba(15,40,80,.08); }
+.ben-icon { width: 42px; height: 42px; background: var(--blue-50); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: .9rem; }
+.ben h4 { font-size: 14.5px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.ben p { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+@media (max-width: 768px) { .ben-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .ben-grid { grid-template-columns: 1fr; } }
 
-/* ══ NAV — MENÚ MÓVIL ══ */
-.nav-right{display:flex;align-items:center;gap:1.25rem;}
-.nav-burger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:34px;height:34px;background:none;border:none;cursor:pointer;padding:0;flex-shrink:0;}
-.nav-burger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:transform .25s ease,opacity .25s ease;}
-.nav-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
-.nav-burger.open span:nth-child(2){opacity:0;}
-.nav-burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-
-@media(max-width:900px){
-  .nav-burger{display:flex;}
-  .nav-right{
-    position:absolute;top:58px;left:0;right:0;
-    background:rgba(5,12,24,0.99);
-    flex-direction:column;align-items:stretch;gap:0;
-    max-height:0;overflow:hidden;
-    border-bottom:0.5px solid var(--border);
-    transition:max-height .3s ease;
-  }
-  .nav-right.open{max-height:400px;}
-  .nav-links{flex-direction:column;height:auto;}
-  .nav-links li a{height:48px;padding:0 2.5rem;border-bottom:0.5px solid var(--border);border-left:2px solid transparent;}
-  .nav-links li a:hover,.nav-links li a.act{border-bottom-color:var(--border);border-left-color:var(--blue);}
-  .btn-nav{margin:1rem 2.5rem;justify-content:center;}
-}
-
-/* HERO */
-.page-hero{background:linear-gradient(135deg,#060f20 0%,#091828 50%,#0c2040 100%);padding:4rem 2.5rem 3rem;position:relative;overflow:hidden;border-bottom:0.5px solid var(--border);}
-.page-hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(21,96,189,0.15) 0%,transparent 70%);border-radius:50%;}
-.page-hero-tag{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);font-weight:600;margin-bottom:8px;}
-.page-hero h1{font-family:var(--fd);font-size:38px;font-weight:600;color:#fff;margin-bottom:12px;line-height:1.2;}
-.page-hero p{font-size:15px;color:rgba(255,255,255,.7);max-width:520px;line-height:1.7;}
-.vac-stats{display:flex;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap;}
-.vs{background:rgba(21,96,189,0.12);border:0.5px solid rgba(21,96,189,0.25);border-radius:10px;padding:.875rem 1.25rem;display:flex;align-items:center;gap:10px;}
-.vs-num{font-size:22px;font-weight:700;color:var(--accent);}
-.vs-label{font-size:11px;color:var(--muted);}
-
-/* SECCIONES */
-.sec{padding:3.5rem 2.5rem;}
-.sec-alt{background:var(--dark2);}
-.sh{font-family:var(--fd);font-size:26px;color:#fff;margin-bottom:8px;}
-.sec-tag{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:500;margin-bottom:6px;}
-.uline{width:44px;height:2px;background:var(--blue);margin:10px 0 2rem;}
-
-/* TARJETAS VACANTES */
-.vac-grid{display:flex;flex-direction:column;gap:1rem;margin-top:2rem;}
-.vac-card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:12px;padding:1.5rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:start;transition:all .25s;}
-.vac-card:hover{border-color:rgba(21,96,189,.4);transform:translateX(4px);box-shadow:0 4px 20px rgba(0,0,0,.2);}
-.vac-area{font-size:11px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
-.vac-title{font-size:18px;font-weight:600;color:#fff;margin-bottom:8px;}
-.vac-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1rem;}
-.vac-tags{display:flex;gap:8px;flex-wrap:wrap;}
-.vtag{font-size:11px;background:rgba(255,255,255,0.05);border:0.5px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:12px;}
-.vtag.blue{background:rgba(21,96,189,0.15);border-color:rgba(21,96,189,0.3);color:var(--accent);}
-.vac-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-width:160px;}
-.vac-main{display:flex;gap:14px;align-items:flex-start;}
-.vac-thumb{width:64px;height:64px;border-radius:10px;background-size:cover;background-position:center;flex-shrink:0;cursor:pointer;}
-.vac-thumb-ph{width:64px;height:64px;border-radius:10px;background:rgba(255,255,255,0.04);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-
-/* ══ LIGHTBOX DE IMÁGENES ══ */
-.vac-lightbox{display:none;position:fixed;inset:0;background:rgba(5,12,22,.92);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;padding:2rem;}
-.vac-lightbox.open{display:flex;}
-.vac-lightbox img{max-width:90vw;max-height:85vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5);object-fit:contain;}
-.vac-lightbox-close{position:fixed;top:20px;right:24px;width:42px;height:42px;border-radius:50%;border:0.5px solid var(--border);background:rgba(10,22,40,.9);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:1000;}
-.vac-lightbox-close:hover{background:rgba(21,96,189,.7);}
-.vac-lightbox-nav{position:fixed;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;pointer-events:none;}
-.vac-lightbox-arrow{pointer-events:auto;width:44px;height:44px;border-radius:50%;border:0.5px solid var(--border);background:rgba(10,22,40,.9);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.vac-lightbox-arrow:hover{background:rgba(21,96,189,.7);}
-.badge-img{font-size:10px;background:rgba(21,96,189,0.14);color:var(--accent);border:0.5px solid rgba(21,96,189,0.3);padding:3px 10px;border-radius:10px;font-weight:600;cursor:pointer;font-family:var(--ff);}
-.badge-img:hover{background:rgba(21,96,189,0.24);}
-@media(max-width:600px){
-  .vac-lightbox{padding:1rem;}
-  .vac-lightbox img{max-width:94vw;max-height:80vh;}
-  .vac-lightbox-close{top:14px;right:14px;width:38px;height:38px;}
-}
-.btn-apply{background:var(--blue);color:#fff;border:none;padding:11px 22px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-block;}
-.btn-apply:hover{background:var(--blue2);transform:translateY(-1px);}
-.badge-nueva{font-size:10px;background:rgba(34,197,94,0.15);color:#4ade80;border:0.5px solid rgba(34,197,94,0.3);padding:3px 10px;border-radius:10px;font-weight:600;}
-.badge-pdf{font-size:10px;background:rgba(239,68,68,0.12);color:#f87171;border:0.5px solid rgba(239,68,68,0.25);padding:3px 10px;border-radius:10px;font-weight:600;text-decoration:none;}
-.badge-pdf:hover{background:rgba(239,68,68,0.2);}
-.empty-msg{text-align:center;padding:3rem;color:var(--muted);font-size:15px;}
-
-/* BENEFICIOS */
-.ben-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem;}
-.ben{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:10px;padding:1.25rem;transition:border-color .2s;}
-.ben:hover{border-color:rgba(21,96,189,.35);}
-.ben-icon{width:40px;height:40px;background:rgba(21,96,189,.15);border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:.875rem;}
-.ben h4{font-size:14px;font-weight:600;color:#fff;margin-bottom:5px;}
-.ben p{font-size:12px;color:var(--muted);line-height:1.6;}
-
-/* PROCESO */
-.proceso-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-top:1.5rem;}
-.paso{text-align:center;position:relative;}
-.paso::after{content:'→';position:absolute;top:20px;right:-12px;font-size:18px;color:var(--blue);opacity:.5;}
-.paso:last-child::after{display:none;}
-.paso-num{width:44px;height:44px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;margin:0 auto 12px;}
-.paso h4{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;}
-.paso p{font-size:11px;color:var(--muted);line-height:1.5;}
-
-/* CTA */
-.cta-band{background:var(--blue);padding:3rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;}
-.cta-band h3{font-family:var(--fd);font-size:24px;color:#fff;margin-bottom:.5rem;}
-.cta-band p{font-size:14px;color:rgba(255,255,255,.78);}
-.btn-white{background:#fff;color:var(--blue);border:none;padding:13px 26px;border-radius:7px;font-size:13px;font-weight:700;font-family:var(--ff);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block;}
-.btn-white:hover{background:#e8f0fe;}
-
-/* FOOTER */
-footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.5rem 1.25rem;}
-.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem;margin-bottom:2rem;}
-.ft-brand p{font-size:12px;color:var(--muted);line-height:1.7;margin:.5rem 0 1rem;max-width:240px;}
-.ft-col h5{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:.9rem;}
-.ft-col a{display:block;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:7px;transition:color .2s;}
-.ft-col a:hover{color:#fff;}
-.ft-bottom{border-top:0.5px solid var(--border);padding-top:1rem;display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
-
-/* FLOAT BUTTONS */
-.float-wrap{position:fixed;bottom:1.75rem;right:1.75rem;display:flex;flex-direction:column;gap:10px;z-index:9999;}
-.float-item{position:relative;display:flex;align-items:center;}
-.float-tooltip{position:absolute;right:62px;background:#001133;color:#fff;font-size:11px;padding:5px 10px;border-radius:6px;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;}
-.float-tooltip::after{content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);border:5px solid transparent;border-right:none;border-left-color:#001133;}
-.float-item:hover .float-tooltip{opacity:1;}
-.fab{width:52px;height:52px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s;}
-.fab:hover{transform:scale(1.1);}
-.fab-wa{background:#25d366;box-shadow:0 4px 16px rgba(37,211,102,.4);}
-.fab-call{background:var(--blue);box-shadow:0 4px 16px rgba(21,96,189,.4);}
-
-@media(max-width:768px){
-  .ben-grid{grid-template-columns:1fr 1fr;}
-  .proceso-grid{grid-template-columns:1fr 1fr;}
-  .ft-grid{grid-template-columns:1fr;gap:1.75rem;}
-  .ft-brand p{max-width:none;}
-  .ft-bottom{flex-direction:column;gap:6px;text-align:center;}
-  .vac-card{grid-template-columns:1fr;}
-  .vac-right{align-items:flex-start;}
-  .cta-band{flex-direction:column;}
-  .page-hero{padding:3rem 1.25rem 2rem;}
-  .sec{padding:2.5rem 1.25rem;}
-}
-
-/* ── Trabaja con Nosotros (movido desde inicio/sections/reclutamiento.html) ── */
-.team-strip   { display: flex; gap: 10px; margin-bottom: 2rem; }
-.team-card    { flex: 1; border-radius: 8px; overflow: hidden; position: relative; height: 130px; }
-.team-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0,rgba(0,0,0,.75),transparent); padding: 8px; font-size: 11px; color: #fff; font-weight: 500; }
-.rec-grid     { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
-.tab-pills    { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
-.tp           { padding: 6px 14px; font-size: 12px; border-radius: 20px; border: 0.5px solid var(--border); color: var(--muted); cursor: pointer; background: none; font-family: var(--ff); }
-.tp.on        { background: var(--blue); color: #fff; border-color: var(--blue); }
-.rec-info     { background: rgba(255,255,255,0.03); border: 0.5px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
-.rec-info h3  { font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 8px; }
-.rec-tag      { font-size: 10px; background: rgba(21,96,189,0.2); color: var(--accent); padding: 2px 8px; border-radius: 10px; }
-.checklist    { list-style: none; font-size: 13px; color: var(--muted); }
-.checklist li { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
-.cdot         { width: 14px; height: 14px; background: rgba(21,96,189,.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
-.cdot::after  { content: ""; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
-.fcard        { background: rgba(255,255,255,0.02); border: 0.5px solid var(--border); border-radius: 10px; padding: 1.5rem; }
-.fcard-title  { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: 1.25rem; }
-.fr           { margin-bottom: 11px; }
-.fr label     { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .3px; }
-.fr input, .fr select, .fr textarea { width: 100%; background: rgba(255,255,255,0.04); border: 0.5px solid var(--border); border-radius: 6px; padding: 9px 12px; font-size: 13px; color: var(--text); font-family: var(--ff); outline: none; transition: border-color .2s; }
-.fr input:focus, .fr select:focus { border-color: rgba(21,96,189,.6); }
-.fr select option { background: #0f1e35; }
-.fgrid        { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.upload-z     { width: 100%; background: rgba(255,255,255,0.02); border: 1.5px dashed rgba(255,255,255,0.1); border-radius: 6px; padding: 1.25rem; text-align: center; cursor: pointer; transition: border-color .2s; }
-.upload-z:hover { border-color: rgba(21,96,189,.5); }
-.upload-z p   { font-size: 12px; color: var(--muted); margin-top: 5px; }
-.btn-full     { width: 100%; background: var(--blue); color: #fff; border: none; padding: 11px; border-radius: 6px; font-size: 13px; font-family: var(--ff); cursor: pointer; margin-top: 8px; transition: background .2s; }
-.btn-full:hover { background: var(--blue2); }
-@media(max-width:768px){ .rec-grid{grid-template-columns:1fr;} }
+/* ══ PROCESO DE SELECCIÓN ══ */
+.proceso-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; margin-top: 1.75rem; }
+.paso { text-align: center; position: relative; }
+.paso::after { content: '→'; position: absolute; top: 21px; right: -18px; font-size: 18px; color: var(--blue-100); }
+.paso:last-child::after { display: none; }
+.paso-num { width: 44px; height: 44px; background: var(--blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; margin: 0 auto 12px; box-shadow: 0 6px 16px rgba(21,96,189,.25); }
+.paso h4 { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.paso p { font-size: 11.5px; color: var(--muted); line-height: 1.6; }
+@media (max-width: 768px) { .proceso-grid { grid-template-columns: 1fr 1fr; row-gap: 2rem; } .paso::after { display: none; } }
 </style>
-</head>
-<body>
+{% endblock %}
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <div>
-    <a href="tel:7821602295">📞 782 160 2295</a>
-    <a href="mailto:grupovr@inbursaasesores.com">✉ grupovr@inbursaasesores.com</a>
-  </div>
-  <div>
-    <a href="/dashboard/" class="admin-link">Acceso Admin ↗</a>
-  </div>
-</div>
-
-<!-- NAVBAR -->
-<nav>
-  <div class="nav-logo">
-    <div class="logo-box">
-      <img src="{% static 'img/logo.png' %}" alt="Grupo V&R" width="30" height="19">
-    </div>
-    <div style="margin-left:8px;">
-      <div class="logo-txt">GRUPO V&amp;R</div>
-      <div class="logo-sub">Consultores · Agente de Seguros S.A.</div>
-    </div>
-  </div>
-  <button class="nav-burger" id="navBurger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="navRight">
-    <span></span><span></span><span></span>
-  </button>
-
-  <div class="nav-right" id="navRight">
-    <ul class="nav-links">
-      <li><a href="/">Inicio</a></li>
-      <li><a href="/servicios/">Servicios</a></li>
-      <li><a href="/vacantes/" class="act">Vacantes</a></li>
-      <li><a href="/citas/agendar/">Citas</a></li>
-    </ul>
-    <a href="/citas/agendar/" class="btn-nav">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      Agendar Cita
-    </a>
-  </div>
-</nav>
-
-<script>
-(function(){
-  var burger = document.getElementById('navBurger');
-  var panel  = document.getElementById('navRight');
-  if(!burger || !panel) return;
-  function cerrar(){
-    panel.classList.remove('open');
-    burger.classList.remove('open');
-    burger.setAttribute('aria-expanded','false');
-  }
-  burger.addEventListener('click', function(){
-    var abierto = panel.classList.toggle('open');
-    burger.classList.toggle('open', abierto);
-    burger.setAttribute('aria-expanded', abierto ? 'true' : 'false');
-  });
-  panel.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', cerrar); });
-})();
-</script>
+{% block content %}
 
 <!-- HERO con estadísticas reales desde BD -->
 <div class="page-hero">
-  <div class="page-hero-tag">Bolsa de Trabajo</div>
-  <h1>Vacantes Disponibles</h1>
-  <p>Forma parte del mejor equipo de consultores financieros en la región. Horarios flexibles, comisiones atractivas y crecimiento real.</p>
-  <div class="vac-stats">
-    <div class="vs">
-      <div class="vs-num">{{ vacantes|length }}</div>
-      <div class="vs-label">Vacante{{ vacantes|length|pluralize }} activa{{ vacantes|length|pluralize }}</div>
-    </div>
-    <div class="vs">
-      <div class="vs-num">+500</div>
-      <div class="vs-label">Asesores certificados</div>
-    </div>
-    <div class="vs">
-      <div class="vs-num">100%</div>
-      <div class="vs-label">Capacitación incluida</div>
+  <div class="page-hero-inner">
+    <div class="page-hero-tag">Bolsa de Trabajo</div>
+    <h1>Vacantes Disponibles</h1>
+    <p>Forma parte del mejor equipo de consultores financieros en la región. Horarios flexibles, comisiones atractivas y crecimiento real.</p>
+    <div class="vac-stats">
+      <div class="vs"><div class="vs-num">{{ vacantes|length }}</div><div class="vs-label">Vacante{{ vacantes|length|pluralize }} activa{{ vacantes|length|pluralize }}</div></div>
+      <div class="vs"><div class="vs-num">+500</div><div class="vs-label">Asesores certificados</div></div>
+      <div class="vs"><div class="vs-num">100%</div><div class="vs-label">Capacitación incluida</div></div>
     </div>
   </div>
 </div>
@@ -298,39 +84,32 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
   <div class="rec-grid">
     {% if hay_vacantes %}
     <div class="anim">
-      <div class="tab-pills">
-        {% if vacantes_estudiantes %}<button class="tp{% if tab_inicial == 'estudiantes' %} on{% endif %}" onclick="setTab(this,'estudiantes')">Estudiantes</button>{% endif %}
-        {% if vacantes_jubilados %}<button class="tp{% if tab_inicial == 'jubilados' %} on{% endif %}" onclick="setTab(this,'jubilados')">Jubilados</button>{% endif %}
-        {% if vacantes_amas_casa %}<button class="tp{% if tab_inicial == 'amas' %} on{% endif %}" onclick="setTab(this,'amas')">Amas de Casa</button>{% endif %}
-        {% if vacantes_profesionistas %}<button class="tp{% if tab_inicial == 'profesionistas' %} on{% endif %}" onclick="setTab(this,'profesionistas')">Profesionistas</button>{% endif %}
-        <button class="tp{% if tab_inicial == 'general' %} on{% endif %}" onclick="setTab(this,'general')">General</button>
+      <div class="svc-tabs">
+        {% if vacantes_estudiantes %}<button type="button" class="svc-tab{% if tab_inicial == 'estudiantes' %} on{% endif %}" onclick="setTab(this,'estudiantes')">Estudiantes</button>{% endif %}
+        {% if vacantes_jubilados %}<button type="button" class="svc-tab{% if tab_inicial == 'jubilados' %} on{% endif %}" onclick="setTab(this,'jubilados')">Jubilados</button>{% endif %}
+        {% if vacantes_amas_casa %}<button type="button" class="svc-tab{% if tab_inicial == 'amas' %} on{% endif %}" onclick="setTab(this,'amas')">Amas de Casa</button>{% endif %}
+        {% if vacantes_profesionistas %}<button type="button" class="svc-tab{% if tab_inicial == 'profesionistas' %} on{% endif %}" onclick="setTab(this,'profesionistas')">Profesionistas</button>{% endif %}
+        <button type="button" class="svc-tab{% if tab_inicial == 'general' %} on{% endif %}" onclick="setTab(this,'general')">General</button>
       </div>
 
       <div class="rec-info" id="tab-estudiantes" style="display:{% if tab_inicial == 'estudiantes' %}block{% else %}none{% endif %}">
-        <h3>Vacantes para Estudiantes</h3>
         {% include 'vacantes/_vac_panel.html' with lista=vacantes_estudiantes %}
       </div>
       <div class="rec-info" id="tab-jubilados" style="display:{% if tab_inicial == 'jubilados' %}block{% else %}none{% endif %}">
-        <h3>Vacantes para Jubilados</h3>
         {% include 'vacantes/_vac_panel.html' with lista=vacantes_jubilados %}
       </div>
       <div class="rec-info" id="tab-amas" style="display:{% if tab_inicial == 'amas' %}block{% else %}none{% endif %}">
-        <h3>Vacantes para Amas de Casa</h3>
         {% include 'vacantes/_vac_panel.html' with lista=vacantes_amas_casa %}
       </div>
-
       <div class="rec-info" id="tab-profesionistas" style="display:{% if tab_inicial == 'profesionistas' %}block{% else %}none{% endif %}">
-        <h3>Vacantes para Profesionistas</h3>
         {% include 'vacantes/_vac_panel.html' with lista=vacantes_profesionistas %}
       </div>
-
       <div class="rec-info" id="tab-general" style="display:{% if tab_inicial == 'general' %}block{% else %}none{% endif %}">
-        <h3>Todas Nuestras Oportunidades</h3>
         {% include 'vacantes/_vac_panel.html' with lista=vacantes_general %}
       </div>
     </div>
     {% else %}
-    <div class="anim" style="text-align:center;padding:3rem 1.5rem;background:rgba(255,255,255,0.02);border:0.5px solid var(--border);border-radius:12px;">
+    <div class="anim" style="text-align:center;padding:3rem 1.5rem;background:var(--bg-soft);border:1px solid var(--border);border-radius:16px;">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" style="margin-bottom:1rem;opacity:.4;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
       <p style="color:var(--muted);font-size:14px;line-height:1.7;">Por el momento no tenemos vacantes activas.<br>Déjanos tus datos y te avisaremos en cuanto abramos una nueva convocatoria.</p>
     </div>
@@ -340,11 +119,11 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
       {% csrf_token %}
       {% if messages %}
         {% for m in messages %}
-        <div style="background:{% if m.tags == 'success' %}rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:#4ade80{% else %}rgba(239,68,68,.12);border-color:rgba(239,68,68,.3);color:#f87171{% endif %};border:0.5px solid;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:1rem;">{{ m }}</div>
+        <div style="background:{% if m.tags == 'success' %}#F0FDF4;border-color:#BBF7D0;color:#16A34A{% else %}#FEF2F2;border-color:#FCA5A5;color:#DC2626{% endif %};border:1px solid;border-radius:9px;padding:10px 14px;font-size:12.5px;margin-bottom:1rem;">{{ m }}</div>
         {% endfor %}
       {% endif %}
       <div class="fcard-title">Formulario de Postulación</div>
-      <p style="font-size:12px;color:var(--muted);margin:-0.5rem 0 1.25rem;line-height:1.6;">Completa tu información y sube tu CV. Te contactaremos en un máximo de 48 horas hábiles.</p>
+      <p class="form-sub" style="margin-top:-.5rem;">Completa tu información y sube tu CV. Te contactaremos en un máximo de 48 horas hábiles.</p>
       <div class="fgrid">
         <div class="fr"><label>Nombre Completo</label><input type="text" name="nombre" placeholder="Tu nombre" required></div>
         <div class="fr"><label>Correo electrónico</label><input type="email" name="correo" placeholder="correo@ejemplo.com" required></div>
@@ -379,32 +158,32 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
   <div class="uline"></div>
   <div class="ben-grid">
     <div class="ben anim">
-      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
       <h4>Comisiones atractivas</h4>
       <p>Esquema de comisiones competitivo con bonos trimestrales y anuales por cumplimiento de metas.</p>
     </div>
     <div class="ben anim" style="transition-delay:.1s">
-      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
       <h4>Horarios flexibles</h4>
       <p>Organiza tu tiempo de trabajo. Ideal para estudiantes, amas de casa, jubilados y profesionistas.</p>
     </div>
     <div class="ben anim" style="transition-delay:.2s">
-      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg></div>
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg></div>
       <h4>Capacitación continua</h4>
       <p>Formación completa desde cero. Certificación ante la CNSF sin costo y cursos permanentes.</p>
     </div>
     <div class="ben anim" style="transition-delay:.1s">
-      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
       <h4>Respaldo Inbursa</h4>
       <p>Trabaja con el respaldo de uno de los grupos financieros más importantes de México.</p>
     </div>
     <div class="ben anim" style="transition-delay:.2s">
-      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
       <h4>Crecimiento real</h4>
-      <p>Plan de carrera definido. Asciende de asesor a coordinador y director según tus resultados.</p>
+      <p>Plan de carrera claro: de asesor a gerente de agencia según tu desempeño y resultados.</p>
     </div>
     <div class="ben anim" style="transition-delay:.3s">
-      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+      <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
       <h4>Convenciones</h4>
       <p>Viajes y convenciones nacionales e internacionales para los mejores productores cada año.</p>
     </div>
@@ -441,67 +220,28 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:2.5rem 2.
 </div>
 
 <!-- CTA FINAL -->
-<div class="cta-band">
-  <div>
-    <h3>¿Listo para dar el siguiente paso?</h3>
-    <p>Postúlate ahora y forma parte del equipo V&amp;R Consultores.</p>
-  </div>
-  <a href="/postulantes/crear/" class="btn-white">Enviar mi postulación →</a>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="ft-grid">
-    <div class="ft-brand">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;">
-        <img src="{% static 'img/logo.png' %}" alt="Grupo V&R" width="32" height="20">
-        <span style="font-size:16px;font-weight:600;color:#fff;">GRUPO V&amp;R</span>
-      </div>
-      <p>Protegemos lo que más te importa con soluciones financieras y de seguros a tu medida, respaldados por Grupo Financiero Inbursa.</p>
-      <div class="ft-social" style="display:flex;gap:10px;margin-top:1rem;">
-        <a href="https://www.facebook.com/GrupoVRagentes/" data-social="facebook" aria-label="Facebook" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;">f</a>
-        <a href="https://www.linkedin.com/company/grupo-v-r-consultores-agente-de-seguros/" data-social="linkedin" aria-label="LinkedIn" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;">in</a>
-        <a href="https://www.instagram.com/grupo.vr.seguros/" data-social="instagram" aria-label="Instagram" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;">ig</a>
-        <a href="https://wa.me/527891079756" target="_blank" data-social="whatsapp" aria-label="WhatsApp" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;">wa</a>
-        <a href="mailto:grupovr@inbursaasesores.com" data-social="correo" aria-label="Correo" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;">✉</a>
-      </div>
+<div class="sec">
+  <div class="cta-band">
+    <div>
+      <h3>¿Listo para dar el siguiente paso?</h3>
+      <p>Postúlate ahora y forma parte del equipo V&amp;R Consultores.</p>
     </div>
-    <div class="ft-col"><h5>Servicios</h5><a href="/servicios/">Gastos Médicos</a><a href="/servicios/">Seguro de Vida</a><a href="/servicios/">Seguro de Auto</a><a href="/servicios/">Inversión y Ahorro</a><a href="/servicios/">Empresarial</a></div>
-    <div class="ft-col"><h5>Empresa</h5><a href="/#nosotros">Quiénes Somos</a><a href="/vacantes/">Vacantes</a><a href="/citas/agendar/">Agendar Cita</a><a href="/usuarios/login/">Portal Admin</a></div>
-    <div class="ft-col"><h5>Contacto</h5><span style="display:block;font-size:13px;color:var(--muted);margin-bottom:7px;">Av. Juárez #704, Poza Rica, Ver.</span><a href="tel:7821602295">782 160 2295</a><a href="mailto:grupovr@inbursaasesores.com">grupovr@inbursaasesores.com</a></div>
-  </div>
-  <div class="ft-bottom">
-    <p>© 2026 Grupo V&amp;R Consultores · Todos los derechos reservados.</p>
-    <p>Aviso de Privacidad · Términos y Condiciones</p>
-  </div>
-</footer>
-
-<!-- BOTONES FLOTANTES -->
-<div class="float-wrap">
-  <div class="float-item">
-    <div class="float-tooltip">Llamar</div>
-    <button class="fab fab-call" onclick="window.location.href='tel:7821602295'">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-    </button>
-  </div>
-  <div class="float-item">
-    <div class="float-tooltip">WhatsApp</div>
-    <button class="fab fab-wa" onclick="window.open('https://wa.me/527891079756','_blank')">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.1 1.524 5.823L0 24l6.335-1.499A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.885.916-3.636-.235-.374A9.861 9.861 0 012.106 12C2.106 6.58 6.58 2.106 12 2.106S21.894 6.58 21.894 12 17.42 21.894 12 21.894z"/></svg>
-    </button>
+    <a href="#reclutamiento" class="btn-cta-w">Enviar mi postulación →</a>
   </div>
 </div>
 
-<!-- Lightbox de imágenes de vacantes -->
+<!-- Lightbox de imágenes de vacantes (comparte estilos/JS con Inicio y Servicios) -->
 <div class="vac-lightbox" id="vacLightbox" onclick="if(event.target===this) cerrarLightbox()">
-  <button class="vac-lightbox-close" onclick="cerrarLightbox()" aria-label="Cerrar">✕</button>
+  <button type="button" class="vac-lightbox-close" onclick="cerrarLightbox()" aria-label="Cerrar">✕</button>
   <div class="vac-lightbox-nav" id="vacLightboxNav" style="display:none;">
-    <button class="vac-lightbox-arrow" onclick="lightboxSiguiente(-1)" aria-label="Anterior">‹</button>
-    <button class="vac-lightbox-arrow" onclick="lightboxSiguiente(1)" aria-label="Siguiente">›</button>
+    <button type="button" class="vac-lightbox-arrow" onclick="lightboxSiguiente(-1)" aria-label="Anterior">‹</button>
+    <button type="button" class="vac-lightbox-arrow" onclick="lightboxSiguiente(1)" aria-label="Siguiente">›</button>
   </div>
   <img id="vacLightboxImg" src="" alt="Imagen de la vacante">
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script src="{% static 'js/main.js' %}"></script>
 <script>
 // Animación al hacer scroll
@@ -510,9 +250,9 @@ var obs = new IntersectionObserver(function(entries){
 }, {threshold: 0.12});
 document.querySelectorAll('.anim').forEach(function(el){ obs.observe(el); });
 
-// Tabs de "Trabaja con Nosotros"
+// Tabs de "Vacantes por Categoría"
 function setTab(btn, tabId) {
-  document.querySelectorAll('#reclutamiento .tp').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelectorAll('#reclutamiento .svc-tab').forEach(function(b){ b.classList.remove('on'); });
   document.querySelectorAll('#reclutamiento .rec-info').forEach(function(d){ d.style.display='none'; });
   btn.classList.add('on');
   document.getElementById('tab-'+tabId).style.display='block';
@@ -521,10 +261,16 @@ function setTab(btn, tabId) {
 // Muestra el nombre del CV seleccionado en el formulario de postulación
 function mostrarNombreCV(input) {
   if (input.files && input.files[0]) {
-    document.getElementById('uploadZone').style.borderColor = '#22c55e';
+    document.getElementById('uploadZone').style.borderColor = '#16a34a';
     document.getElementById('uploadTxt').textContent = '✓ ' + input.files[0].name;
   }
 }
+
+// Navbar al hacer scroll
+window.addEventListener("scroll",function(){
+  var nav=document.getElementById("navbar");
+  if(window.scrollY>50) nav.classList.add("scrolled");
+  else nav.classList.remove("scrolled");
+});
 </script>
-</body>
-</html>
+{% endblock %}

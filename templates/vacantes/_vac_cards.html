@@ -1,39 +1,33 @@
 {% for v in lista %}
 <div class="vac-card anim">
-  <div class="vac-main">
+  <div class="vac-img" {% if v.imagen %}onclick="abrirLightbox('{{ v.imagen.url }}')" role="button" aria-label="Ver imagen de {{ v.titulo }}"{% endif %}>
+    {% if v.creada.date|timesince|slice:":1" == "0" %}<span class="vac-badge-nueva">NUEVA</span>{% endif %}
     {% if v.imagen %}
-      <div class="vac-thumb" style="background-image:url('{{ v.imagen.url }}');" onclick="abrirLightbox('{{ v.imagen.url }}')" role="button" aria-label="Ver imagen de {{ v.titulo }}"></div>
+      <img src="{{ v.imagen.url }}" alt="{{ v.titulo }}" loading="lazy">
     {% else %}
-      <div class="vac-thumb-ph"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg></div>
+      <div class="vac-img-ph"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg></div>
     {% endif %}
-    <div>
-      <div class="vac-area">{{ v.area }}</div>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
-        <div class="vac-title">{{ v.titulo }}</div>
-        {% if v.creada.date|timesince|slice:":1" == "0" %}
-          <span class="badge-nueva">NUEVA</span>
-        {% endif %}
-      </div>
-      <p class="vac-desc">{{ v.descripcion|linebreaksbr }}</p>
-      <div class="vac-tags">
-        <span class="vtag blue">{{ v.get_modalidad_display }}</span>
-        {% if v.ubicacion %}<span class="vtag">{{ v.ubicacion }}</span>{% endif %}
-        {% if v.sueldo %}<span class="vtag">{{ v.sueldo }}</span>{% endif %}
-        {% if v.postulantes.count > 0 %}<span class="vtag">{{ v.postulantes.count }} postulante{{ v.postulantes.count|pluralize }}</span>{% endif %}
-        {% if v.fecha_limite %}<span class="vtag">Cierra: {{ v.fecha_limite|date:"d/m/Y" }}</span>{% endif %}
-      </div>
+  </div>
+  <div class="vac-body">
+    <div class="vac-area">{{ v.area }}</div>
+    <div class="vac-title">{{ v.titulo }}</div>
+    <p class="vac-desc">{{ v.descripcion|linebreaksbr }}</p>
+    <div class="vac-tags">
+      <span class="vtag blue">{{ v.get_modalidad_display }}</span>
+      {% if v.ubicacion %}<span class="vtag">{{ v.ubicacion }}</span>{% endif %}
+      {% if v.sueldo %}<span class="vtag">{{ v.sueldo }}</span>{% endif %}
+      {% if v.postulantes.count > 0 %}<span class="vtag">{{ v.postulantes.count }} postulante{{ v.postulantes.count|pluralize }}</span>{% endif %}
+      {% if v.fecha_limite %}<span class="vtag">Cierra: {{ v.fecha_limite|date:"d/m/Y" }}</span>{% endif %}
+    </div>
+    <div class="vac-actions">
+      {% if v.pdf_convocatoria %}
+      <a href="{{ v.pdf_convocatoria.url }}" target="_blank" class="badge-pdf">📄 Ver convocatoria</a>
+      {% endif %}
+      {% if v.imagen %}
+      <button type="button" class="badge-img" onclick="abrirLightbox('{{ v.imagen.url }}')">🖼 Ver imagen</button>
+      {% endif %}
     </div>
   </div>
-  {% if v.pdf_convocatoria or v.imagen %}
-  <div class="vac-right">
-    {% if v.pdf_convocatoria %}
-    <a href="{{ v.pdf_convocatoria.url }}" target="_blank" class="badge-pdf">📄 Ver convocatoria</a>
-    {% endif %}
-    {% if v.imagen %}
-    <button type="button" class="badge-img" onclick="abrirLightbox('{{ v.imagen.url }}')">🖼 Ver imágenes</button>
-    {% endif %}
-  </div>
-  {% endif %}
 </div>
 {% empty %}
 <div class="empty-msg">

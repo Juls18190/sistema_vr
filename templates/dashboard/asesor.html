@@ -193,6 +193,18 @@ tr:last-child td{border-bottom:none;}
 .tc-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+
+.modal-eliminar{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.modal-eliminar.show{display:flex;}
+.me-box{background:#fff;border-radius:14px;padding:2rem;width:380px;max-width:95vw;animation:fadeInUp .25s ease both;text-align:center;}
+.me-icon{width:52px;height:52px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;}
+.me-title{font-size:16px;font-weight:700;margin-bottom:.5rem;}
+.me-sub{font-size:13px;color:var(--txt3);margin-bottom:1.5rem;line-height:1.5;}
+.me-btns{display:flex;gap:10px;justify-content:center;}
+.me-cancel{background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:9px 24px;border-radius:8px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:500;}
+.me-confirm{background:#ef4444;color:#fff;border:none;padding:9px 24px;border-radius:8px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:700;}
+.me-confirm:disabled{opacity:.6;cursor:not-allowed;}
+.me-confirm:not(:disabled):hover{background:#dc2626;}
 .modal-overlay.show{display:flex;}
 
 .btn-new{background:var(--blue);color:#fff;border:none;padding:8px 18px;border-radius:7px;font-size:12px;font-family:var(--ff);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .2s;box-shadow:0 3px 10px rgba(21,96,189,0.25);}
@@ -297,8 +309,63 @@ tr:last-child td{border-bottom:none;}
 .saludo-titulo{font-size:20px;font-weight:700;}
 .saludo-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:4px;}
 
+.hamburguesa-btn{display:none;background:none;border:none;cursor:pointer;padding:4px;margin-right:4px;}
+#sidebar-backdrop{display:none;}
+
 @media(max-width:1100px){.kpi-grid,.kpi-grid.g4{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:640px){.sidebar{display:none;}.kpi-grid,.kpi-grid.g4{grid-template-columns:1fr;}}
+
+@media(max-width:640px){
+  .kpi-grid,.kpi-grid.g4{grid-template-columns:1fr;}
+
+  /* ── Sidebar como panel deslizante, con botón hamburguesa para abrir/cerrar ── */
+  .hamburguesa-btn{display:inline-flex;align-items:center;justify-content:center;}
+  .ab-name small{display:none;}
+  .abody{position:relative;}
+  .sidebar{
+    position:fixed;top:0;left:0;bottom:0;z-index:600;
+    transform:translateX(-100%);transition:transform .25s ease;
+    box-shadow:4px 0 20px rgba(0,0,0,.25);
+  }
+  .sidebar.open{transform:translateX(0);}
+  #sidebar-backdrop.open{
+    display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:590;
+  }
+
+  /* ── Encabezados y acciones apiladas ── */
+  .page-header{flex-direction:column;align-items:stretch;}
+  .page-header .btn-new, .page-header button{width:100%;justify-content:center;}
+  .saludo-card{padding:1.1rem;}
+
+  /* ── Tablas: scroll horizontal en vez de desbordar la pantalla ── */
+  .table-card{overflow-x:auto;}
+  .table-card table{min-width:640px;}
+
+  /* ── Cuadrícula de prospectos: 1 columna ── */
+  .pros-grid{grid-template-columns:1fr;}
+
+  /* ── Gráficas: apiladas ── */
+  .charts-row{grid-template-columns:1fr;}
+
+  /* ── Expediente: hero y tarjetas apiladas ── */
+  .exp-hero{flex-direction:column;align-items:flex-start;}
+  .exp-hero-actions{width:100%;}
+  .exp-hero-actions .btn-accion{flex:1;justify-content:center;}
+  .exp-grid{grid-template-columns:1fr;}
+
+  /* ── Formularios de modales: 1 columna, ancho completo ── */
+  .multi-check-grid{grid-template-columns:1fr;}
+  .modal, .md-box{width:100%!important;}
+  #modal-nueva-cita-asesor > div,
+  #modal-editar-cita-asesor > div{width:100%!important;}
+  [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important;}
+
+  /* ── Búsqueda / filtro de "Todas mis citas" y "Mis prospectos": apilados ── */
+  .tc-head{flex-direction:column;align-items:stretch;gap:8px;}
+  .tc-actions{flex-direction:column;width:100%;}
+  .search-box,.search-form,.filter-select{width:100%;}
+  .search-box input,.search-form input{width:100%;}
+  .notif-panel{width:90vw;right:-60px;}
+}
 </style>
 </head>
 <body>
@@ -312,6 +379,9 @@ tr:last-child td{border-bottom:none;}
   <!-- TOP BAR -->
   <div class="atop">
     <div class="atop-brand">
+      <button id="btn-hamburguesa" class="hamburguesa-btn" onclick="toggleSidebarAsesor()" aria-label="Abrir menú">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--txt2)" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <div class="ab-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
       <span class="ab-name">ASESOR V&amp;R<small>· Sistema de Gestión</small></span>
     </div>
@@ -361,8 +431,10 @@ tr:last-child td{border-bottom:none;}
   </div>
 
   <div class="abody">
+    <!-- Backdrop del sidebar en móvil -->
+    <div id="sidebar-backdrop" onclick="toggleSidebarAsesor()"></div>
     <!-- SIDEBAR -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar-asesor">
       <div class="sb-sec">
         <div class="sb-label">Principal</div>
         <div class="sb-item on" onclick="nav('inicio',this)">
@@ -935,16 +1007,16 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- Modal: confirmar eliminar cita (reutiliza citas:eliminar_ajax) -->
-<div class="modal-overlay" id="modal-eliminar-cita-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
-  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:360px;max-width:92vw;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-      <div style="font-size:15px;font-weight:700;color:#dc2626;">⚠️ Eliminar cita</div>
-      <button onclick="cerrarEliminarCitaAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+<div class="modal-eliminar" id="modal-eliminar-cita-asesor">
+  <div class="me-box">
+    <div class="me-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
     </div>
-    <p style="font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:1.25rem;">¿Eliminar la cita de <strong id="dca-nombre"></strong>? Esta acción no se puede deshacer.</p>
-    <div style="display:flex;justify-content:flex-end;gap:8px;">
-      <button onclick="cerrarEliminarCitaAsesor()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
-      <button onclick="ejecutarEliminarCitaAsesor()" style="background:#dc2626;color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Sí, eliminar</button>
+    <div class="me-title">Eliminar cita</div>
+    <div class="me-sub">¿Eliminar la cita de <strong id="dca-nombre"></strong>? Esta acción no se puede deshacer.</div>
+    <div class="me-btns">
+      <button class="me-cancel" onclick="cerrarEliminarCitaAsesor()">Cancelar</button>
+      <button class="me-confirm" onclick="ejecutarEliminarCitaAsesor()">Sí, eliminar</button>
     </div>
   </div>
 </div>
@@ -1233,16 +1305,16 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- Modal: confirmar eliminar prospecto (reutiliza prospectos:eliminar) -->
-<div class="modal-overlay" id="modal-eliminar-prospecto-asesor" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;">
-  <div style="background:var(--white);border-radius:14px;padding:1.75rem;width:360px;max-width:92vw;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-      <div style="font-size:15px;font-weight:700;color:#dc2626;">⚠️ Eliminar prospecto</div>
-      <button onclick="cerrarEliminarProspectoAsesor()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--txt3);">×</button>
+<div class="modal-eliminar" id="modal-eliminar-prospecto-asesor">
+  <div class="me-box">
+    <div class="me-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
     </div>
-    <p style="font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:1.25rem;">¿Eliminar a <strong id="dpa-nombre"></strong>? Esta acción no se puede deshacer.</p>
-    <div style="display:flex;justify-content:flex-end;gap:8px;">
-      <button onclick="cerrarEliminarProspectoAsesor()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
-      <button onclick="ejecutarEliminarProspectoAsesor()" style="background:#dc2626;color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Sí, eliminar</button>
+    <div class="me-title">Eliminar prospecto</div>
+    <div class="me-sub">¿Eliminar a <strong id="dpa-nombre"></strong>? Esta acción no se puede deshacer.</div>
+    <div class="me-btns">
+      <button class="me-cancel" onclick="cerrarEliminarProspectoAsesor()">Cancelar</button>
+      <button class="me-confirm" onclick="ejecutarEliminarProspectoAsesor()">Sí, eliminar</button>
     </div>
   </div>
 </div>
@@ -1260,6 +1332,17 @@ function nav(id, el){
     var item = document.querySelector('.sb-item[onclick*="nav(\'' + id + '\'"]');
     if (item) item.classList.add('on');
   }
+  cerrarSidebarAsesor();
+}
+
+/* ─── Menú hamburguesa (sidebar deslizante en móvil) ─── */
+function toggleSidebarAsesor(){
+  document.getElementById('sidebar-asesor').classList.toggle('open');
+  document.getElementById('sidebar-backdrop').classList.toggle('open');
+}
+function cerrarSidebarAsesor(){
+  document.getElementById('sidebar-asesor').classList.remove('open');
+  document.getElementById('sidebar-backdrop').classList.remove('open');
 }
 
 /* ─── CHARTS de Inicio (mismo patrón que dashboard/index.html) ─── */
@@ -1678,10 +1761,10 @@ var _delCitaId = null;
 function abrirEliminarCitaAsesor(id, nombre){
   _delCitaId = id;
   document.getElementById('dca-nombre').textContent = nombre;
-  document.getElementById('modal-eliminar-cita-asesor').style.display = 'flex';
+  document.getElementById('modal-eliminar-cita-asesor').classList.add('show');
 }
 function cerrarEliminarCitaAsesor(){
-  document.getElementById('modal-eliminar-cita-asesor').style.display = 'none';
+  document.getElementById('modal-eliminar-cita-asesor').classList.remove('show');
 }
 function ejecutarEliminarCitaAsesor(){
   fetch('/citas/admin/' + _delCitaId + '/eliminar/ajax/', {
@@ -1771,10 +1854,10 @@ var _delProspectoId = null;
 function abrirEliminarProspectoAsesor(id, nombre){
   _delProspectoId = id;
   document.getElementById('dpa-nombre').textContent = nombre;
-  document.getElementById('modal-eliminar-prospecto-asesor').style.display = 'flex';
+  document.getElementById('modal-eliminar-prospecto-asesor').classList.add('show');
 }
 function cerrarEliminarProspectoAsesor(){
-  document.getElementById('modal-eliminar-prospecto-asesor').style.display = 'none';
+  document.getElementById('modal-eliminar-prospecto-asesor').classList.remove('show');
 }
 function ejecutarEliminarProspectoAsesor(){
   fetch('/prospectos/' + _delProspectoId + '/eliminar/', {
@@ -1989,7 +2072,7 @@ document.addEventListener('DOMContentLoaded', function(){
       }
       document.getElementById('expa-modal-editar').classList.remove('show');
       toastAsesor('Prospecto "' + data.nombre + '" actualizado.');
-      abrirExpedienteAsesor(_expAId);
+      setTimeout(function(){ window.location.reload(); }, 700);
     })
     .catch(function(){
       btn.disabled    = false;

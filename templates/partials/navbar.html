@@ -1,14 +1,8 @@
 {% load static %}
 <nav id="navbar">
-    <div class="nav-logo">
-        <div class="logo-box">
-            <img src="{% static 'img/logo.png' %}" alt="Grupo V&R" width="32" height="20">
-        </div>
-        <div style="margin-left:8px;">
-            <div class="logo-txt">GRUPO V&amp;R</div>
-            <div class="logo-sub">Consultores · Agente de Seguros S.A.</div>
-        </div>
-    </div>
+    <a href="/" class="nav-logo">
+        <img src="{% static 'img/logo-vr.png' %}" alt="Grupo V&R Consultores, Agente de Seguros">
+    </a>
     <button class="nav-burger" id="navBurger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="navRight">
         <span></span><span></span><span></span>
     </button>

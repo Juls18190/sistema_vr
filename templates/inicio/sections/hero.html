@@ -1,83 +1,83 @@
 {% load static %}
+<div class="hero-wrap">
 <div class="hero" id="heroCarousel">
-  <div class="hero-slides">
 
-    <div class="hero-slide active" style="background-image:url('{% static "img/hero-slide-1.jpg" %}');">
-      <div class="hero-slide-overlay"></div>
-      <div class="hero-content">
-        <div class="hero-badge"><span class="pulse"></span></div>
-        <h1 class="hero-h">Protegemos tu futuro,<br><span class="hl">aseguramos</span><br>tu presente</h1>
-        <p class="hero-p">Consultoría Bancaria y Financiera para para familias y empresas. Más de 15 años brindando tranquilidad a nuestros clientes.</p>
-        <div class="hero-btns">
-          <a href="#citas" class="btn-p">Agendar Asesoría</a>
-          <a href="#servicios" class="btn-s">Nuestros Servicios</a>
-        </div>
+  <div class="hero-text-stack">
+    <div class="hero-slide-text active">
+      <div class="hero-badge"><span class="pulse"></span>Desde 2011 protegiendo familias mexicanas</div>
+      <h1 class="hero-h">Protegemos tu futuro,<br><span class="hl">aseguramos</span> tu presente</h1>
+      <p class="hero-p">Consultoría Bancaria y Financiera para familias y empresas. Más de 15 años brindando tranquilidad a nuestros clientes.</p>
+      <div class="hero-btns">
+        <a href="#citas" class="btn-p">Agendar Asesoría →</a>
+        <a href="#servicios" class="btn-s">Nuestros Servicios</a>
       </div>
     </div>
 
-    <div class="hero-slide" style="background-image:url('{% static "img/hero-slide-2.jpg" %}');">
-      <div class="hero-slide-overlay"></div>
-      <div class="hero-content">
-        <div class="hero-badge"><span class="pulse"></span>Desde 2011 ayudando a familias mexicanas</div>
-        <h1 class="hero-h">Planeación Financiera<br>para un <span class="hl">futuro seguro</span></h1>
-        <p class="hero-p">Somos una Agencia de seguros comprometida con el bienestar financiero y la seguridad de las familias mexicanas, respaldados por Grupo Financiero Inbursa.</p>
-        <div class="hero-btns">
-          <a href="#nosotros" class="btn-p">Conócenos</a>
-          <a href="#servicios" class="btn-s">Nuestros Servicios</a>
-        </div>
+    <div class="hero-slide-text">
+      <div class="hero-badge"><span class="pulse"></span>Desde 2011 ayudando a familias mexicanas</div>
+      <h1 class="hero-h">Planeación Financiera<br>para un <span class="hl">futuro seguro</span></h1>
+      <p class="hero-p">Somos una Agencia de seguros comprometida con el bienestar financiero y la seguridad de las familias mexicanas, respaldados por Grupo Financiero Inbursa.</p>
+      <div class="hero-btns">
+        <a href="#nosotros" class="btn-p">Conócenos →</a>
+        <a href="#servicios" class="btn-s">Nuestros Servicios</a>
       </div>
     </div>
 
-    <div class="hero-slide" style="background-image:url('{% static "img/hero-slide-3.jpg" %}');">
-      <div class="hero-slide-overlay"></div>
-      <div class="hero-content">
-        <div class="hero-badge"><span class="pulse"></span>Únete al equipo</div>
-        <h1 class="hero-h">¿Buscas una<br><span class="hl">oportunidad profesional</span>?</h1>
-        <p class="hero-p">Estamos buscando talento como tú. Únete a nuestro equipo de asesores exitosos.</p>
-        <div class="hero-btns">
-          <a href="/vacantes/" class="btn-p">Ver Vacantes Disponibles</a>
-          <a href="#servicios" class="btn-s">Nuestros Servicios</a>
-        </div>
+    <div class="hero-slide-text">
+      <div class="hero-badge"><span class="pulse"></span>Únete al equipo</div>
+      <h1 class="hero-h">¿Buscas una<br><span class="hl">oportunidad profesional</span>?</h1>
+      <p class="hero-p">Estamos buscando talento como tú. Únete a nuestro equipo de asesores exitosos.</p>
+      <div class="hero-btns">
+        <a href="/vacantes/" class="btn-p">Ver Vacantes Disponibles →</a>
+        <a href="#servicios" class="btn-s">Nuestros Servicios</a>
       </div>
     </div>
-
   </div>
 
-  <button class="hero-arrow hero-prev" onclick="heroCarouselMove(-1)" aria-label="Anterior">‹</button>
-  <button class="hero-arrow hero-next" onclick="heroCarouselMove(1)" aria-label="Siguiente">›</button>
+  <div class="hero-photo-stack">
+    <div class="hero-slide-photo active" style="background-image:url('{% static "img/hero-slide-1.jpg" %}');"><div class="hero-slide-grad"></div></div>
+    <div class="hero-slide-photo" style="background-image:url('{% static "img/hero-slide-2.jpg" %}');"><div class="hero-slide-grad"></div></div>
+    <div class="hero-slide-photo" style="background-image:url('{% static "img/hero-slide-3.jpg" %}');"><div class="hero-slide-grad"></div></div>
 
-  <div class="hero-dots">
-    <button class="hero-dot active" onclick="heroCarouselGo(0)" aria-label="Ir al slide 1"></button>
-    <button class="hero-dot" onclick="heroCarouselGo(1)" aria-label="Ir al slide 2"></button>
-    <button class="hero-dot" onclick="heroCarouselGo(2)" aria-label="Ir al slide 3"></button>
+    <button class="hero-arrow hero-prev" onclick="heroCarouselMove(-1)" aria-label="Anterior">‹</button>
+    <button class="hero-arrow hero-next" onclick="heroCarouselMove(1)" aria-label="Siguiente">›</button>
+    <div class="hero-dots">
+      <button class="hero-dot active" onclick="heroCarouselGo(0)" aria-label="Ir al slide 1"></button>
+      <button class="hero-dot" onclick="heroCarouselGo(1)" aria-label="Ir al slide 2"></button>
+      <button class="hero-dot" onclick="heroCarouselGo(2)" aria-label="Ir al slide 3"></button>
+    </div>
+
+    <div class="hero-float">
+      <div class="hf-title">¿Por qué elegirnos?</div>
+      <div class="hf-row"><span class="hf-dot"></span>Asesoría personalizada.</div>
+      <div class="hf-row"><span class="hf-dot"></span>Respaldo Grupo Financiero Inbursa</div>
+      <div class="hf-row"><span class="hf-dot"></span>Atención inmediata en siniestros</div>
+      <div class="hf-row"><span class="hf-dot"></span>Planes a tu medida y presupuesto</div>
+    </div>
   </div>
 
-  <div class="hero-float">
-    <div class="hf-title">¿Por qué elegirnos?</div>
-    <div class="hf-row"><span class="hf-dot"></span>Asesoría personalizada.</div>
-    <div class="hf-row"><span class="hf-dot"></span>Respaldo Grupo Financiero Inbursa</div>
-    <div class="hf-row"><span class="hf-dot"></span>Atención inmediata en siniestros</div>
-    <div class="hf-row"><span class="hf-dot"></span>Planes a tu medida y presupuesto</div>
-  </div>
+</div>
 </div>
 
 <script>
 (function(){
-  var idx = 0;
-  var slides = document.querySelectorAll('#heroCarousel .hero-slide');
+  var idxHero = 0;
+  var textos = document.querySelectorAll('#heroCarousel .hero-slide-text');
+  var fotos  = document.querySelectorAll('#heroCarousel .hero-slide-photo');
   var dots   = document.querySelectorAll('#heroCarousel .hero-dot');
   var timer;
 
   function show(i){
-    slides.forEach(function(s,n){ s.classList.toggle('active', n===i); });
+    textos.forEach(function(s,n){ s.classList.toggle('active', n===i); });
+    fotos.forEach(function(s,n){ s.classList.toggle('active', n===i); });
     dots.forEach(function(d,n){ d.classList.toggle('active', n===i); });
-    idx = i;
+    idxHero = i;
   }
-  function reset(){ clearInterval(timer); timer = setInterval(function(){ show((idx+1) % slides.length); }, 6000); }
+  function reset(){ clearInterval(timer); timer = setInterval(function(){ show((idxHero+1) % textos.length); }, 6000); }
 
   window.heroCarouselGo   = function(i){ show(i); reset(); };
-  window.heroCarouselMove = function(dir){ show((idx + dir + slides.length) % slides.length); reset(); };
+  window.heroCarouselMove = function(dir){ show((idxHero + dir + textos.length) % textos.length); reset(); };
 
-  if (slides.length > 1) reset();
+  if (textos.length > 1) reset();
 })();
 </script>

@@ -1,67 +1,27 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cita Confirmada — Grupo V&R</title>
-<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
-<link rel="icon" type="image/png" sizes="256x256" href="{% static 'img/favicon.png' %}">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{--dark:#0a1628;--dark2:#0f1e35;--blue:#1560BD;--blue2:#3a82e8;--accent:#4fc3f7;--text:#e8edf5;--muted:#8899aa;--border:rgba(255,255,255,0.09);--ff:'Sora',sans-serif;--fd:'Sora',sans-serif;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--ff);background:var(--dark);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
-nav{background:rgba(10,22,40,0.97);padding:0 2.5rem;display:flex;align-items:center;justify-content:space-between;height:58px;border-bottom:0.5px solid var(--border);}
-.logo-box{width:36px;height:36px;background:var(--dark2);border-radius:8px;display:flex;align-items:center;justify-content:center;}
-.logo-txt{font-size:14px;font-weight:600;color:#fff;margin-left:8px;}
-@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes checkmark{0%{stroke-dashoffset:50}100%{stroke-dashoffset:0}}
-@keyframes scaleIn{from{transform:scale(0)}to{transform:scale(1)}}
-.main{flex:1;display:flex;align-items:center;justify-content:center;padding:3rem 1.5rem;}
-.card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:16px;padding:3rem 2.5rem;max-width:480px;width:100%;text-align:center;animation:fadeInUp .6s ease both;}
-.check-circle{width:80px;height:80px;background:rgba(34,197,94,0.12);border:2px solid rgba(34,197,94,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.75rem;animation:scaleIn .5s ease .2s both;}
-.card h2{font-family:var(--fd);font-size:26px;color:#fff;margin-bottom:.75rem;}
-.card p{font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:1.75rem;}
-.info-box{background:rgba(21,96,189,0.08);border:0.5px solid rgba(21,96,189,0.25);border-radius:10px;padding:1.1rem 1.25rem;margin-bottom:1.75rem;text-align:left;}
-.ib-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:6px;}
-.ib-row:last-child{margin-bottom:0;}
-.ib-row strong{color:#fff;}
-.ib-dot{width:5px;height:5px;background:var(--accent);border-radius:50%;flex-shrink:0;}
-.btn-home{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;text-decoration:none;transition:all .2s;margin-right:10px;box-shadow:0 4px 14px rgba(21,96,189,.35);}
-.btn-home:hover{background:var(--blue2);transform:translateY(-1px);}
-.btn-wa{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,0.12);color:#4ade80;border:0.5px solid rgba(37,211,102,0.3);padding:12px 20px;border-radius:8px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:500;text-decoration:none;transition:all .2s;}
-.btn-wa:hover{background:rgba(37,211,102,0.2);}
-footer{background:#05101c;border-top:0.5px solid var(--border);padding:1rem 2.5rem;display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
-</style>
-</head>
-<body>
-<nav>
-  <div style="display:flex;align-items:center;">
-    <div class="logo-box"><img src="{% static 'img/logo.png' %}" alt="Grupo V&R" width="30" height="19"></div>
-    <div class="logo-txt">GRUPO V&amp;R</div>
-  </div>
-  <a href="/" style="font-size:12px;color:var(--muted);text-decoration:none;">← Volver al inicio</a>
-</nav>
+{% block title %}Cita Confirmada — Grupo V&R{% endblock %}
 
-<div class="main">
-  <div class="card">
+{% block content %}
+<div class="success-main">
+  <div class="success-card">
     <div class="check-circle">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round">
-        <polyline points="20 6 9 17 4 12" style="stroke-dasharray:50;stroke-dashoffset:50;animation:checkmark .5s ease .4s forwards;"/>
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
       </svg>
     </div>
     <h2>¡Cita registrada con éxito!</h2>
-    <p>Tu solicitud ha sido recibida correctamente. Uno de nuestros asesores se pondrá en contacto contigo en las próximas <strong style="color:#fff;">24 horas hábiles</strong> para confirmar los detalles.</p>
+    <p>Tu solicitud ha sido recibida correctamente. Uno de nuestros asesores se pondrá en contacto contigo en las próximas <strong>24 horas hábiles</strong> para confirmar los detalles.</p>
 
     <div class="info-box">
-      <div class="ib-row"><span class="ib-dot"></span><strong>Confirmación:</strong>&nbsp;por teléfono o correo electrónico</div>
-      <div class="ib-row"><span class="ib-dot"></span><strong>Tiempo de respuesta:</strong>&nbsp;máximo 24 horas hábiles</div>
-      <div class="ib-row"><span class="ib-dot"></span><strong>Primera consulta:</strong>&nbsp;completamente gratuita</div>
-      <div class="ib-row"><span class="ib-dot"></span><strong>Teléfono:</strong>&nbsp;782 160 2295</div>
+      <div class="ib-row"><span class="ib-dot"></span><div><strong>Confirmación:</strong> por teléfono o correo electrónico</div></div>
+      <div class="ib-row"><span class="ib-dot"></span><div><strong>Tiempo de respuesta:</strong> máximo 24 horas hábiles</div></div>
+      <div class="ib-row"><span class="ib-dot"></span><div><strong>Primera consulta:</strong> completamente gratuita</div></div>
+      <div class="ib-row"><span class="ib-dot"></span><div><strong>Teléfono:</strong> 782 160 2295</div></div>
     </div>
 
-    <div>
-      <a href="/" class="btn-home">← Volver al inicio</a>
+    <div class="success-btns">
+      <a href="/" class="btn-p">← Volver al inicio</a>
       <a href="https://wa.me/527891079756" target="_blank" class="btn-wa">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
         Escribir por WhatsApp
@@ -69,10 +29,4 @@ footer{background:#05101c;border-top:0.5px solid var(--border);padding:1rem 2.5r
     </div>
   </div>
 </div>
-
-<footer>
-  <p>© 2026 Grupo V&amp;R Consultores</p>
-  <p>782 160 2295 · grupovr@inbursaasesores.com</p>
-</footer>
-</body>
-</html>
+{% endblock %}
