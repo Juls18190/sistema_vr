@@ -1,56 +1,49 @@
 {% load static %}
-
 <div class="sec" id="servicios">
-
-    <div class="sec-tag">
-        Lo que ofrecemos
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:0;">
+    <div>
+      <div class="sec-tag">Lo que ofrecemos</div>
+      <h2 class="sh" style="margin-bottom:0;">Soluciones integrales para cada etapa de tu vida</h2>
     </div>
+    <a href="/servicios/" class="btn-s">Ver todos los servicios →</a>
+  </div>
+  <div class="uline"></div>
 
-    <h2 class="sh">
-        Soluciones integrales para cada etapa de tu vida
-    </h2>
+{% if servicios %}
 
-    <div class="uline"></div>
+  <div class="svc-tabs" id="svcTabsInicio">
+    {% for cat_slug, cat_label, cat_lista in categorias_servicios %}
+      {% if cat_lista %}
+        <button type="button" class="svc-tab{% if forloop.first %} on{% endif %}" data-cat="{{ cat_slug }}" onclick="svcHomeSetTab('{{ cat_slug }}', this)">{{ cat_label }}</button>
+      {% endif %}
+    {% endfor %}
+  </div>
 
-    {% if servicios %}
+  <div class="svc-showcase">
+    <div class="svc-showcase-img" id="svcHomeImgWrap" onclick="svcHomeAbrirImagenActual()">
+      <img id="svcHomeImg" src="" alt="" style="display:none;">
+      <div class="svc-showcase-img-ph" id="svcHomeImgPh">
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Sin imagen disponible</span>
+      </div>
+      <div class="svc-showcase-zoom">🔍 Ver imagen completa</div>
+    </div>
+    <div class="svc-showcase-body">
+      <div class="svc-cat-label" id="svcHomeCatLabel">Servicio destacado</div>
+      <h3 id="svcHomeNombre"></h3>
+      <p class="svc-showcase-lead" id="svcHomeLead"></p>
+      <p class="svc-showcase-detalle" id="svcHomeDetalle"></p>
+      <div class="svc-showcase-nav">
+        <button type="button" class="svc-nav-arrow" onclick="svcHomeMove(-1)" id="svcHomePrev" aria-label="Servicio anterior">‹</button>
+        <div class="svc-nav-dots" id="svcHomeDots"></div>
+        <span class="svc-count" id="svcHomeCount"></span>
+        <button type="button" class="svc-nav-arrow" onclick="svcHomeMove(1)" id="svcHomeNext" aria-label="Servicio siguiente">›</button>
+        <a href="/citas/agendar/" class="btn-p" id="svcHomeCtaBtn">Quiero información →</a>
+      </div>
+    </div>
+  </div>
 
-        {% for cat_slug, cat_label, cat_lista in categorias_servicios %}
-            {% if cat_lista %}
-                <div class="svc-cat-block">
-                    <h3 class="svc-cat-title">{{ cat_label }}</h3>
-                    <div class="svc-grid">
-                        {% for s in cat_lista %}
-                            <div class="svc-card">
-                                <div class="svc-main">
-                                    {% if s.imagen %}
-                                        <div class="svc-thumb" style="background-image:url('{{ s.imagen.url }}');" onclick="abrirLightbox('{{ s.imagen.url }}')" role="button" aria-label="Ver imagen de {{ s.nombre }}"></div>
-                                    {% else %}
-                                        <div class="svc-thumb-ph">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                        </div>
-                                    {% endif %}
-                                    <div>
-                                        <div class="svc-title">{{ s.nombre }}</div>
-                                        <p class="svc-desc">{{ s.descripcion_corta|linebreaksbr }}</p>
-                                    </div>
-                                </div>
-                                <div class="svc-right">
-                                    {% if s.imagen %}
-                                        <button type="button" class="badge-img" onclick="abrirLightbox('{{ s.imagen.url }}')">🖼 Ver imagen</button>
-                                    {% endif %}
-                                    <a href="/servicios/" class="svc-link">Ver más →</a>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-        {% endfor %}
-
-    {% else %}
-
-        <!-- AQUÍ DEJAS TODOS TUS SERVICIOS ESTÁTICOS QUE YA TENÍAS -->
-
-    {% endif %}
-
+{% else %}
+  <div class="svc-empty">Por el momento no hay servicios publicados. Vuelve pronto.</div>
+{% endif %}
 </div>

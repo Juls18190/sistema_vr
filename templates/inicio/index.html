@@ -110,25 +110,13 @@
 .pillar:hover { transform: translateY(-4px); border-color: var(--blue); box-shadow: 0 12px 28px rgba(15,40,80,.1); }
 .pillar h4 { color: var(--blue); font-size: 14.5px; font-weight: 700; margin-bottom: 8px; }
 .pillar p { font-size: 12.5px; line-height: 1.7; color: var(--muted); }
-
-/* ══ SERVICIOS (vista compacta de Inicio, agrupada por categoría) ══ */
-.svc-cat-block { margin-bottom: 1.75rem; }
-.svc-cat-block:last-child { margin-bottom: 0; }
-.svc-cat-title { font-size: 13px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .6px; margin-bottom: .85rem; padding-bottom: .6rem; border-bottom: 1px solid var(--border); }
-.svc-grid { display: flex; flex-direction: column; gap: .7rem; }
-.svc-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.1rem; display: grid; grid-template-columns: 1fr auto; gap: .75rem; align-items: center; transition: all .25s; }
-.svc-card:hover { border-color: var(--blue); box-shadow: 0 8px 20px rgba(15,40,80,.06); transform: translateY(-2px); }
-.svc-main { display: flex; gap: 12px; align-items: center; }
-.svc-thumb { width: 50px; height: 50px; border-radius: 10px; background-size: cover; background-position: center; flex-shrink: 0; cursor: pointer; border: 1px solid var(--border); }
-.svc-thumb-ph { width: 50px; height: 50px; border-radius: 10px; background: var(--blue-50); border: 1px solid var(--blue-100); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.svc-title { font-size: 14.5px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
-.svc-desc { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
-.svc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 100px; }
-.svc-link { font-size: 12.5px; color: var(--blue); font-weight: 600; transition: gap .2s; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; }
-.svc-link:hover { gap: 7px; }
-.badge-img { font-size: 10.5px; background: var(--blue-50); color: var(--blue); border: 1px solid var(--blue-100); padding: 4px 10px; border-radius: 10px; font-weight: 600; cursor: pointer; font-family: var(--ff); }
-.badge-img:hover { background: var(--blue-100); }
-@media (max-width: 640px) { .svc-card { grid-template-columns: 1fr; } .svc-right { align-items: flex-start; flex-direction: row; } }
+@media (max-width: 900px) {
+  .nos-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .nos-img { height: 300px; }
+}
+@media (max-width: 560px) {
+  .pillars { grid-template-columns: 1fr; }
+}
 
 /* ══ VACANTES DESTACADAS ══ */
 .vd-wrap { position: relative; margin-top: 1rem; }
@@ -214,6 +202,83 @@
 {% block extra_js %}
 <script src="{% static 'js/main.js' %}"></script>
 <script>
+// ── Datos reales de servicios, agrupados por categoría (mismo patrón que /servicios/) ──
+var svcHomeData = {};
+{% for cat_slug, cat_label, cat_lista in categorias_servicios %}
+  {% if cat_lista %}
+svcHomeData["{{ cat_slug }}"] = [
+    {% for s in cat_lista %}
+    {
+      nombre: "{{ s.nombre|escapejs }}",
+      lead: "{{ s.descripcion_corta|escapejs }}",
+      detalle: "{{ s.descripcion|escapejs }}",
+      img: {% if s.imagen %}"{{ s.imagen.url|escapejs }}"{% else %}null{% endif %},
+      catLabel: "{{ cat_label|escapejs }}"
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
+  {% endif %}
+{% endfor %}
+
+var svcHomeCatActual = Object.keys(svcHomeData)[0] || null;
+var svcHomeIdxActual = 0;
+
+function svcHomeSetTab(cat, btn){
+  svcHomeCatActual = cat;
+  svcHomeIdxActual = 0;
+  document.querySelectorAll('#svcTabsInicio .svc-tab').forEach(function(t){ t.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  svcHomeRender();
+}
+
+function svcHomeMove(dir){
+  if (!svcHomeCatActual) return;
+  var lista = svcHomeData[svcHomeCatActual];
+  svcHomeIdxActual = (svcHomeIdxActual + dir + lista.length) % lista.length;
+  svcHomeRender();
+}
+
+function svcHomeAbrirImagenActual(){
+  if (!svcHomeCatActual) return;
+  var item = svcHomeData[svcHomeCatActual][svcHomeIdxActual];
+  if (item.img) abrirLightbox(item.img);
+}
+
+function svcHomeRender(){
+  if (!svcHomeCatActual || !svcHomeData[svcHomeCatActual] || !svcHomeData[svcHomeCatActual].length) return;
+  var lista = svcHomeData[svcHomeCatActual];
+  var item = lista[svcHomeIdxActual];
+
+  document.getElementById('svcHomeCatLabel').textContent = item.catLabel;
+  document.getElementById('svcHomeNombre').textContent = item.nombre;
+  document.getElementById('svcHomeLead').textContent = item.lead;
+  var detalleEl = document.getElementById('svcHomeDetalle');
+  var hayDetalle = item.detalle && item.detalle !== item.lead;
+  detalleEl.textContent = hayDetalle ? item.detalle : '';
+  detalleEl.style.display = hayDetalle ? 'block' : 'none';
+
+  var img = document.getElementById('svcHomeImg');
+  var ph  = document.getElementById('svcHomeImgPh');
+  if (item.img) {
+    img.src = item.img; img.alt = item.nombre;
+    img.style.display = 'block'; ph.style.display = 'none';
+  } else {
+    img.style.display = 'none'; ph.style.display = 'flex';
+  }
+
+  var dotsWrap = document.getElementById('svcHomeDots');
+  dotsWrap.innerHTML = lista.map(function(_, i){ return '<span class="svc-nav-dot' + (i === svcHomeIdxActual ? ' on' : '') + '"></span>'; }).join('');
+  document.getElementById('svcHomeCount').textContent = (lista.length > 1) ? (svcHomeIdxActual + 1) + ' / ' + lista.length : '';
+  document.getElementById('svcHomePrev').style.display = lista.length > 1 ? 'flex' : 'none';
+  document.getElementById('svcHomeNext').style.display = lista.length > 1 ? 'flex' : 'none';
+
+  var cta = document.getElementById('svcHomeCtaBtn');
+  cta.href = '/citas/agendar/?interes=' + encodeURIComponent(item.nombre);
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  if (svcHomeCatActual) svcHomeRender();
+});
 
 // ── FAQ animado ──
 function toggleFaq(id){
@@ -239,5 +304,12 @@ var observer=new IntersectionObserver(function(entries){
 document.querySelectorAll(".anim-fadeup,.anim-fadein,.anim-left,.anim-right").forEach(function(el){
   observer.observe(el);
 });
+// Red de seguridad: si por cualquier motivo el navegador no revela algún
+// elemento, se muestra de todas formas pasado un instante.
+setTimeout(function(){
+  document.querySelectorAll(".anim-fadeup:not(.anim-visible),.anim-fadein:not(.anim-visible),.anim-left:not(.anim-visible),.anim-right:not(.anim-visible)").forEach(function(el){
+    el.classList.add("anim-visible");
+  });
+}, 1200);
 </script>
 {% endblock %}

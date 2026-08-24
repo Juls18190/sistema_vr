@@ -240,6 +240,10 @@ tr:hover td{background:#fafbfc;}
 .pg-row{padding:10px 1.25rem;display:flex;align-items:center;gap:6px;border-top:1px solid #f8fafc;}
 .pg{width:28px;height:28px;background:var(--gray);border:1px solid var(--bdr);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;color:var(--txt3);transition:all .2s;}
 .pg.on{background:var(--blue);color:#fff;border-color:var(--blue);}
+.pg[style*="pointer-events:none"]{opacity:.4;cursor:default;}
+.pg-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 1.25rem;border-top:1px solid #f8fafc;flex-wrap:wrap;gap:8px;}
+.pg-info{font-size:12px;color:var(--txt3);}
+.pg-btns{display:flex;gap:6px;}
 
 /* ══ ACTIVITY FEED ══ */
 .bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
@@ -1027,7 +1031,7 @@ tr:hover td{background:#fafbfc;}
               {% endfor %}
             </tbody>
           </table>
-          <div class="pg-row"><span class="pg on">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">›</span></div>
+          <div class="pg-footer" id="pg-citas"></div>
         </div>
       </div>
 
@@ -1475,6 +1479,7 @@ tr:hover td{background:#fafbfc;}
               {% endfor %}
             </tbody>
           </table>
+          <div class="pg-footer" id="pg-vacantes"></div>
         </div>
       </div>
 
@@ -1581,6 +1586,7 @@ tr:hover td{background:#fafbfc;}
           </div>
           {% endfor %}
         </div>
+        <div class="pg-footer" id="pg-prospectos"></div>
       </div>
 
 <!-- ═══ EXPEDIENTE (vista hija de Prospectos) ═══ -->
@@ -1841,6 +1847,7 @@ tr:hover td{background:#fafbfc;}
               {% endfor %}
             </tbody>
           </table>
+          <div class="pg-footer" id="pg-servicios"></div>
         </div>
       </div>
 
@@ -1941,6 +1948,7 @@ tr:hover td{background:#fafbfc;}
           </div>
           {% endfor %}
         </div>
+        <div class="pg-footer" id="pg-usuarios"></div>
       </div>
 
       <!-- ═══ HISTORIAL ═══ -->
@@ -3364,6 +3372,7 @@ function ejecutarEliminarCita() {
       fila.style.opacity    = '0';
       setTimeout(function() {
         fila.remove();
+        refrescarPaginador('citas', ((document.getElementById('busq-cita')||{}).value||'').trim() !== '' || (document.getElementById('filtro-estado-cita')||{}).value);
         var tbody = document.getElementById('tbody-citas');
         if (tbody && tbody.querySelectorAll('tr[data-cita-id]').length === 0) {
           var tr = document.createElement('tr');
@@ -4000,13 +4009,13 @@ function guardarNuevoPostulante(e) {
 }
 
 function filtrarCitas(){
-  
   var estado=(document.getElementById('filtro-estado-cita').value||'').toLowerCase();
   var busq=(document.getElementById('busq-cita').value||'').toLowerCase();
   document.querySelectorAll('#tbody-citas tr').forEach(function(tr){
     var ok=(!estado||tr.dataset.estado===estado)&&(!busq||(tr.dataset.nombre||'').includes(busq));
     tr.style.display=ok?'':'none';
   });
+  refrescarPaginador('citas', !!(estado || busq));
 }
 // ── PROSPECTOS: filtros ───────────────────────────────────────────────────────
 var _pfiltroActivo = '';
@@ -4395,6 +4404,7 @@ function ejecutarEliminarProspecto() {
       toast('Prospecto <strong>' + _prospEliminarNombre + '</strong> eliminado', 'success');
       var card = document.getElementById('pcard-' + data.id);
       if (card) card.remove();
+      refrescarPaginador('prospectos', !!_pfiltroActivo || ((document.getElementById('buscar-prospecto')||{}).value||'').trim() !== '');
       if (document.getElementById('p-expediente').classList.contains('on') && _expIdActual === data.id) {
         regresarAProspectos();
       }
@@ -4484,6 +4494,7 @@ function _aplicarFiltroProspectos(busq, estado) {
   });
   var sub = document.getElementById('prosp-subtitulo');
   if (sub) sub.textContent = visibles + ' prospecto' + (visibles !== 1 ? 's' : '') + ' registrado' + (visibles !== 1 ? 's' : '');
+  refrescarPaginador('prospectos', !!(estado || busqL));
 }
 
 // ── PROSPECTOS: modal "Nuevo prospecto" (AJAX, sin recargar) ─────────────────
@@ -4594,6 +4605,7 @@ function filtrarUsuariosInput(texto) {
   document.querySelectorAll('.ucard[data-nombre]').forEach(function(card) {
     card.style.display = (!busq || (card.dataset.nombre || '').indexOf(busq) !== -1) ? '' : 'none';
   });
+  refrescarPaginador('usuarios', !!busq);
 }
 function aplicarFiltrosHistorial(){
   var errBox = document.getElementById('hist-error');
@@ -4919,6 +4931,8 @@ function _aplicarFiltroVacantes(busq, tipo, valor, publico) {
   var tbody    = document.getElementById('tbody-vacantes');
   var filaVacia = tbody ? tbody.querySelector('tr td[colspan]') : null;
   if (filaVacia) filaVacia.closest('tr').style.display = visibles === 0 ? '' : 'none';
+
+  refrescarPaginador('vacantes', !!(busq || tipo || publico));
 }
 
 function abrirEditarVacante(id) {
@@ -5093,6 +5107,7 @@ function ejecutarEliminarVacante() {
       fila.style.opacity    = '0';
       setTimeout(function() {
         fila.remove();
+        refrescarPaginador('vacantes', false);
         var tbody = document.querySelector('#p-vacantes table tbody');
         if (tbody && tbody.querySelectorAll('tr[data-vacante-id]').length === 0) {
           var tr = document.createElement('tr');
@@ -5645,6 +5660,7 @@ function ejecutarEliminarServicio() {
       fila.style.opacity = '0';
       setTimeout(function() {
         fila.remove();
+        refrescarPaginador('servicios', false);
         // Si no quedan filas, mostrar mensaje vacío
         var tbody = document.querySelector('#p-servicios table tbody');
         if (tbody && tbody.children.length === 0) {
@@ -5744,6 +5760,8 @@ function _aplicarFiltroServicios(busq, tipo, valor) {
   var tbody = document.getElementById('tbody-servicios');
   var filaVacia = tbody ? tbody.querySelector('tr td[colspan]') : null;
   if (filaVacia) filaVacia.closest('tr').style.display = visibles === 0 ? '' : 'none';
+
+  refrescarPaginador('servicios', !!(busq || tipo));
 }
 
 // ── Toggle activo/oculto ──────────────────────────────────────────────────────
@@ -7305,6 +7323,71 @@ function toggleActivoServicio(id, btnEl) {
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════════
+   PAGINACIÓN GENÉRICA (Citas, CRM, Servicios, Usuarios, Vacantes)
+   Coopera con los filtros de búsqueda existentes: cuando hay una búsqueda
+   o filtro activo se muestran TODOS los resultados que coincidan (sin
+   recortar), y la paginación solo actúa cuando la lista está sin filtrar.
+   ═══════════════════════════════════════════════════════════════════════ */
+var _paginadores = {};
+function iniciarPaginador(id, selector, porPagina, contId){
+  _paginadores[id] = { pagina: 1, selector: selector, porPagina: porPagina, contId: contId };
+  refrescarPaginador(id, false);
+}
+function refrescarPaginador(id, filtroActivo){
+  var p = _paginadores[id];
+  if (!p) return;
+  var cont = document.getElementById(p.contId);
+
+  if (filtroActivo) {
+    if (cont) cont.innerHTML = '';
+    return;
+  }
+
+  var items = Array.prototype.slice.call(document.querySelectorAll(p.selector));
+  var total = items.length;
+
+  if (total === 0) {
+    if (cont) cont.innerHTML = '';
+    return;
+  }
+
+  var totalPaginas = Math.max(1, Math.ceil(total / p.porPagina));
+  if (p.pagina > totalPaginas) p.pagina = totalPaginas;
+
+  var desde = (p.pagina - 1) * p.porPagina;
+  var hasta = desde + p.porPagina;
+  items.forEach(function(el, i){ el.style.display = (i >= desde && i < hasta) ? '' : 'none'; });
+
+  if (!cont) return;
+
+  var html = '<div class="pg-info">Mostrando ' + (desde + 1) + '–' + Math.min(hasta, total) + ' de ' + total + '</div><div class="pg-btns">';
+  html += '<span class="pg" style="' + (p.pagina <= 1 ? 'pointer-events:none;' : '') + '" onclick="_pgIr(\'' + id + '\',' + (p.pagina - 1) + ')">‹</span>';
+
+  var ini = Math.max(1, p.pagina - 2);
+  var fin = Math.min(totalPaginas, ini + 4);
+  ini = Math.max(1, fin - 4);
+  for (var n = ini; n <= fin; n++) {
+    html += '<span class="pg' + (n === p.pagina ? ' on' : '') + '" onclick="_pgIr(\'' + id + '\',' + n + ')">' + n + '</span>';
+  }
+  html += '<span class="pg" style="' + (p.pagina >= totalPaginas ? 'pointer-events:none;' : '') + '" onclick="_pgIr(\'' + id + '\',' + (p.pagina + 1) + ')">›</span></div>';
+  cont.innerHTML = html;
+}
+function _pgIr(id, pagina){
+  var p = _paginadores[id];
+  if (!p || pagina < 1) return;
+  p.pagina = pagina;
+  refrescarPaginador(id, false);
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  iniciarPaginador('citas',      '#tbody-citas tr[data-cita-id]',      10, 'pg-citas');
+  iniciarPaginador('prospectos', '.pros-card[data-estado]',            9,  'pg-prospectos');
+  iniciarPaginador('servicios',  '#tbody-servicios tr[data-servicio-id]', 10, 'pg-servicios');
+  iniciarPaginador('usuarios',   '.ucard[data-nombre]',                 9,  'pg-usuarios');
+  iniciarPaginador('vacantes',   '#tbody-vacantes tr[data-vacante-id]', 10, 'pg-vacantes');
+});
+
+/* ═══════════════════════════════════════════════════════════════════════
    FASE C — GESTIÓN DE USUARIOS (JS)
    Un solo componente visual (construirTarjetaUsuarioHTML) usado tanto para
    pintar tarjetas nuevas como para refrescar tarjetas existentes tras
@@ -7409,6 +7492,7 @@ function refrescarTarjetaUsuario(u){
   }
   nueva.style.boxShadow = '0 0 0 2px var(--blue)';
   setTimeout(function(){ nueva.style.transition = 'box-shadow .8s'; nueva.style.boxShadow = ''; }, 900);
+  refrescarPaginador('usuarios', ((document.getElementById('buscar-usuario') || {}).value || '').trim() !== '');
 }
 
 /* ── Crear usuario ── */

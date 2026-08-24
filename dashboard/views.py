@@ -201,7 +201,7 @@ def index(request):
             'postulantes_rechazados':   Postulante.objects.filter(estado='rechazado').count(),
 
             # ── Citas ──────────────────────────────────────────────────────
-            'citas':                    Cita.objects.select_related('asesor').order_by('-creada')[:50],
+            'citas':                    Cita.objects.select_related('asesor').order_by('-creada'),
             'citas_total':              Cita.objects.count(),
             'citas_confirmadas':        Cita.objects.filter(estado='confirmada').count(),
             'citas_completadas':        Cita.objects.filter(estado='completada').count(),
@@ -212,7 +212,7 @@ def index(request):
             # ── Vacantes ──────────────────────────────────────────────────
             'vacantes': Vacante.objects.annotate(
                 num_postulantes=Count('postulantes')
-            ).order_by('-creada')[:50],
+            ).order_by('-creada'),
             'vacantes_pausadas':        Vacante.objects.filter(estado='pausada').count(),
             'vacantes_cerradas':        Vacante.objects.filter(estado='cerrada').count(),
 
@@ -220,7 +220,7 @@ def index(request):
             'postulantes':              Postulante.objects.select_related('vacante').order_by('-fecha')[:50],
 
             # ── Prospectos — filtrados por rol ────────────────────────────
-            'prospectos':               _qs_prospectos(request.user).select_related('asesor_asignado').order_by('-fecha')[:50],
+            'prospectos':               _qs_prospectos(request.user).select_related('asesor_asignado').order_by('-fecha'),
             'prospectos_total':         _qs_prospectos(request.user).count(),
             'prospectos_contactados':   _qs_prospectos(request.user).filter(estado='contactado').count(),
             'prospectos_convertidos':   _qs_prospectos(request.user).filter(estado='convertido').count(),
@@ -698,7 +698,7 @@ def index_asesor(request):
         # Mismo queryset _qs_citas() que usaba la vista independiente
         # agenda_asesor(); ahora se entrega completo en el mismo request
         # porque la sección vive dentro de este mismo Dashboard (SPA).
-        'citas':             qs_citas.select_related('asesor').order_by('-fecha', '-hora')[:100],
+        'citas':             qs_citas.select_related('asesor').order_by('-fecha', '-hora'),
         'citas_total':       qs_citas.count(),
 
         # ── Prospectos — resumen para "Inicio" ──────────────────────────
@@ -707,7 +707,7 @@ def index_asesor(request):
         # ── Prospectos — listado completo para la sección embebida "CRM" ─
         # Mismo criterio (asesor_asignado=request.user) que usaba la vista
         # independiente prospectos_asesor(); se entrega completo aquí.
-        'prospectos':              qs_prospectos.select_related('asesor_asignado').order_by('-fecha')[:100],
+        'prospectos':              qs_prospectos.select_related('asesor_asignado').order_by('-fecha'),
         'prospectos_total':        qs_prospectos.count(),
         'prospectos_nuevos':       qs_prospectos.filter(estado='nuevo').count(),
         'prospectos_contactados':  qs_prospectos.filter(estado='contactado').count(),

@@ -2,63 +2,6 @@
 {% load static %}
 {% block title %}Servicios — Grupo V&R Consultores{% endblock %}
 
-{% block extra_css %}
-<style>
-/* ══════════════════════════════════════════════════════════════
-   SERVICIOS — Estilos específicos de esta página.
-   Topbar, navbar, footer, botones, .sec/.sh/.uline, cta-band,
-   page-hero y el lightbox de imágenes YA viven en estilos.css.
-   Aquí solo va el showcase de servicios (tabs + tarjeta grande).
-   ══════════════════════════════════════════════════════════════ */
-
-/* ══ TARJETA SHOWCASE (servicio destacado dentro de la categoría) ══ */
-.svc-showcase {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
-    background: #fff; border: 1px solid var(--border); border-radius: 20px;
-    overflow: hidden; box-shadow: 0 20px 50px rgba(15,40,80,.06); position: relative;
-    min-height: 440px;
-}
-.svc-showcase-img {
-    position: relative; background: var(--blue-ink);
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-}
-.svc-showcase-img img { width: 100%; height: 100%; object-fit: contain; padding: 1.75rem; box-sizing: border-box; max-height: 440px; }
-.svc-showcase-img-ph { color: rgba(255,255,255,.35); display: flex; flex-direction: column; align-items: center; gap: .75rem; font-size: 12.5px; }
-.svc-showcase-zoom {
-    position: absolute; bottom: 1.25rem; left: 50%; transform: translateX(-50%) translateY(6px);
-    background: rgba(255,255,255,.95); color: var(--blue); font-size: 11.5px; font-weight: 700;
-    padding: 7px 16px; border-radius: 20px; opacity: 0; transition: opacity .2s ease, transform .2s ease;
-    pointer-events: none;
-}
-.svc-showcase-img:hover .svc-showcase-zoom { opacity: 1; transform: translateX(-50%) translateY(0); }
-.svc-showcase-body { padding: 2.75rem 3rem; display: flex; flex-direction: column; justify-content: center; }
-.svc-cat-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); margin-bottom: 10px; }
-.svc-showcase-body h3 { font-family: var(--fd); font-size: 25px; font-weight: 700; color: var(--ink); margin-bottom: 14px; letter-spacing: -.3px; line-height: 1.25; }
-.svc-showcase-lead { font-size: 14.5px; color: var(--text); line-height: 1.75; margin-bottom: .9rem; font-weight: 500; white-space: pre-line; }
-.svc-showcase-detalle { font-size: 13.5px; color: var(--muted); line-height: 1.8; margin-bottom: 1.75rem; white-space: pre-line; }
-.svc-showcase-nav { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--border); flex-wrap: wrap; }
-.svc-nav-arrow {
-    width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border); background: #fff;
-    color: var(--ink); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: all .2s; flex-shrink: 0;
-}
-.svc-nav-arrow:hover { border-color: var(--blue); color: var(--blue); }
-.svc-nav-arrow:disabled { opacity: .35; cursor: default; }
-.svc-nav-dots { display: flex; gap: 6px; margin-right: auto; }
-.svc-nav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all .2s; }
-.svc-nav-dot.on { background: var(--blue); width: 18px; border-radius: 4px; }
-.svc-count { font-size: 11.5px; color: var(--muted); margin-right: auto; }
-
-.svc-empty { text-align: center; padding: 3rem 2rem; color: var(--muted); font-size: 14px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 16px; }
-
-@media (max-width: 860px) {
-  .svc-showcase { grid-template-columns: 1fr; min-height: 0; }
-  .svc-showcase-img { min-height: 260px; }
-  .svc-showcase-body { padding: 2rem 1.75rem; }
-}
-</style>
-{% endblock %}
-
 {% block content %}
 
 <!-- HERO propio de Servicios -->

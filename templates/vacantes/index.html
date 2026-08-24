@@ -83,7 +83,7 @@
 
   <div class="rec-grid">
     {% if hay_vacantes %}
-    <div class="anim">
+    <div>
       <div class="svc-tabs">
         {% if vacantes_estudiantes %}<button type="button" class="svc-tab{% if tab_inicial == 'estudiantes' %} on{% endif %}" onclick="setTab(this,'estudiantes')">Estudiantes</button>{% endif %}
         {% if vacantes_jubilados %}<button type="button" class="svc-tab{% if tab_inicial == 'jubilados' %} on{% endif %}" onclick="setTab(this,'jubilados')">Jubilados</button>{% endif %}
@@ -109,13 +109,13 @@
       </div>
     </div>
     {% else %}
-    <div class="anim" style="text-align:center;padding:3rem 1.5rem;background:var(--bg-soft);border:1px solid var(--border);border-radius:16px;">
+    <div style="text-align:center;padding:3rem 1.5rem;background:var(--bg-soft);border:1px solid var(--border);border-radius:16px;">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" style="margin-bottom:1rem;opacity:.4;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
       <p style="color:var(--muted);font-size:14px;line-height:1.7;">Por el momento no tenemos vacantes activas.<br>Déjanos tus datos y te avisaremos en cuanto abramos una nueva convocatoria.</p>
     </div>
     {% endif %}
 
-    <form class="fcard anim" method="POST" action="/postulantes/crear/" enctype="multipart/form-data">
+    <form class="fcard" method="POST" action="/postulantes/crear/" enctype="multipart/form-data">
       {% csrf_token %}
       {% if messages %}
         {% for m in messages %}
@@ -174,7 +174,7 @@
     </div>
     <div class="ben anim" style="transition-delay:.1s">
       <div class="ben-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-      <h4>Respaldo Inbursa</h4>
+      <h4>Respaldo financiero</h4>
       <p>Trabaja con el respaldo de uno de los grupos financieros más importantes de México.</p>
     </div>
     <div class="ben anim" style="transition-delay:.2s">
@@ -249,6 +249,12 @@ var obs = new IntersectionObserver(function(entries){
   entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('vis'); });
 }, {threshold: 0.12});
 document.querySelectorAll('.anim').forEach(function(el){ obs.observe(el); });
+// Red de seguridad: si por cualquier motivo el navegador no revela algún
+// elemento (observer que no dispara en ciertos dispositivos/tamaños), se
+// muestra de todas formas pasado un instante — nunca debe quedar oculto.
+setTimeout(function(){
+  document.querySelectorAll('.anim:not(.vis)').forEach(function(el){ el.classList.add('vis'); });
+}, 1200);
 
 // Tabs de "Vacantes por Categoría"
 function setTab(btn, tabId) {
