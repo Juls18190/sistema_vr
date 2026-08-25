@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'prospectos',
     'inicio',
     'reportes',
+    'agenda',
 ]
 
 MIDDLEWARE = [

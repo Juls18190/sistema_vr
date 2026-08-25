@@ -86,16 +86,25 @@ def agendar(request):
                 'post': request.POST,
             })
 
+        correo = request.POST.get('correo', '').strip()
+
+        # Asignación automática de asesor (round-robin). El formulario
+        # público NUNCA envía ni acepta un asesor_id — el asesor lo
+        # decide siempre el backend aquí. Ver asignacion/servicios.py.
+        from asignacion.servicios import obtener_asesor_para
+        asesor_asignado = obtener_asesor_para(correo)
+
         cita = Cita.objects.create(
             nombre_cliente    = request.POST.get('nombre', '').strip(),
             apellidos_cliente = request.POST.get('apellidos', '').strip(),
-            correo            = request.POST.get('correo', '').strip(),
+            correo            = correo,
             telefono          = request.POST.get('telefono', '').strip(),
             fecha             = fecha,
             hora              = request.POST.get('hora'),
             motivo            = request.POST.get('motivo', ''),
             motivo_otro       = request.POST.get('motivo_otro', ''),
             comentarios       = request.POST.get('comentarios', ''),
+            asesor            = asesor_asignado,
         )
         # Registrar en historial (sin usuario porque es público)
         registrar(

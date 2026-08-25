@@ -10,6 +10,7 @@ class Historial(models.Model):
         ('usuarios',    'Usuarios'),
         ('prospectos',  'Prospectos'),
         ('dashboard',   'Dashboard'),
+        ('agenda',      'Agenda'),
     ]
 
     usuario   = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='historial')

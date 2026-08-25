@@ -38,6 +38,12 @@ class Postulante(models.Model):
         help_text='Observaciones privadas del reclutador. No visibles para el postulante.'
     )
     fecha = models.DateTimeField(auto_now_add=True)
+    fecha_entrevista = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Fecha y hora de entrevista',
+        help_text='Se captura al marcar al postulante como "Entrevista".'
+    )
 
     def __str__(self):
         return f'{self.nombre} — {self.vacante}'

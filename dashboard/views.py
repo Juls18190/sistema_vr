@@ -178,6 +178,16 @@ def index(request):
             .order_by('fecha', 'hora')[:10]
         )
 
+        # Mini-tabla "Próximas entrevistas" (Postulantes): mismo patrón que
+        # proximas_citas — solo futuras (no ya pasadas) y en estado
+        # 'entrevista'. select_related('vacante') porque el template la
+        # muestra igual que en la tabla completa de Postulantes.
+        proximas_entrevistas = (
+            Postulante.objects.filter(estado='entrevista', fecha_entrevista__gte=hoy)
+            .select_related('vacante')
+            .order_by('fecha_entrevista')[:10]
+        )
+
         # Rol del usuario actual (para mostrar/ocultar el selector de asesor en modales)
         es_admin_dashboard = _es_admin(request.user)
 
@@ -208,6 +218,7 @@ def index(request):
             'citas_canceladas':         Cita.objects.filter(estado='cancelada').count(),
             'citas_hoy_lista':          citas_hoy_lista,
             'proximas_citas':           proximas_citas,
+            'proximas_entrevistas':     proximas_entrevistas,
 
             # ── Vacantes ──────────────────────────────────────────────────
             'vacantes': Vacante.objects.annotate(

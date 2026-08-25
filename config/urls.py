@@ -15,4 +15,5 @@ urlpatterns = [
     path('prospectos/',  include('prospectos.urls')),
     path('reportes/',    include('reportes.urls')),
     path('historial/',   include('historial.urls')),
+    path('agenda/',      include('agenda.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

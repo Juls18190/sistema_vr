@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
 from .models import Postulante
 from vacantes.models import Vacante
@@ -170,6 +172,19 @@ def cambiar_estado_ajax(request, post_id):
         if nuevo_estado in estados_validos:
             estado_anterior = postulante.estado
             postulante.estado = nuevo_estado
+
+            # La fecha de entrevista solo se captura/actualiza cuando el
+            # nuevo estado es 'entrevista'. Si se manda vacía o el estado
+            # es otro, no se toca fecha_entrevista (se conserva lo que
+            # ya hubiera, por si luego regresan el estado a "Entrevista").
+            fecha_entrevista_raw = request.POST.get('fecha_entrevista', '').strip()
+            if nuevo_estado == 'entrevista' and fecha_entrevista_raw:
+                fecha_entrevista = parse_datetime(fecha_entrevista_raw)
+                if fecha_entrevista and timezone.is_naive(fecha_entrevista):
+                    fecha_entrevista = timezone.make_aware(fecha_entrevista)
+                if fecha_entrevista:
+                    postulante.fecha_entrevista = fecha_entrevista
+
             postulante.save()
             postulante.refresh_from_db()
             registrar(
@@ -183,6 +198,10 @@ def cambiar_estado_ajax(request, post_id):
                 'ok': True,
                 'estado': postulante.estado,
                 'estado_display': postulante.get_estado_display(),
+                'fecha_entrevista': (
+                    timezone.localtime(postulante.fecha_entrevista).strftime('%Y-%m-%dT%H:%M')
+                    if postulante.fecha_entrevista else None
+                ),
             })
         return JsonResponse({'ok': False, 'error': 'Estado no válido'}, status=400)
     return JsonResponse({'ok': False}, status=405)
@@ -263,6 +282,14 @@ def detalle_ajax(request, post_id):
         'estado':   p.estado,
         'estado_display': p.get_estado_display(),
         'notas':    p.notas or '',
+        'fecha_entrevista': (
+            timezone.localtime(p.fecha_entrevista).strftime('%d/%m/%Y %H:%M')
+            if p.fecha_entrevista else ''
+        ),
+        'fecha_entrevista_iso': (
+            timezone.localtime(p.fecha_entrevista).strftime('%Y-%m-%dT%H:%M')
+            if p.fecha_entrevista else ''
+        ),
     })
 # ── AJAX: crear postulante desde el dashboard ─────────────────────────────────
 @login_required

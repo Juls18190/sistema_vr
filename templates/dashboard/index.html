@@ -241,7 +241,7 @@ tr:hover td{background:#fafbfc;}
 .pg{width:28px;height:28px;background:var(--gray);border:1px solid var(--bdr);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;color:var(--txt3);transition:all .2s;}
 .pg.on{background:var(--blue);color:#fff;border-color:var(--blue);}
 .pg[style*="pointer-events:none"]{opacity:.4;cursor:default;}
-.pg-footer{display:flex;align-items:center;justify-content:center;padding:10px 1.25rem;border-top:1px solid #f8fafc;flex-wrap:wrap;gap:8px;}
+.pg-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 1.25rem;border-top:1px solid #f8fafc;flex-wrap:wrap;gap:8px;}
 .pg-info{font-size:12px;color:var(--txt3);}
 .pg-btns{display:flex;gap:6px;}
 
@@ -882,6 +882,27 @@ tr:hover td{background:#fafbfc;}
           <div class="kpi" id="ckpi-cancelada" onclick="filtrarCitasKpi('cancelada')" style="cursor:pointer;"><div><div class="kpi-label">Canceladas</div><div class="kpi-num" id="ccnt-cancelada">{{ citas_canceladas }}</div></div><div class="kpi-icon" style="background:#fee2e2;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div></div>
         </div>
 
+        {% if es_admin %}
+        <!-- Asignación automática de citas (round-robin) -->
+        <div class="table-card" id="card-asignacion-auto">
+          <div class="tc-head">
+            <h3>Asignación automática de citas</h3>
+          </div>
+          <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--txt2);">
+              <input type="checkbox" id="aa-toggle-automatica" onchange="toggleAsignacionAutomatica(this)" style="width:18px;height:18px;cursor:pointer;">
+              Asignación automática activada
+            </label>
+            <div style="font-size:13px;color:var(--txt3);">
+              Próximo asesor: <strong id="aa-proximo-asesor" style="color:var(--txt2);">—</strong>
+            </div>
+          </div>
+          <div style="padding:0 20px 16px;font-size:12px;color:var(--txt3);">
+            Reparte prospectos nuevos entre los asesores activos por turnos (round-robin). Si un prospecto ya tiene asesor, sus nuevas citas siempre conservan ese mismo asesor.
+          </div>
+        </div>
+        {% endif %}
+
         <!-- Citas de hoy -->
         <div class="table-card">
           <div class="tc-head">
@@ -1106,6 +1127,29 @@ tr:hover td{background:#fafbfc;}
       <div class="pkpi-label">Rechazados</div>
     </div>
 
+  </div>
+
+  <!-- Próximas entrevistas -->
+  <div class="table-card">
+    <div class="tc-head">
+      <h3>Próximas entrevistas</h3>
+      <a class="tc-link" href="#post-tc-titulo" onclick="filtrarPorEstado('entrevista')">Ver todas ↓</a>
+    </div>
+    <table>
+      <thead><tr><th>Fecha</th><th>Hora</th><th>Postulante</th><th>Vacante</th></tr></thead>
+      <tbody>
+        {% for p in proximas_entrevistas %}
+        <tr>
+          <td>{{ p.fecha_entrevista|date:"d/m/Y" }}</td>
+          <td>{{ p.fecha_entrevista|time:"H:i" }}</td>
+          <td>{{ p.nombre }}</td>
+          <td>{{ p.vacante.titulo|default:"—" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" style="text-align:center;padding:20px;color:var(--txt3);">No hay entrevistas programadas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 
   <div class="table-card">
@@ -2053,7 +2097,9 @@ tr:hover td{background:#fafbfc;}
               {% endfor %}
             </tbody>
           </table>
-          <div class="pg-footer" id="pg-historial"></div>
+          <div class="pg-row">
+            <span class="pg on" id="hist-contador">Mostrando últimos 15 registros</span>
+          </div>
         </div>
       </div>
 
@@ -2456,6 +2502,10 @@ tr:hover td{background:#fafbfc;}
         <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0077b5" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div>
         <div><div class="md-label">LinkedIn</div><div class="md-val"><a id="md-linkedin" href="#" target="_blank" style="color:var(--blue);text-decoration:none;font-size:13px;">Ver perfil</a></div></div>
       </div>
+      <div class="md-row" id="md-row-entrevista" style="display:none;">
+        <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div><div class="md-label">Entrevista programada</div><div class="md-val" id="md-fecha-entrevista">—</div></div>
+      </div>
       <div class="md-row" id="md-row-cv">
         <div class="md-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
         <div><div class="md-label">Currículum</div><div class="md-val"><a id="md-cv" href="#" target="_blank" style="color:var(--blue);text-decoration:none;font-weight:500;font-size:13px;">📄 Descargar CV</a></div></div>
@@ -2540,6 +2590,10 @@ tr:hover td{background:#fafbfc;}
       <div class="dest-opt" data-e="finalista"  onclick="selDashEstado(this)" style="border:2px solid var(--bdr);border-radius:8px;padding:10px 6px;cursor:pointer;text-align:center;font-size:12px;font-weight:500;transition:all .2s;">⭐ Finalista</div>
       <div class="dest-opt" data-e="contratado" onclick="selDashEstado(this)" style="border:2px solid var(--bdr);border-radius:8px;padding:10px 6px;cursor:pointer;text-align:center;font-size:12px;font-weight:500;transition:all .2s;">✅ Contratado</div>
       <div class="dest-opt" data-e="rechazado"  onclick="selDashEstado(this)" style="border:2px solid var(--bdr);border-radius:8px;padding:10px 6px;cursor:pointer;text-align:center;font-size:12px;font-weight:500;transition:all .2s;">❌ Rechazado</div>
+    </div>
+    <div id="dash-campo-fecha-entrevista" style="display:none;margin:-0.5rem 0 1.25rem;">
+      <label for="dash-fecha-entrevista" style="display:block;font-size:12px;color:var(--txt3);margin-bottom:4px;">Fecha y hora de la entrevista</label>
+      <input type="datetime-local" id="dash-fecha-entrevista" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;">
       <button onclick="cerrarModalEstadoDash()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
@@ -2630,7 +2684,26 @@ function abrirModalEstadoDash(id, estadoActual, nombre){
     o.style.borderColor='var(--bdr)';o.style.background='';o.style.color='';
     if(o.dataset.e===estadoActual){o.style.borderColor='var(--blue)';o.style.background='#dbeafe';o.style.color='#1d4ed8';}
   });
+  document.getElementById('dash-fecha-entrevista').value='';
+  toggleCampoFechaEntrevista(estadoActual==='entrevista');
+  // Si ya está en "Entrevista" y tiene fecha guardada, precargarla
+  // (reutiliza detalle_ajax, que ya devuelve fecha_entrevista).
+  if(estadoActual==='entrevista'){
+    if(_detalleCache[id]&&_detalleCache[id].fecha_entrevista_iso){
+      document.getElementById('dash-fecha-entrevista').value=_detalleCache[id].fecha_entrevista_iso;
+    }
+    fetch('/postulantes/admin/'+id+'/detalle/ajax/',{method:'GET',headers:{'X-Requested-With':'XMLHttpRequest'}})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.ok&&d.fecha_entrevista_iso&&_dashPostId===id){
+        document.getElementById('dash-fecha-entrevista').value=d.fecha_entrevista_iso;
+      }
+    }).catch(function(){});
+  }
   document.getElementById('modal-estado-dash').style.display='flex';
+}
+function toggleCampoFechaEntrevista(mostrar){
+  document.getElementById('dash-campo-fecha-entrevista').style.display=mostrar?'block':'none';
 }
 function cerrarModalEstadoDash(){
   document.getElementById('modal-estado-dash').style.display='none';
@@ -2641,6 +2714,7 @@ function selDashEstado(el){
   });
   el.style.borderColor='var(--blue)';el.style.background='#dbeafe';el.style.color='#1d4ed8';
   _dashEstadoSel=el.dataset.e;
+  toggleCampoFechaEntrevista(_dashEstadoSel==='entrevista');
 }
 document.getElementById('modal-estado-dash').addEventListener('click',function(e){
   if(e.target===this)cerrarModalEstadoDash();
@@ -2649,13 +2723,21 @@ document.getElementById('modal-estado-dash').addEventListener('click',function(e
 var _guardandoEstado=false;
 function guardarEstadoDash(){
   if(!_dashPostId||!_dashEstadoSel)return;
-  if(_dashEstadoSel===_dashEstadoAnterior){cerrarModalEstadoDash();return;}
+  // Si el estado no cambió Y no es "entrevista", no hay nada que guardar.
+  // Si es "entrevista", sí puede haber una fecha nueva/editada aunque el
+  // estado siga igual, así que dejamos pasar.
+  if(_dashEstadoSel===_dashEstadoAnterior && _dashEstadoSel!=='entrevista'){
+    cerrarModalEstadoDash();return;
+  }
   if(_guardandoEstado)return;
   _guardandoEstado=true;
   var btn=document.querySelector('#modal-estado-dash .btn-submit-estado');
   if(btn){btn.disabled=true;btn.textContent='Guardando…';}
   var fd=new FormData();
   fd.append('estado',_dashEstadoSel);
+  if(_dashEstadoSel==='entrevista'){
+    fd.append('fecha_entrevista',document.getElementById('dash-fecha-entrevista').value);
+  }
   fd.append('csrfmiddlewaretoken',getCsrf());
   fetch('/postulantes/admin/'+_dashPostId+'/estado/ajax/',{method:'POST',body:fd})
   .then(function(r){return r.json();})
@@ -2672,6 +2754,9 @@ function guardarEstadoDash(){
       // Actualizar data-estado en la fila
       var row=document.getElementById('row-p-'+_dashPostId);
       if(row)row.dataset.estado=d.estado;
+      // Invalidar caché de detalle para que el próximo abrirDetalle()
+      // traiga la fecha_entrevista actualizada, no la vieja.
+      delete _detalleCache[_dashPostId];
       // Recalcular contadores desde DOM
       recalcularContadoresDom();
       cerrarModalEstadoDash();
@@ -2733,6 +2818,14 @@ function renderDetalle(d){
   if(d.linkedin&&d.linkedin.length>3){
     rowLi.style.display='flex'; liLink.href=d.linkedin;
   }else{rowLi.style.display='none';}
+  // Entrevista programada
+  var rowEnt=document.getElementById('md-row-entrevista');
+  if(d.fecha_entrevista){
+    rowEnt.style.display='flex';
+    document.getElementById('md-fecha-entrevista').textContent=d.fecha_entrevista;
+  }else{
+    rowEnt.style.display='none';
+  }
   // CV
   var cvLink=document.getElementById('md-cv');
   var rowCv=document.getElementById('md-row-cv');
@@ -4647,8 +4740,12 @@ function aplicarFiltrosHistorial(){
           }).join('')
         : '<tr><td colspan="4" style="text-align:center;padding:20px;color:#64748b;">No hay actividad registrada.</td></tr>';
 
-      var filtroActivo = !!(pe || mo);
-      refrescarPaginador('historial', filtroActivo);
+      var contador = document.getElementById('hist-contador');
+      if (contador) {
+        contador.textContent = data.listado.length < data.resumen.total
+          ? 'Mostrando ' + data.listado.length + ' de ' + data.resumen.total + ' registros'
+          : 'Mostrando ' + data.listado.length + ' registro' + (data.listado.length === 1 ? '' : 's');
+      }
     })
     .catch(function(){
       errBox.textContent = 'Error de conexión. Intenta de nuevo.';
@@ -4684,6 +4781,44 @@ function nav(id,el){
     var item = document.querySelector('.sb-item[onclick*="nav(\'' + id + '\'"]');
     if (item) item.classList.add('on');
   }
+  if(id==='citas' && document.getElementById('card-asignacion-auto')){
+    cargarEstadoAsignacionAutomatica();
+  }
+}
+
+/* ─── Asignación automática de citas (round-robin) ─── */
+function cargarEstadoAsignacionAutomatica(){
+  fetch('/asignacion/estado/ajax/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.ok) return;
+      document.getElementById('aa-toggle-automatica').checked = d.activo;
+      document.getElementById('aa-proximo-asesor').textContent =
+        d.proximo_asesor_nombre || 'Sin asesores disponibles';
+    })
+    .catch(function(){});
+}
+
+function toggleAsignacionAutomatica(checkbox){
+  var activo = checkbox.checked;
+  fetch('/asignacion/toggle/ajax/', {
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': getCsrf(),
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({ activo: activo ? '1' : '0' }),
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.ok){
+        checkbox.checked = !activo; // revertir si falló
+        return;
+      }
+      cargarEstadoAsignacionAutomatica();
+    })
+    .catch(function(){ checkbox.checked = !activo; });
 }
 
 /* ─── FILTRO PERIODO (real — consulta /dashboard/kpis/ con datos de PostgreSQL) ─── */
@@ -7354,7 +7489,7 @@ function refrescarPaginador(id, filtroActivo){
 
   if (!cont) return;
 
-  var html = '<div class="pg-btns" style="margin:0 auto;">';
+  var html = '<div class="pg-info">Mostrando ' + (desde + 1) + '–' + Math.min(hasta, total) + ' de ' + total + '</div><div class="pg-btns">';
   html += '<span class="pg" style="' + (p.pagina <= 1 ? 'pointer-events:none;' : '') + '" onclick="_pgIr(\'' + id + '\',' + (p.pagina - 1) + ')">‹</span>';
 
   var ini = Math.max(1, p.pagina - 2);
@@ -7379,7 +7514,6 @@ document.addEventListener('DOMContentLoaded', function(){
   iniciarPaginador('servicios',  '#tbody-servicios tr[data-servicio-id]', 10, 'pg-servicios');
   iniciarPaginador('usuarios',   '.ucard[data-nombre]',                 9,  'pg-usuarios');
   iniciarPaginador('vacantes',   '#tbody-vacantes tr[data-vacante-id]', 10, 'pg-vacantes');
-  iniciarPaginador('historial',  '#tbody-historial tr[data-modulo]',   10, 'pg-historial');
 });
 
 /* ═══════════════════════════════════════════════════════════════════════
