@@ -20,6 +20,10 @@ def index(request):
     vacantes_jubilados      = vacantes_general.filter(publico_objetivo='jubilados')
     vacantes_amas_casa      = vacantes_general.filter(publico_objetivo='amas_casa')
     vacantes_profesionistas = vacantes_general.filter(publico_objetivo='profesionistas')
+    # Landing público: "General" debe mostrar SOLO las vacantes marcadas con
+    # ese público objetivo (vacantes_general de arriba es el total sin filtrar,
+    # usado también para la pestaña "Todas" y el conteo de vacantes activas).
+    vacantes_solo_general   = vacantes_general.filter(publico_objetivo='general')
 
     # Abre por defecto la primera categoría que sí tenga vacantes activas
     tab_inicial = 'general'
@@ -41,6 +45,7 @@ def index(request):
         'vacantes_jubilados':       vacantes_jubilados,
         'vacantes_amas_casa':       vacantes_amas_casa,
         'vacantes_profesionistas':  vacantes_profesionistas,
+        'vacantes_solo_general':    vacantes_solo_general,
         'tab_inicial':              tab_inicial,
         'hay_vacantes':             vacantes_general.exists(),
     }

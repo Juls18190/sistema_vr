@@ -241,7 +241,7 @@ tr:hover td{background:#fafbfc;}
 .pg{width:28px;height:28px;background:var(--gray);border:1px solid var(--bdr);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;color:var(--txt3);transition:all .2s;}
 .pg.on{background:var(--blue);color:#fff;border-color:var(--blue);}
 .pg[style*="pointer-events:none"]{opacity:.4;cursor:default;}
-.pg-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 1.25rem;border-top:1px solid #f8fafc;flex-wrap:wrap;gap:8px;}
+.pg-footer{display:flex;align-items:center;justify-content:center;padding:10px 1.25rem;border-top:1px solid #f8fafc;flex-wrap:wrap;gap:8px;}
 .pg-info{font-size:12px;color:var(--txt3);}
 .pg-btns{display:flex;gap:6px;}
 
@@ -2053,9 +2053,7 @@ tr:hover td{background:#fafbfc;}
               {% endfor %}
             </tbody>
           </table>
-          <div class="pg-row">
-            <span class="pg on" id="hist-contador">Mostrando últimos 15 registros</span>
-          </div>
+          <div class="pg-footer" id="pg-historial"></div>
         </div>
       </div>
 
@@ -4649,12 +4647,8 @@ function aplicarFiltrosHistorial(){
           }).join('')
         : '<tr><td colspan="4" style="text-align:center;padding:20px;color:#64748b;">No hay actividad registrada.</td></tr>';
 
-      var contador = document.getElementById('hist-contador');
-      if (contador) {
-        contador.textContent = data.listado.length < data.resumen.total
-          ? 'Mostrando ' + data.listado.length + ' de ' + data.resumen.total + ' registros'
-          : 'Mostrando ' + data.listado.length + ' registro' + (data.listado.length === 1 ? '' : 's');
-      }
+      var filtroActivo = !!(pe || mo);
+      refrescarPaginador('historial', filtroActivo);
     })
     .catch(function(){
       errBox.textContent = 'Error de conexión. Intenta de nuevo.';
@@ -7360,7 +7354,7 @@ function refrescarPaginador(id, filtroActivo){
 
   if (!cont) return;
 
-  var html = '<div class="pg-info">Mostrando ' + (desde + 1) + '–' + Math.min(hasta, total) + ' de ' + total + '</div><div class="pg-btns">';
+  var html = '<div class="pg-btns" style="margin:0 auto;">';
   html += '<span class="pg" style="' + (p.pagina <= 1 ? 'pointer-events:none;' : '') + '" onclick="_pgIr(\'' + id + '\',' + (p.pagina - 1) + ')">‹</span>';
 
   var ini = Math.max(1, p.pagina - 2);
@@ -7385,6 +7379,7 @@ document.addEventListener('DOMContentLoaded', function(){
   iniciarPaginador('servicios',  '#tbody-servicios tr[data-servicio-id]', 10, 'pg-servicios');
   iniciarPaginador('usuarios',   '.ucard[data-nombre]',                 9,  'pg-usuarios');
   iniciarPaginador('vacantes',   '#tbody-vacantes tr[data-vacante-id]', 10, 'pg-vacantes');
+  iniciarPaginador('historial',  '#tbody-historial tr[data-modulo]',   10, 'pg-historial');
 });
 
 /* ═══════════════════════════════════════════════════════════════════════

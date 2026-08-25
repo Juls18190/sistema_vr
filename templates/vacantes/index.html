@@ -16,22 +16,19 @@
 .vac-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.25rem; margin-top: .75rem; }
 .vac-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: all .25s; display: flex; flex-direction: column; }
 .vac-card:hover { border-color: var(--blue); transform: translateY(-4px); box-shadow: 0 16px 34px rgba(15,40,80,.1); }
-.vac-img { height: 175px; position: relative; background: var(--blue-50); cursor: pointer; }
+.vac-img { height: 190px; position: relative; background: var(--blue-50); cursor: pointer; }
 .vac-img img { width: 100%; height: 100%; object-fit: contain; padding: .85rem; box-sizing: border-box; }
 .vac-img-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--blue); opacity: .35; }
-.vac-badge-nueva { position: absolute; top: 10px; left: 10px; background: #16a34a; color: #fff; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 700; z-index: 2; }
+.vac-cat-badge { position: absolute; top: 12px; left: 12px; background: #fff; color: var(--blue); font-size: 10.5px; padding: 5px 12px; border-radius: 12px; font-weight: 700; z-index: 2; box-shadow: 0 3px 10px rgba(15,40,80,.14); }
 .vac-body { padding: 1.15rem 1.25rem 1.35rem; display: flex; flex-direction: column; flex: 1; }
 .vac-area { font-size: 11px; color: var(--blue); font-weight: 700; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; }
 .vac-title { font-size: 15.5px; font-weight: 700; color: var(--ink); margin-bottom: 8px; line-height: 1.35; }
 .vac-desc { font-size: 12.5px; color: var(--muted); line-height: 1.65; margin-bottom: 1rem; flex: 1; }
-.vac-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: .9rem; }
+.vac-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
 .vtag { font-size: 10.5px; background: var(--bg-soft); border: 1px solid var(--border); color: var(--muted); padding: 4px 10px; border-radius: 10px; font-weight: 600; }
 .vtag.blue { background: var(--blue-50); border-color: var(--blue-100); color: var(--blue); }
-.vac-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.badge-img { font-size: 11px; background: var(--blue-50); color: var(--blue); border: 1px solid var(--blue-100); padding: 6px 12px; border-radius: 10px; font-weight: 600; cursor: pointer; font-family: var(--ff); }
-.badge-img:hover { background: var(--blue-100); }
-.badge-pdf { font-size: 11px; background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; padding: 6px 12px; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-block; }
-.badge-pdf:hover { background: #FEE2E2; }
+.vac-cta { width: 100%; background: var(--blue); color: #fff; border: none; padding: 12px; border-radius: 9px; font-size: 13px; font-family: var(--ff); font-weight: 700; cursor: pointer; transition: all .2s; }
+.vac-cta:hover { background: var(--blue2); }
 .empty-msg { text-align: center; padding: 3rem; color: var(--muted); font-size: 14px; grid-column: 1 / -1; }
 .rec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
 .rec-info { margin-top: 1.25rem; }
@@ -85,27 +82,31 @@
     {% if hay_vacantes %}
     <div>
       <div class="svc-tabs">
-        {% if vacantes_estudiantes %}<button type="button" class="svc-tab{% if tab_inicial == 'estudiantes' %} on{% endif %}" onclick="setTab(this,'estudiantes')">Estudiantes</button>{% endif %}
-        {% if vacantes_jubilados %}<button type="button" class="svc-tab{% if tab_inicial == 'jubilados' %} on{% endif %}" onclick="setTab(this,'jubilados')">Jubilados</button>{% endif %}
-        {% if vacantes_amas_casa %}<button type="button" class="svc-tab{% if tab_inicial == 'amas' %} on{% endif %}" onclick="setTab(this,'amas')">Amas de Casa</button>{% endif %}
-        {% if vacantes_profesionistas %}<button type="button" class="svc-tab{% if tab_inicial == 'profesionistas' %} on{% endif %}" onclick="setTab(this,'profesionistas')">Profesionistas</button>{% endif %}
-        <button type="button" class="svc-tab{% if tab_inicial == 'general' %} on{% endif %}" onclick="setTab(this,'general')">General</button>
+        <button type="button" class="svc-tab on" onclick="setTab(this,'todas')">Todas</button>
+        {% if vacantes_estudiantes %}<button type="button" class="svc-tab" onclick="setTab(this,'estudiantes')">Estudiantes</button>{% endif %}
+        {% if vacantes_jubilados %}<button type="button" class="svc-tab" onclick="setTab(this,'jubilados')">Jubilados</button>{% endif %}
+        {% if vacantes_amas_casa %}<button type="button" class="svc-tab" onclick="setTab(this,'amas')">Amas de Casa</button>{% endif %}
+        {% if vacantes_profesionistas %}<button type="button" class="svc-tab" onclick="setTab(this,'profesionistas')">Profesionistas</button>{% endif %}
+        <button type="button" class="svc-tab" onclick="setTab(this,'general')">General</button>
       </div>
 
-      <div class="rec-info" id="tab-estudiantes" style="display:{% if tab_inicial == 'estudiantes' %}block{% else %}none{% endif %}">
+      <div class="rec-info" id="tab-todas" style="display:block">
+        {% include 'vacantes/_vac_panel.html' with lista=vacantes_general %}
+      </div>
+      <div class="rec-info" id="tab-estudiantes" style="display:none">
         {% include 'vacantes/_vac_panel.html' with lista=vacantes_estudiantes %}
       </div>
-      <div class="rec-info" id="tab-jubilados" style="display:{% if tab_inicial == 'jubilados' %}block{% else %}none{% endif %}">
+      <div class="rec-info" id="tab-jubilados" style="display:none">
         {% include 'vacantes/_vac_panel.html' with lista=vacantes_jubilados %}
       </div>
-      <div class="rec-info" id="tab-amas" style="display:{% if tab_inicial == 'amas' %}block{% else %}none{% endif %}">
+      <div class="rec-info" id="tab-amas" style="display:none">
         {% include 'vacantes/_vac_panel.html' with lista=vacantes_amas_casa %}
       </div>
-      <div class="rec-info" id="tab-profesionistas" style="display:{% if tab_inicial == 'profesionistas' %}block{% else %}none{% endif %}">
+      <div class="rec-info" id="tab-profesionistas" style="display:none">
         {% include 'vacantes/_vac_panel.html' with lista=vacantes_profesionistas %}
       </div>
-      <div class="rec-info" id="tab-general" style="display:{% if tab_inicial == 'general' %}block{% else %}none{% endif %}">
-        {% include 'vacantes/_vac_panel.html' with lista=vacantes_general %}
+      <div class="rec-info" id="tab-general" style="display:none">
+        {% include 'vacantes/_vac_panel.html' with lista=vacantes_solo_general %}
       </div>
     </div>
     {% else %}
@@ -269,6 +270,20 @@ function mostrarNombreCV(input) {
   if (input.files && input.files[0]) {
     document.getElementById('uploadZone').style.borderColor = '#16a34a';
     document.getElementById('uploadTxt').textContent = '✓ ' + input.files[0].name;
+  }
+}
+
+// Botón "Ver convocatoria" de cada tarjeta: abre el PDF si existe, si no
+// muestra la imagen ampliada, y si la vacante no tiene ninguno de los dos,
+// baja directo al formulario de postulación con esa vacante preseleccionada.
+function verConvocatoria(pdfUrl, imgUrl, vacanteId) {
+  if (pdfUrl) { window.open(pdfUrl, '_blank'); return; }
+  if (imgUrl) { abrirLightbox(imgUrl); return; }
+  var select = document.querySelector('select[name="vacante"]');
+  if (select) {
+    select.value = vacanteId;
+    var form = select.closest('form');
+    if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }
 
