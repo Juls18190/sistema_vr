@@ -55,6 +55,15 @@ if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
     CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
 
+# ─────────────────────────────────────────────
+# Ruta del panel de administración: no se deja fija en 'admin/' porque
+# es la primera ruta que prueban los bots que escanean sitios Django
+# buscando el login del admin. Se define en .env (nunca en el código,
+# para que no quede visible en el historial de GitHub). Si no está
+# definida, cae a un default distinto del estándar.
+# ─────────────────────────────────────────────
+ADMIN_URL = config('ADMIN_URL', default='panel-vr-gestion/')
+
 
 # Application definition
 
