@@ -136,6 +136,38 @@ body{font-family:var(--ff);background:var(--bg);color:var(--txt);}
 .pg-footer{display:flex;align-items:center;justify-content:center;padding:10px 1.25rem;border-top:1px solid #f8fafc;flex-wrap:wrap;gap:8px;}
 .pg-info{font-size:12px;color:var(--txt3);}
 .pg-btns{display:flex;gap:6px;}
+
+/* ── Agenda (calendario) ── */
+.agenda-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:1rem;}
+.agenda-mes-nav{display:flex;align-items:center;gap:10px;}
+.agenda-mes-nav button{width:30px;height:30px;border-radius:7px;border:1px solid var(--bdr);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt2);}
+.agenda-mes-nav button:hover{background:var(--gray);}
+.agenda-mes-label{font-size:15px;font-weight:700;color:var(--txt);min-width:150px;text-align:center;text-transform:capitalize;}
+.agenda-vista-toggle{display:flex;border:1px solid var(--bdr);border-radius:8px;overflow:hidden;}
+.agenda-vista-toggle button{padding:7px 14px;font-size:12px;font-family:var(--ff);border:none;background:var(--white);color:var(--txt2);cursor:pointer;font-weight:600;}
+.agenda-vista-toggle button.on{background:var(--blue);color:#fff;}
+
+.agenda-grid{display:grid;grid-template-columns:repeat(7,1fr);background:var(--bdr);gap:1px;border:1px solid var(--bdr);border-radius:12px;overflow:hidden;}
+.agenda-dow{background:var(--gray);padding:8px;text-align:center;font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px;}
+.agenda-day{background:var(--white);min-height:92px;padding:6px;display:flex;flex-direction:column;gap:3px;cursor:pointer;transition:background .15s;}
+.agenda-day:hover{background:var(--gray);}
+.agenda-day.otro-mes{background:#fafbfc;}
+.agenda-day.otro-mes .agenda-day-num{color:var(--txt3);opacity:.5;}
+.agenda-day.hoy .agenda-day-num{background:var(--blue);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
+.agenda-day-num{font-size:12px;font-weight:600;color:var(--txt2);}
+.agenda-evento{font-size:10px;padding:2px 5px;border-radius:4px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;}
+.agenda-evento.tarea-completada{opacity:.5;text-decoration:line-through;}
+.agenda-mas{font-size:10px;color:var(--txt3);font-weight:600;padding:0 5px;}
+
+.agenda-lista-dia{background:var(--white);border:1px solid var(--bdr);border-radius:10px;margin-bottom:10px;overflow:hidden;}
+.agenda-lista-dia-header{background:var(--gray);padding:8px 14px;font-size:12px;font-weight:700;color:var(--txt);text-transform:capitalize;}
+.agenda-lista-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--bdr);}
+.agenda-lista-item:first-child{border-top:none;}
+.agenda-lista-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.agenda-lista-hora{font-size:11px;color:var(--txt3);width:48px;flex-shrink:0;}
+.agenda-lista-texto{flex:1;font-size:13px;color:var(--txt2);}
+.agenda-lista-texto.completada{opacity:.5;text-decoration:line-through;}
+.agenda-lista-sub{font-size:11px;color:var(--txt3);}
 .tc-link{font-size:12px;color:var(--blue);font-weight:600;text-decoration:none;}
 .tc-link:hover{text-decoration:underline;}
 table{width:100%;border-collapse:collapse;}
@@ -454,6 +486,10 @@ tr:last-child td{border-bottom:none;}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           Citas {% if citas_pendientes %}<span class="sb-badge red">{{ citas_pendientes }}</span>{% endif %}
         </div>
+        <div class="sb-item" onclick="abrirSeccionAgenda(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+          Agenda
+        </div>
         <div class="sb-item" onclick="nav('prospectos',this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           Prospectos {% if prospectos_nuevos %}<span class="sb-badge">{{ prospectos_nuevos }}</span>{% endif %}
@@ -644,6 +680,44 @@ tr:last-child td{border-bottom:none;}
         <div class="pg-footer" id="pg-citas-asesor"></div>
       </div>
       </div><!-- /p-citas -->
+
+      <div id="p-agenda" class="page">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Agenda</div>
+            <div class="page-sub">Tus citas y tareas en un solo lugar</div>
+          </div>
+          <button class="btn-new" onclick="abrirNuevaTareaAsesor()">+ Nueva tarea</button>
+        </div>
+
+        <div class="agenda-toolbar">
+          <div class="agenda-mes-nav">
+            <button onclick="cambiarMesAgenda(-1)" aria-label="Mes anterior">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="agenda-mes-label" id="agenda-mes-label">—</div>
+            <button onclick="cambiarMesAgenda(1)" aria-label="Mes siguiente">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <span class="tc-link" style="cursor:pointer;" onclick="irHoyAgenda()">Hoy</span>
+          </div>
+          <div class="agenda-vista-toggle">
+            <button id="agenda-btn-mes" class="on" onclick="cambiarVistaAgenda('mes')">Mes</button>
+            <button id="agenda-btn-lista" onclick="cambiarVistaAgenda('lista')">Lista</button>
+          </div>
+        </div>
+
+        <div id="agenda-loading" style="text-align:center;padding:2rem;color:var(--txt3);font-size:13px;">Cargando agenda…</div>
+
+        <div id="agenda-vista-mes" style="display:none;">
+          <div class="agenda-grid" id="agenda-grid">
+            <div class="agenda-dow">Dom</div><div class="agenda-dow">Lun</div><div class="agenda-dow">Mar</div>
+            <div class="agenda-dow">Mié</div><div class="agenda-dow">Jue</div><div class="agenda-dow">Vie</div><div class="agenda-dow">Sáb</div>
+          </div>
+        </div>
+
+        <div id="agenda-vista-lista" style="display:none;"></div>
+      </div><!-- /p-agenda -->
 
       <div id="p-prospectos" class="page">
       <div class="page-header" style="margin-top:.5rem;">
@@ -1224,6 +1298,66 @@ tr:last-child td{border-bottom:none;}
         <button type="submit" id="nca-btn-guardar" style="background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">+ Agendar cita</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Modal: día de la agenda (lista de eventos de un día + acceso rápido para agregar tarea) -->
+<div id="modal-dia-agenda" class="modal-detalle">
+  <div class="md-box">
+    <div class="md-header">
+      <div class="md-title" id="mda-fecha">—</div>
+      <button class="md-close" onclick="cerrarDiaAgenda()">×</button>
+    </div>
+    <div class="md-body" id="mda-eventos" style="padding-top:0;"></div>
+    <div class="md-actions">
+      <button class="md-btn-secondary" onclick="cerrarDiaAgenda()">Cerrar</button>
+      <button onclick="abrirNuevaTareaAsesor(_mdaFechaActual)" style="background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">+ Agregar tarea</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: nueva/editar tarea de agenda -->
+<div id="modal-tarea-agenda" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)cerrarTareaAgenda();">
+  <div style="background:#fff;width:380px;max-width:95%;border-radius:14px;padding:1.75rem;font-family:var(--ff);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+      <div style="font-size:16px;font-weight:700;" id="mta-titulo">Nueva tarea</div>
+      <button onclick="cerrarTareaAgenda()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1;">×</button>
+    </div>
+    <input type="hidden" id="mta-id">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div>
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Fecha *</label>
+        <input type="date" id="mta-fecha" required style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 11px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
+      </div>
+      <div>
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">Hora</label>
+        <input type="time" id="mta-hora" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 11px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;">
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:5px;">¿Qué tienes que hacer? *</label>
+      <textarea id="mta-texto" rows="3" required placeholder="Ej. Llamar a lista de prospectos" style="width:100%;border:1px solid var(--bdr);border-radius:8px;padding:9px 11px;font-size:13px;font-family:var(--ff);color:var(--txt2);outline:none;resize:vertical;"></textarea>
+    </div>
+    <div id="mta-error" style="display:none;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 12px;border-radius:7px;font-size:12px;margin-bottom:1rem;"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="cerrarTareaAgenda()" style="background:var(--gray2);color:var(--txt2);border:1px solid var(--bdr);padding:8px 18px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;">Cancelar</button>
+      <button id="mta-btn-guardar" onclick="guardarTareaAgenda()" style="background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:13px;font-family:var(--ff);cursor:pointer;font-weight:600;">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: confirmar eliminar tarea -->
+<div class="modal-eliminar" id="modal-eliminar-tarea-agenda">
+  <div class="me-box">
+    <div class="me-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+    </div>
+    <div class="me-title">Eliminar tarea</div>
+    <div class="me-sub">¿Eliminar "<strong id="meta-texto"></strong>"? Esta acción no se puede deshacer.</div>
+    <div class="me-btns">
+      <button class="me-cancel" onclick="document.getElementById('modal-eliminar-tarea-agenda').classList.remove('show')">Cancelar</button>
+      <button class="me-confirm" onclick="ejecutarEliminarTareaAgenda()">Sí, eliminar</button>
+    </div>
   </div>
 </div>
 
@@ -2301,6 +2435,311 @@ function cerrarModalVerProspectoAsesor(){
 document.getElementById('modal-ver-prospecto-asesor').addEventListener('click', function(e){
   if (e.target === this) cerrarModalVerProspectoAsesor();
 });
+
+/* ════════════════════════════════════════════════════════
+   AGENDA — calendario (citas + tareas propias)
+   ════════════════════════════════════════════════════════ */
+var _agendaHoy = new Date();
+var _agendaAnio = _agendaHoy.getFullYear();
+var _agendaMes  = _agendaHoy.getMonth() + 1; // 1-12
+var _agendaVista = 'mes';
+var _agendaEventos = [];
+var _agendaCargada = false;
+var _mdaFechaActual = null;
+var _tareaEliminarId = null;
+
+var _MESES_AGENDA = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+var _DIAS_AGENDA  = ['dom','lun','mar','mié','jue','vie','sáb'];
+
+function abrirSeccionAgenda(el){
+  nav('agenda', el);
+  if (!_agendaCargada) cargarAgenda();
+}
+
+function cargarAgenda(){
+  document.getElementById('agenda-loading').style.display = 'block';
+  document.getElementById('agenda-vista-mes').style.display = 'none';
+  document.getElementById('agenda-vista-lista').style.display = 'none';
+  document.getElementById('agenda-mes-label').textContent = _MESES_AGENDA[_agendaMes - 1] + ' ' + _agendaAnio;
+
+  fetch('/agenda/calendario/ajax/?anio=' + _agendaAnio + '&mes=' + _agendaMes, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d.ok) { toastAsesor(d.error || 'No se pudo cargar la agenda.'); return; }
+      _agendaCargada = true;
+      _agendaEventos = d.eventos;
+      document.getElementById('agenda-loading').style.display = 'none';
+      _renderVistaAgendaActual();
+    })
+    .catch(function(){ toastAsesor('Error de conexión al cargar la agenda.'); });
+}
+
+function cambiarMesAgenda(delta){
+  _agendaMes += delta;
+  if (_agendaMes > 12) { _agendaMes = 1; _agendaAnio++; }
+  if (_agendaMes < 1)  { _agendaMes = 12; _agendaAnio--; }
+  cargarAgenda();
+}
+function irHoyAgenda(){
+  _agendaAnio = _agendaHoy.getFullYear();
+  _agendaMes  = _agendaHoy.getMonth() + 1;
+  cargarAgenda();
+}
+function cambiarVistaAgenda(vista){
+  _agendaVista = vista;
+  document.getElementById('agenda-btn-mes').classList.toggle('on', vista === 'mes');
+  document.getElementById('agenda-btn-lista').classList.toggle('on', vista === 'lista');
+  _renderVistaAgendaActual();
+}
+function _renderVistaAgendaActual(){
+  if (_agendaVista === 'mes') { renderAgendaMes(); }
+  else { renderAgendaLista(); }
+}
+
+function _eventosDelDia(fechaISO){
+  return _agendaEventos.filter(function(e){ return e.fecha === fechaISO; })
+    .sort(function(a,b){ return (a.hora||'99:99').localeCompare(b.hora||'99:99'); });
+}
+function _fechaISO(anio, mes, dia){
+  return anio + '-' + String(mes).padStart(2,'0') + '-' + String(dia).padStart(2,'0');
+}
+
+function renderAgendaMes(){
+  document.getElementById('agenda-vista-lista').style.display = 'none';
+  document.getElementById('agenda-vista-mes').style.display = 'block';
+
+  var grid = document.getElementById('agenda-grid');
+  grid.innerHTML = _DIAS_AGENDA.map(function(d){ return '<div class="agenda-dow">' + d.charAt(0).toUpperCase() + d.slice(1) + '</div>'; }).join('');
+
+  var primerDia = new Date(_agendaAnio, _agendaMes - 1, 1);
+  var diasEnMes = new Date(_agendaAnio, _agendaMes, 0).getDate();
+  var offset = primerDia.getDay(); // 0=domingo
+
+  var hoyISO = _fechaISO(_agendaHoy.getFullYear(), _agendaHoy.getMonth()+1, _agendaHoy.getDate());
+
+  var celdas = [];
+  // Días del mes anterior para rellenar la primera semana
+  var mesAnt = _agendaMes === 1 ? 12 : _agendaMes - 1;
+  var anioAnt = _agendaMes === 1 ? _agendaAnio - 1 : _agendaAnio;
+  var diasMesAnt = new Date(anioAnt, mesAnt, 0).getDate();
+  for (var i = offset - 1; i >= 0; i--) {
+    celdas.push({ dia: diasMesAnt - i, otroMes: true });
+  }
+  for (var d = 1; d <= diasEnMes; d++) {
+    celdas.push({ dia: d, otroMes: false, fecha: _fechaISO(_agendaAnio, _agendaMes, d) });
+  }
+  while (celdas.length % 7 !== 0) {
+    celdas.push({ dia: celdas.length - offset - diasEnMes + 1, otroMes: true });
+  }
+
+  var html = '';
+  celdas.forEach(function(c){
+    if (c.otroMes) {
+      html += '<div class="agenda-day otro-mes"><div class="agenda-day-num">' + c.dia + '</div></div>';
+      return;
+    }
+    var eventos = _eventosDelDia(c.fecha);
+    var esHoy = c.fecha === hoyISO;
+    var pills = eventos.slice(0, 3).map(function(e){
+      var cls = 'agenda-evento' + (e.tipo === 'tarea' && e.completada ? ' tarea-completada' : '');
+      var texto = (e.hora ? e.hora + ' ' : '') + e.titulo;
+      return '<div class="' + cls + '" style="background:' + e.color + ';" title="' + texto.replace(/"/g,'') + '">' + texto + '</div>';
+    }).join('');
+    var mas = eventos.length > 3 ? '<div class="agenda-mas">+' + (eventos.length - 3) + ' más</div>' : '';
+    html += '<div class="agenda-day' + (esHoy ? ' hoy' : '') + '" onclick="abrirDiaAgenda(\'' + c.fecha + '\')">' +
+      '<div class="agenda-day-num">' + c.dia + '</div>' + pills + mas +
+    '</div>';
+  });
+  grid.insertAdjacentHTML('beforeend', html);
+}
+
+function renderAgendaLista(){
+  document.getElementById('agenda-vista-mes').style.display = 'none';
+  var cont = document.getElementById('agenda-vista-lista');
+  cont.style.display = 'block';
+
+  var porDia = {};
+  _agendaEventos.forEach(function(e){
+    (porDia[e.fecha] = porDia[e.fecha] || []).push(e);
+  });
+  var fechas = Object.keys(porDia).sort();
+
+  if (fechas.length === 0) {
+    cont.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--txt3);font-size:13px;">No tienes citas ni tareas este mes.</div>';
+    return;
+  }
+
+  cont.innerHTML = fechas.map(function(fecha){
+    var partes = fecha.split('-');
+    var fechaObj = new Date(partes[0], partes[1]-1, partes[2]);
+    var label = _DIAS_AGENDA[fechaObj.getDay()] + ' ' + parseInt(partes[2],10) + ' de ' + _MESES_AGENDA[parseInt(partes[1],10)-1];
+
+    var items = porDia[fecha].sort(function(a,b){ return (a.hora||'99:99').localeCompare(b.hora||'99:99'); }).map(function(e){
+      var textoClass = 'agenda-lista-texto' + (e.tipo === 'tarea' && e.completada ? ' completada' : '');
+      var accion = e.tipo === 'cita'
+        ? 'onclick="abrirVerCitaAsesor(' + e.id + ')"'
+        : 'onclick="abrirTareaAgendaExistente(' + e.id + ')"';
+      var sub = e.tipo === 'cita' ? '<div class="agenda-lista-sub">' + e.subtitulo + '</div>' : '';
+      return '<div class="agenda-lista-item" style="cursor:pointer;" ' + accion + '>' +
+        '<div class="agenda-lista-dot" style="background:' + e.color + ';"></div>' +
+        '<div class="agenda-lista-hora">' + (e.hora || '—') + '</div>' +
+        '<div style="flex:1;"><div class="' + textoClass + '">' + e.titulo + '</div>' + sub + '</div>' +
+      '</div>';
+    }).join('');
+
+    return '<div class="agenda-lista-dia"><div class="agenda-lista-dia-header">' + label + '</div>' + items + '</div>';
+  }).join('');
+}
+
+/* ── Modal: día completo ── */
+function abrirDiaAgenda(fechaISO){
+  _mdaFechaActual = fechaISO;
+  var partes = fechaISO.split('-');
+  var fechaObj = new Date(partes[0], partes[1]-1, partes[2]);
+  document.getElementById('mda-fecha').textContent =
+    _DIAS_AGENDA[fechaObj.getDay()].charAt(0).toUpperCase() + _DIAS_AGENDA[fechaObj.getDay()].slice(1) +
+    ' ' + parseInt(partes[2],10) + ' de ' + _MESES_AGENDA[parseInt(partes[1],10)-1];
+
+  var eventos = _eventosDelDia(fechaISO);
+  var cont = document.getElementById('mda-eventos');
+  if (eventos.length === 0) {
+    cont.innerHTML = '<p style="text-align:center;color:var(--txt3);font-size:13px;padding:1rem 0;">Sin citas ni tareas para este día.</p>';
+  } else {
+    cont.innerHTML = eventos.map(function(e){
+      var esTarea = e.tipo === 'tarea';
+      var botones = '';
+      if (esTarea && e.editable) {
+        botones =
+          '<button class="act-btn" title="' + (e.completada ? 'Marcar pendiente' : 'Marcar completada') + '" onclick="toggleCompletarTareaAgenda(' + e.id + ')">' +
+            (e.completada ? '↺' : '✓') +
+          '</button>' +
+          '<button class="act-btn" title="Editar" onclick="abrirTareaAgendaExistente(' + e.id + ')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg></button>' +
+          '<button class="act-btn act-btn-del" title="Eliminar" onclick="abrirEliminarTareaAgenda(' + e.id + ', \'' + e.titulo.replace(/'/g,"\\'") + '\')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>';
+      } else if (!esTarea) {
+        botones = '<button class="act-btn" title="Ver cita" onclick="cerrarDiaAgenda();abrirVerCitaAsesor(' + e.id + ')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>';
+      }
+      return '<div class="md-row">' +
+        '<div class="md-icon" style="background:' + e.color + ';color:#fff;">' + (esTarea ? '📝' : '📅') + '</div>' +
+        '<div style="flex:1;">' +
+          '<div class="md-val" style="' + (esTarea && e.completada ? 'text-decoration:line-through;opacity:.6;' : '') + '">' + (e.hora ? e.hora + ' — ' : '') + e.titulo + '</div>' +
+          (e.subtitulo ? '<div class="md-label" style="text-transform:none;font-weight:400;">' + e.subtitulo + '</div>' : '') +
+        '</div>' +
+        '<div style="display:flex;gap:4px;">' + botones + '</div>' +
+      '</div>';
+    }).join('');
+  }
+  document.getElementById('modal-dia-agenda').classList.add('show');
+}
+function cerrarDiaAgenda(){
+  document.getElementById('modal-dia-agenda').classList.remove('show');
+}
+
+/* ── Modal: nueva/editar tarea ── */
+function abrirNuevaTareaAsesor(fechaPrefill){
+  cerrarDiaAgenda();
+  document.getElementById('mta-titulo').textContent = 'Nueva tarea';
+  document.getElementById('mta-id').value = '';
+  document.getElementById('mta-fecha').value = fechaPrefill || _fechaISO(_agendaHoy.getFullYear(), _agendaHoy.getMonth()+1, _agendaHoy.getDate());
+  document.getElementById('mta-hora').value = '';
+  document.getElementById('mta-texto').value = '';
+  document.getElementById('mta-error').style.display = 'none';
+  document.getElementById('modal-tarea-agenda').style.display = 'flex';
+}
+function abrirTareaAgendaExistente(id){
+  var t = _agendaEventos.find(function(e){ return e.tipo === 'tarea' && e.id === id; });
+  if (!t) return;
+  cerrarDiaAgenda();
+  document.getElementById('mta-titulo').textContent = 'Editar tarea';
+  document.getElementById('mta-id').value = id;
+  document.getElementById('mta-fecha').value = t.fecha;
+  document.getElementById('mta-hora').value = t.hora || '';
+  document.getElementById('mta-texto').value = t.titulo;
+  document.getElementById('mta-error').style.display = 'none';
+  document.getElementById('modal-tarea-agenda').style.display = 'flex';
+}
+function cerrarTareaAgenda(){
+  document.getElementById('modal-tarea-agenda').style.display = 'none';
+}
+function guardarTareaAgenda(){
+  var id     = document.getElementById('mta-id').value;
+  var fecha  = document.getElementById('mta-fecha').value;
+  var hora   = document.getElementById('mta-hora').value;
+  var texto  = document.getElementById('mta-texto').value.trim();
+  var errDiv = document.getElementById('mta-error');
+  var btn    = document.getElementById('mta-btn-guardar');
+
+  if (!fecha || !texto) {
+    errDiv.textContent = 'La fecha y la descripción son obligatorias.';
+    errDiv.style.display = 'block';
+    return;
+  }
+
+  var body = new URLSearchParams();
+  body.append('fecha', fecha);
+  body.append('hora', hora);
+  body.append('texto', texto);
+
+  var url = id ? '/agenda/tarea/' + id + '/editar/ajax/' : '/agenda/tarea/crear/ajax/';
+
+  btn.disabled = true;
+  btn.textContent = 'Guardando…';
+  errDiv.style.display = 'none';
+
+  fetch(url, {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _citaCsrf(), 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString(),
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    btn.disabled = false;
+    btn.textContent = 'Guardar';
+    if (!d.ok) { errDiv.textContent = d.error || 'No se pudo guardar.'; errDiv.style.display = 'block'; return; }
+    cerrarTareaAgenda();
+    toastAsesor(id ? 'Tarea actualizada.' : 'Tarea agregada a tu agenda.');
+    cargarAgenda();
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Guardar';
+    errDiv.textContent = 'Error de conexión.';
+    errDiv.style.display = 'block';
+  });
+}
+
+function toggleCompletarTareaAgenda(id){
+  fetch('/agenda/tarea/' + id + '/completar/ajax/', {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _citaCsrf() },
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (!d.ok) { toastAsesor(d.error || 'No se pudo actualizar.'); return; }
+    cargarAgenda();
+    setTimeout(function(){ abrirDiaAgenda(_mdaFechaActual); }, 150);
+  })
+  .catch(function(){ toastAsesor('Error de conexión.'); });
+}
+
+function abrirEliminarTareaAgenda(id, texto){
+  _tareaEliminarId = id;
+  document.getElementById('meta-texto').textContent = texto;
+  document.getElementById('modal-eliminar-tarea-agenda').classList.add('show');
+}
+function ejecutarEliminarTareaAgenda(){
+  fetch('/agenda/tarea/' + _tareaEliminarId + '/eliminar/ajax/', {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': _citaCsrf() },
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    document.getElementById('modal-eliminar-tarea-agenda').classList.remove('show');
+    if (!d.ok) { toastAsesor(d.error || 'No se pudo eliminar.'); return; }
+    toastAsesor('Tarea eliminada.');
+    cargarAgenda();
+  })
+  .catch(function(){ toastAsesor('Error de conexión.'); });
+}
 </script>
 </body>
 

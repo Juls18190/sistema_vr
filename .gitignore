@@ -17,6 +17,7 @@ media/
 # Variables de entorno
 .env
 .env.*
+!.env.example
 
 # VS Code
 .vscode/

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from decouple import config, Csv
 
@@ -42,6 +43,18 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
 
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
+
+# ─────────────────────────────────────────────
+# Render asigna el dominio *.onrender.com y lo expone en esta variable
+# de entorno automáticamente (no hay que configurarla a mano). Si existe,
+# se agrega sola a ALLOWED_HOSTS y CSRF_TRUSTED_ORIGINS.
+# ─────────────────────────────────────────────
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
+
 
 # Application definition
 
@@ -67,6 +80,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -175,21 +189,29 @@ LOGOUT_REDIRECT_URL = '/usuarios/login/'
 SESSION_COOKIE_HTTPONLY = True          # la cookie de sesión no es legible desde JS
 SESSION_COOKIE_SAMESITE = 'Lax'         # no se envía en peticiones cross-site
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # la sesión termina al cerrar el navegador
-SESSION_COOKIE_SECURE = False           # ⚠️ cambiar a True en producción (HTTPS)
 
+# PRODUCCIÓN (DEBUG=False, HTTPS de Render): las cookies *_SECURE y las
+# cabeceras HSTS se activan solas, sin tener que acordarte de cambiar nada
+# a mano en cada deploy. En desarrollo (DEBUG=True, runserver por HTTP)
+# se quedan desactivadas para no romper el login local.
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SECURE = False              # ⚠️ cambiar a True en producción (HTTPS)
 
-# PRODUCCIÓN: cuando el sitio ya sirva por HTTPS, cambiar las dos líneas
-# marcadas arriba (SESSION_COOKIE_SECURE y CSRF_COOKIE_SECURE) a True.
-# Sin HTTPS, el navegador nunca enviaría esas cookies y nadie podría
-# iniciar sesión, así que NO se activan mientras el proyecto corra en HTTP.
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
 
 # ─────────────────────────────────────────────
 # ARCHIVOS ESTÁTICOS (para producción)
 # ─────────────────────────────────────────────
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ─────────────────────────────────────────────
 # CORREO ELECTRÓNICO (para recuperación de contraseña)
