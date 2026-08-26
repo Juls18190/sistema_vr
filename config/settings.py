@@ -234,7 +234,14 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Si faltan las credenciales de Cloudinary (ej. en tu máquina local sin
 # .env configurado para esto), cae de vuelta al disco local para que
 # sigas pudiendo trabajar en desarrollo sin necesidad de una cuenta.
+#
+# Se define STATICFILES_STORAGE (estilo viejo) además de STORAGES
+# (estilo nuevo) porque el propio comando collectstatic de
+# django-cloudinary-storage todavía lee STATICFILES_STORAGE directo y
+# truena con AttributeError si solo existe STORAGES.
 # ─────────────────────────────────────────────
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
     'API_KEY': config('CLOUDINARY_API_KEY', default=''),
