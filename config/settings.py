@@ -73,7 +73,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary',
     'citas',
     'postulantes',
     'vacantes',
@@ -220,7 +222,43 @@ if not DEBUG:
 # ARCHIVOS ESTÁTICOS (para producción)
 # ─────────────────────────────────────────────
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# ─────────────────────────────────────────────
+# Almacenamiento de archivos:
+# - Estáticos (CSS/JS del proyecto) → WhiteNoise, sirven desde el propio
+#   servidor de Render, no cambian con cada deploy.
+# - Media (CVs, fotos de servicios, fotos de perfil, pólizas subidas por
+#   usuarios) → Cloudinary, porque el disco de Render en el plan Free NO
+#   es persistente: cualquier archivo subido por un usuario se perdería
+#   en el siguiente deploy o reinicio si se quedara solo en el servidor.
+# Si faltan las credenciales de Cloudinary (ej. en tu máquina local sin
+# .env configurado para esto), cae de vuelta al disco local para que
+# sigas pudiendo trabajar en desarrollo sin necesidad de una cuenta.
+# ─────────────────────────────────────────────
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+    'API_KEY': config('CLOUDINARY_API_KEY', default=''),
+    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+}
+
+if CLOUDINARY_STORAGE['CLOUD_NAME']:
+    STORAGES = {
+        'default': {
+            'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        },
+    }
+else:
+    STORAGES = {
+        'default': {
+            'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        },
+    }
 
 # ─────────────────────────────────────────────
 # CORREO ELECTRÓNICO (para recuperación de contraseña)
